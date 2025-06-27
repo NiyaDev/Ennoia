@@ -61,6 +61,10 @@ const int TRIANGLES = 0x00000004;
 const int UNSIGNED_INT = 0x00001405;
 const int FLOAT = 0x00001406;
 
+const GL_TEXTURE_WRAP_S = 0x00002802;
+const GL_TEXTURE_2D = 0x00000DE1;
+const GL_MIRRORED_REPEAT = 0x8370;
+
 
 const int KEY_SPACE = 32;
 const int KEY_APOSTROPHE = 39;  /* ' */
@@ -201,6 +205,12 @@ extern fn void delete_shader(uint) @extern("glDeleteShader");
 extern fn int get_uniform_location(uint, char*) @extern("glGetUniformLocation");
 extern fn void program_uniform_f(uint, int, float) @extern("glProgramUniform1f");
 
+extern fn void texture_parameter_i(int, int, int) @extern("glTextureParameteri");
+extern fn void texture_parameter_fv(int, int, float[]) @extern("glTextureParameterfv");
+
+// Textures
+
+
 extern fn void vertex_attrib_pointer(uint, int, int, bool, int, void*) @extern("glVertexAttribPointer");
 extern fn void enable_vertex_attrib_array(uint) @extern("glEnableVertexAttribArray");
 extern fn void gen_vertex_arrays(uint, uint*) @extern("glGenVertexArrays");
@@ -332,7 +342,7 @@ fn Shader load(String vert, String frag) {
   if (success == 0) {
     char[] log = mem::new_array(char, 512);
 		gl::get_program_info_log(program, 512, null, (char*)log);
-		io::printfn("fuck [%s]",log);
+		io::printfn("[ERROR] - ENNOIA::SHADER::PROGRAM [%s]",(String)log);
 		free(log);
   }
 
@@ -379,6 +389,7 @@ fn void Shader.update_loc(&self, String name, UniformType type, any data) {
 // Mesh
 module ennoia::mesh;
 import ennoia::gl;
+import ennoia::shader;
 
 
 struct Mesh {
@@ -386,10 +397,14 @@ struct Mesh {
   uint[] indices;
 
   uint vao, vbo;
-  //Shader shader;
+  Shader shader;
 }
 
-<* Creates a new Mesh using input vertices and indices *>
+<* Creates a new Mesh using input vertices and indices
+  @param vertices: "The array of vertices to set"
+  @param indices:  "In dices of triangles"
+  @return "Mesh struct"
+ *>
 fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
   Mesh output;
 
@@ -398,9 +413,9 @@ fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
     vert = vertices;
   } else {
     vert = {
-       0.0,  0.5, 0.0,
-      -0.5, -0.5, 0.0,
-       0.5, -0.5, 0.0,
+       0.0,  0.5, 0.0, 1,0,0, 1,1,
+      -0.5, -0.5, 0.0, 0,1,0, 1,0,
+       0.5, -0.5, 0.0, 1,1,0, 0,0,
     };
   }
   uint[] ind;
@@ -424,8 +439,13 @@ fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
   gl::bind_buffer(gl::ELEMENT_ARRAY_BUFFER, ebo);
   gl::buffer_data(gl::ELEMENT_ARRAY_BUFFER, ind.len * uint.sizeof, ind, gl::STATIC_DRAW);
 
-  gl::vertex_attrib_pointer(0, 3, gl::FLOAT, false, 3 * float.sizeof, null);
+  gl::vertex_attrib_pointer(0, 3, gl::FLOAT, false, 8 * float.sizeof, null);
   gl::enable_vertex_attrib_array(0);
+
+  gl::vertex_attrib_pointer(1, 3, gl::FLOAT, false, 8 * float.sizeof, (void*)(3 * float.sizeof));
+  gl::enable_vertex_attrib_array(1);
+  gl::vertex_attrib_pointer(2, 3, gl::FLOAT, false, 8 * float.sizeof, (void*)(6 * float.sizeof));
+  gl::enable_vertex_attrib_array(2);
 
   gl::bind_buffer(gl::ARRAY_BUFFER, 0);
   gl::bind_vertex_array(0);
@@ -434,7 +454,19 @@ fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
 }
 <* Draws Mesh *>
 fn void Mesh.draw(&self, Vector3 position) {
-  
+  gl::use_program(self.shader.id);
+	gl::bind_vertex_array(self.vao);
+	gl::draw_elements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, null);
 }
 
+
+module ennoia::texture;
+
+
+struct Texture {
+  uint id;
+  int width, height;
+  int mipmaps;
+  int format;
+}
 
