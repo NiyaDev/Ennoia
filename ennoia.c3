@@ -61,20 +61,6 @@ const int TRIANGLES = 0x00000004;
 const int UNSIGNED_INT = 0x00001405;
 const int FLOAT = 0x00001406;
 
-const char* BLANK_VERTEX_SHADER =
-  "#version 330 core\n"
-  "layout (location = 0) in vec3 aPos;\n"
-  "void main()\n"
-  "{\n"
-  "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
-  "}\0";
-const char* BLANK_FRAGMENT_SHADER =
-  "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "void main()\n"
-  "{\n"
-  "  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-  "}\n\0";
 
 const int KEY_SPACE = 32;
 const int KEY_APOSTROPHE = 39;  /* ' */
@@ -212,6 +198,8 @@ extern fn void use_program(uint) @extern("glUseProgram");
 extern fn void get_programiv(uint, int, int*) @extern("glGetProgramiv");
 extern fn void get_program_info_log(uint, usz, usz*, char*) @extern("glGetProgramInfoLog");
 extern fn void delete_shader(uint) @extern("glDeleteShader");
+extern fn int get_uniform_location(uint, char*) @extern("glGetUniformLocation");
+extern fn void program_uniform_f(uint, int, float) @extern("glProgramUniform1f");
 
 extern fn void vertex_attrib_pointer(uint, int, int, bool, int, void*) @extern("glVertexAttribPointer");
 extern fn void enable_vertex_attrib_array(uint) @extern("glEnableVertexAttribArray");
@@ -237,14 +225,61 @@ struct Vector3 {
 module ennoia::shader;
 import ennoia::gl;
 import std::io;
+import std::collections;
 
 
 struct Shader {
   uint id;
-
+  HashMap{String, int} locs;
 }
 
-<* Compile a new shader *>
+enum UniformType {
+  FLOAT,
+  VECTOR2,
+  VECTOR3,
+  VECTOR4,
+
+  INT,
+  IVECTOR2,
+  IVECTOR3,
+  IVECTOR4,
+
+  UINT,
+  UIVECTOR2,
+  UIVECTOR3,
+  UIVECTOR4,
+
+  FLOATARRAY,
+  VECTOR2ARRAY,
+  VECTOR3ARRAY,
+  VECTOR4ARRAY,
+
+  INTARRAY,
+  IVECTOR2ARRAY,
+  IVECTOR3ARRAY,
+  IVECTOR4ARRAY,
+
+  UINTARRAY,
+  UIVECTOR2ARRAY,
+  UIVECTOR3ARRAY,
+  UIVECTOR4ARRAY,
+
+  MATRIX2X2,
+  MATRIX3X3,
+  MATRIX4X4,
+  MATRIX2X3,
+  MATRIX3X2,
+  MATRIX2X4,
+  MATRIX4X2,
+  MATRIX3X4,
+  MATRIX4X3,
+}
+
+<* Compile a new shader
+  @param vert: "Filename of uncompiled Vertex Shader"
+  @param frag: "Filename of uncompiled Fragment Shader"
+  @return "Compiled shader structure"
+ *>
 fn Shader load(String vert, String frag) {
   int success;
 
@@ -305,7 +340,39 @@ fn Shader load(String vert, String frag) {
   gl::delete_shader(vertex_shader);
 	gl::delete_shader(fragment_shader);
 
-  return {program};
+  return {program, {}};
+}
+<* Add uniform location to shader
+  @param name: "name of uniform"
+  @param type: "Type of variable"
+  @param data: "Pointer to data"
+ *>
+fn void Shader.add_loc(&self, String name, UniformType type, any data) {
+  if (self.locs.has_key(name)) {
+    io::printfn("[WARNING] - ENNOIA::SHADER::ADD_LOC [Added new location that already existed. Replacing old entry with new one.]");
+  }
+
+  int location = gl::get_uniform_location(self.id, name.zstr_tcopy());
+  self.locs.set(name, location);
+
+  self.update_loc(name, type, data);
+}
+<* Update uniform value
+  @param name: "name of uniform"
+  @param type: "Type of variable"
+  @param data: "Pointer to data"
+ *>
+fn void Shader.update_loc(&self, String name, UniformType type, any data) {
+  if (!self.locs.has_key(name)) {
+    io::printfn("[WARNING] - ENNOIA::SHADER::UPDATE_LOC [Attempted to update a location that doesn't exist. Adding it as a new one.]");
+    self.add_loc(name, type, data);
+    return;
+  }
+
+  switch (type) {
+    case FLOAT: gl::program_uniform_f(self.id, self.locs[name]!!, *((float*)data));
+    default: io::printfn("[WARNING] - ENNOIA::SHADER::ADD_LOC [Attempted to edit non-implemented data type (%s)]", type);
+  }
 }
 
 
@@ -322,7 +389,7 @@ struct Mesh {
   //Shader shader;
 }
 
-<**>
+<* Creates a new Mesh using input vertices and indices *>
 fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
   Mesh output;
 
@@ -365,7 +432,7 @@ fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
 
   return output;
 }
-<**>
+<* Draws Mesh *>
 fn void Mesh.draw(&self, Vector3 position) {
   
 }
