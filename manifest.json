@@ -33,7 +33,7 @@
     },
     "linux-x64" : {
       "link-args" : [],
-      "dependencies" : [],
+      "dependencies" : [ "stb" ],
       "linked-libraries" : [ "GL", "glfw" ]
     },
     "macos-aarch64" : {

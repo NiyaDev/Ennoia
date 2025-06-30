@@ -58,12 +58,18 @@ const int VERTEX_SHADER   = 0x00008B31;
 const int LINK_STATUS     = 0x00008B82;
 
 const int TRIANGLES = 0x00000004;
+const int UNSIGNED_BYTE = 0x00001401;
 const int UNSIGNED_INT = 0x00001405;
 const int FLOAT = 0x00001406;
 
-const GL_TEXTURE_WRAP_S = 0x00002802;
-const GL_TEXTURE_2D = 0x00000DE1;
-const GL_MIRRORED_REPEAT = 0x8370;
+const TEXTURE_WRAP_S = 0x00002802;
+const TEXTURE_2D = 0x00000DE1;
+const MIRRORED_REPEAT = 0x00008370;
+const RGB = 0x00001907;
+const TEXTURE_MAG_FILTER = 0x00002800;
+const TEXTURE_MIN_FILTER = 0x00002801;
+
+const LINEAR = 0x00002601;
 
 
 const int KEY_SPACE = 32;
@@ -209,7 +215,10 @@ extern fn void texture_parameter_i(int, int, int) @extern("glTextureParameteri")
 extern fn void texture_parameter_fv(int, int, float[]) @extern("glTextureParameterfv");
 
 // Textures
-
+extern fn void gen_textures(int, uint*) @extern("glGenTextures");
+extern fn void bind_texture(int, uint) @extern("glBindTexture");
+extern fn void tex_image_2d(int, int, int, uint, uint, int, int, int, char*) @extern("glTexImage2D");
+extern fn void generate_mipmap(int) @extern("glGenerateMipmap");
 
 extern fn void vertex_attrib_pointer(uint, int, int, bool, int, void*) @extern("glVertexAttribPointer");
 extern fn void enable_vertex_attrib_array(uint) @extern("glEnableVertexAttribArray");
@@ -229,16 +238,5 @@ extern fn void set_framebuffer_size_callback(GLFWwindow*, CallbackSize) @extern(
 
 struct Vector3 {
   float x, y, z;
-}
-
-
-module ennoia::texture;
-
-
-struct Texture {
-  uint id;
-  int width, height;
-  int mipmaps;
-  int format;
 }
 
