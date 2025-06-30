@@ -65,11 +65,14 @@ const int FLOAT = 0x00001406;
 const TEXTURE_WRAP_S = 0x00002802;
 const TEXTURE_2D = 0x00000DE1;
 const MIRRORED_REPEAT = 0x00008370;
-const RGB = 0x00001907;
+const TEXTURE_MAX_ANISOTROPY_EXT = 0x000084FE;
+const RGB  = 0x00001907;
+const RGBA = 0x00001908;
 const TEXTURE_MAG_FILTER = 0x00002800;
 const TEXTURE_MIN_FILTER = 0x00002801;
 
-const LINEAR = 0x00002601;
+const NEAREST = 0x00002600;
+const LINEAR  = 0x00002601;
 
 
 const int KEY_SPACE = 32;
@@ -210,8 +213,11 @@ extern fn void get_program_info_log(uint, usz, usz*, char*) @extern("glGetProgra
 extern fn void delete_shader(uint) @extern("glDeleteShader");
 extern fn int get_uniform_location(uint, char*) @extern("glGetUniformLocation");
 extern fn void program_uniform_f(uint, int, float) @extern("glProgramUniform1f");
+extern fn void delete_vertex_arrays(int, uint*) @extern("glDeleteVertexArrays");
+extern fn void delete_buffers(int, uint*) @extern("glDeleteBuffers");
 
 extern fn void texture_parameter_i(int, int, int) @extern("glTextureParameteri");
+extern fn void texture_parameter_f(int, int, float) @extern("glTextureParameterf");
 extern fn void texture_parameter_fv(int, int, float[]) @extern("glTextureParameterfv");
 
 // Textures
@@ -235,8 +241,4 @@ extern fn void viewport(int, int, int, int) @extern("glViewport");
 alias CallbackSize = fn void(GLFWwindow*, int, int);
 extern fn void set_framebuffer_size_callback(GLFWwindow*, CallbackSize) @extern("glfwSetFramebufferSizeCallback");
 
-
-struct Vector3 {
-  float x, y, z;
-}
 
