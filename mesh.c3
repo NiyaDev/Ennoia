@@ -107,11 +107,11 @@ fn void Mesh.draw(&self, Vector3 position, Texture* tex = null) {
       vertices[offset + 2] = self.vertices[offset + 2] + position.z;
     }
     trio = self.upload(vertices);
+
+    free(vertices);
   } else {
     trio = self.upload();
-  }
-
-  
+  } 
 
   gl::use_program(self.shader.id);
   if (tex != null) gl::bind_texture(gl::TEXTURE_2D, tex.id);
