@@ -5,13 +5,15 @@ import ennoia::gl;
 import ennoia::shader;
 import ennoia::texture;
 import ennoia::vector;
+import ennoia::matrix;
+import ennoia::camera;
 
 
 struct Mesh {
   float[] vertices;
-  uint[] indices;
 
-  uint vao, vbo, ebo;
+  Matrix mat;
+
   Shader shader;
 }
 
@@ -20,20 +22,16 @@ struct Trio {
 }
 
 const float[] BASIC_TRI = {
-   0.0,  0.5, 0.0, 1,0,0, 1,1,
-  -0.5, -0.5, 0.0, 0,1,0, 1,0,
-   0.5, -0.5, 0.0, 1,1,0, 0,0,
-};
-const uint[] BASIC_IND = {
-  0, 1, 2,
+   0.0,  0.5, 0.0, 1,1,
+  -0.5, -0.5, 0.0, 1,0,
+   0.5, -0.5, 0.0, 0,0,
 };
 
 <* Creates a new Mesh using input vertices and indices
   @param vertices: "The array of vertices to set"
-  @param indices:  "In dices of triangles"
   @return "Mesh struct"
  *>
-fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
+fn Mesh new(float[] vertices = {}) {
   Mesh output;
 
   if (vertices.len != 0) {
@@ -41,11 +39,9 @@ fn Mesh new(float[] vertices = {}, uint[] indices = {}) {
   } else {
     output.vertices = BASIC_TRI;
   }
-  if (indices.len != 0) {
-    output.indices = indices;
-  } else {
-    output.indices = BASIC_IND;
-  }
+
+  output.mat = matrix::IDENTITY;
+  output.mat.print();
 
   return output;
 }
@@ -66,15 +62,12 @@ fn Trio Mesh.upload(&self, float[] override = {}) @private {
     gl::buffer_data(gl::ARRAY_BUFFER, override.len * float.sizeof, override, gl::STATIC_DRAW);
   }
 
-  gl::bind_buffer(gl::ELEMENT_ARRAY_BUFFER, output.ebo);
-  gl::buffer_data(gl::ELEMENT_ARRAY_BUFFER, self.indices.len * uint.sizeof, self.indices, gl::STATIC_DRAW);
-
-  gl::vertex_attrib_pointer(0, 3, gl::FLOAT, false, 8 * float.sizeof, null);
+  gl::vertex_attrib_pointer(0, 3, gl::FLOAT, false, 5 * float.sizeof, null);
   gl::enable_vertex_attrib_array(0);
-  gl::vertex_attrib_pointer(1, 3, gl::FLOAT, false, 8 * float.sizeof, (void*)(3 * float.sizeof));
+  //gl::vertex_attrib_pointer(1, 3, gl::FLOAT, false, 8 * float.sizeof, (void*)(3 * float.sizeof));
+  //gl::enable_vertex_attrib_array(1);
+  gl::vertex_attrib_pointer(1, 2, gl::FLOAT, false, 5 * float.sizeof, (void*)(6 * float.sizeof));
   gl::enable_vertex_attrib_array(1);
-  gl::vertex_attrib_pointer(2, 2, gl::FLOAT, false, 8 * float.sizeof, (void*)(6 * float.sizeof));
-  gl::enable_vertex_attrib_array(2);
 
   gl::bind_buffer(gl::ARRAY_BUFFER, 0);
   gl::bind_vertex_array(0);
@@ -94,12 +87,11 @@ fn void Mesh.delete(&self, Trio trio) {
 // TODO: Position not implemented yet
 fn void Mesh.draw(&self, Vector3 position, Texture* tex = null) {
   
-  //self.vertices[0] = 0;
+  /*
   Trio trio;
   if (position != (Vector3){0,0,0}) {
     float[] vertices = mem::new_array(float, self.vertices.len);
     mem::copy(vertices, self.vertices, self.vertices.len * float.sizeof);
-    //float[] vertices = self.vertices.copy(allocator::heap());
     for (int i; i < (self.vertices.len / 8); i++) {
       usz offset = (usz)i*8;
       vertices[offset + 0] = self.vertices[offset + 0] + position.x;
@@ -112,11 +104,17 @@ fn void Mesh.draw(&self, Vector3 position, Texture* tex = null) {
   } else {
     trio = self.upload();
   } 
+  */
+  Trio trio = self.upload();
 
-  gl::use_program(self.shader.id);
+  gl::use_program(ennoia::default_shader.id);
+  Matrix mat = camera::get_matrix();
+  ennoia::default_shader.update_loc("view",  MATRIX4X4, &mat);
+  ennoia::default_shader.update_loc("model", MATRIX4X4, &self.mat);
+  //gl::use_program(self.shader.id);
   if (tex != null) gl::bind_texture(gl::TEXTURE_2D, tex.id);
 	gl::bind_vertex_array(trio.vao);
-	gl::draw_elements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, null);
+	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len / 5);
 
 	self.delete(trio);
 }

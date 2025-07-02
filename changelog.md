@@ -8,3 +8,7 @@
 ==== [7/1/25]
 - Migrated ennoia.c3 to gl.c3 and started on base Ennoia functions.
 - Started on camera.
+==== [7/2/25]
+- Moved shader compilation to seperate function to allow both loading from file and raw data.
+- Re-added default shaders.
+- Changed how rendering models works. It doesn't fully work yet.

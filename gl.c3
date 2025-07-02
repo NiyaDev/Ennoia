@@ -214,6 +214,7 @@ extern fn void get_program_info_log(uint, usz, usz*, char*) @extern("glGetProgra
 extern fn void delete_shader(uint) @extern("glDeleteShader");
 extern fn int get_uniform_location(uint, char*) @extern("glGetUniformLocation");
 extern fn void program_uniform_f(uint, int, float) @extern("glProgramUniform1f");
+extern fn void program_uniform_matrix4_fv(uint, int, int, bool, float*) @extern("glProgramUniformMatrix4fv");
 extern fn void delete_vertex_arrays(int, uint*) @extern("glDeleteVertexArrays");
 extern fn void delete_buffers(int, uint*) @extern("glDeleteBuffers");
 
