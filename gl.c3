@@ -3,7 +3,8 @@ module ennoia::gl;
 
 
 // OpenGL
-const int COLOR_BUFFER_BIT = 0x00004000;
+const DEPTH_BUFFER_BIT = 0x00000100;
+const COLOR_BUFFER_BIT = 0x00004000;
 
 const int COMPILE_STATUS = 0x00008B81;
 
@@ -73,6 +74,8 @@ const TEXTURE_MIN_FILTER = 0x00002801;
 
 const NEAREST = 0x00002600;
 const LINEAR  = 0x00002601;
+
+const DEPTH_TEST = 0x0000B71;
 
 
 const int KEY_SPACE = 32;
@@ -196,6 +199,7 @@ extern fn int get_key(GLFWwindow*, int) @extern("glfwGetKey");
 extern fn void clear_color(float, float, float, float) @extern("glClearColor");
 extern fn void clear(int) @extern("glClear");
 extern fn float get_time() @extern("glfwGetTime");
+extern fn void enable(int) @extern("glEnable");
 
 extern fn void gen_buffers(uint, uint*) @extern("glGenBuffers");
 extern fn void bind_buffer(int, uint) @extern("glBindBuffer");

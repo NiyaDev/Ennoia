@@ -1,5 +1,6 @@
 
 module ennoia;
+import std::math;
 
 
 GLFWwindow* window;
@@ -31,11 +32,13 @@ fn void init(int width, int height, String title) {
 
   gl::make_context_current(window);
 
+  gl::enable(gl::DEPTH_TEST);
+
   default_shader = shader::compile();
   default_shader.add_loc("view", MATRIX4X4);
   default_shader.add_loc("model", MATRIX4X4);
   default_shader.add_loc("projection", MATRIX4X4);
-  Matrix proj = matrix::perspective(70, (double)scr_width / (double)scr_height, 0.1, 100);
+  Matrix proj = matrix::perspective(70 * math::PI / 180, (double)scr_width / (double)scr_height, 0.1, 100.0);
   default_shader.update_loc("projection", MATRIX4X4, &proj);
 }
 <* Checks if the window should close and updating deltatime *>

@@ -6,12 +6,19 @@ import ennoia::vector;
 
 
 <* Matrix *>
+//struct Matrix {
+//	float m0, m4, m8,  m12;
+//	float m1, m5, m9,  m13;
+//	float m2, m6, m10, m14;
+//	float m3, m7, m11, m15;
+//}
 struct Matrix {
-	float m0, m4, m8,  m12;
-	float m1, m5, m9,  m13;
-	float m2, m6, m10, m14;
-	float m3, m7, m11, m15;
+	float m0,  m1,  m2,  m3;
+	float m4,  m5,  m6,  m7;
+	float m8,  m9,  m10, m11;
+	float m12, m13, m14, m15;
 }
+
 
 <* Equals *>
 fn bool Matrix.equals(self, Matrix rhs) @operator(==) @export("matrix_equals") {
@@ -200,7 +207,7 @@ fn Vector4 Matrix.quaternion_transform(self, vector::Quaternion q) @export("matr
 }
 <* Prints matrix to console *>
 fn void Matrix.print(&self) @export("matrix_print") {
-	io::printfn("[\n\t%d, %d, %d, %d,\n\t%d, %d, %d, %d,\n\t%d, %d, %d, %d,\n\t%d, %d, %d, %d,\n]",
+	io::printfn("[\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n]",
 		self.m0, self.m4, self.m8,  self.m12,
 		self.m1, self.m5, self.m9,  self.m13,
 		self.m2, self.m6, self.m10, self.m14,
@@ -454,7 +461,7 @@ fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @export("matrix_looka
 	float length;
 	float ilength;
 
-	Vector3 vz = eye.sub(target);
+	Vector3 vz = eye - target;
 
 	//* Vector3Normalize(vz)
 	Vector3 v = vz;
@@ -480,6 +487,19 @@ fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @export("matrix_looka
 	//* Vector3CrossProduct(vz, vx)
 	Vector3 vy = vz.cross_product(vx);
 
+	/*
+	Vector3 f = (target - eye).normalize();
+	Vector3 s = f.cross_product(up).normalize();
+	Vector3 u = s.cross_product(f);
+	result = {
+		s.x, u.x, -f.x, 0,
+		s.y, u.y, -f.y, 0,
+		s.z, u.z, -f.z, 0,
+		-s.dot_product(eye), -u.dot_product(eye), f.dot_product(eye), 1,
+	};
+	*/
+	
+	//*
 	result.m0  =  vx.x;
 	result.m1  =  vy.x;
 	result.m2  =  vz.x;
@@ -492,10 +512,11 @@ fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @export("matrix_looka
 	result.m9  =  vy.z;
 	result.m10 =  vz.z;
 	result.m11 =     0;
-	result.m12 = -(vx.x * eye.x + vx.y * eye.y + vx.z * eye.z);   //* Vector3DotProduct(vx, eye)
-	result.m13 = -(vy.x * eye.x + vy.y * eye.y + vy.z * eye.z);   //* Vector3DotProduct(vy, eye)
-	result.m14 = -(vz.x * eye.x + vz.y * eye.y + vz.z * eye.z);   //* Vector3DotProduct(vz, eye)
+	result.m12 = -(vx.x * eye.x + vx.y * eye.y + vx.z * eye.z);   // Vector3DotProduct(vx, eye)
+	result.m13 = -(vy.x * eye.x + vy.y * eye.y + vy.z * eye.z);   // Vector3DotProduct(vy, eye)
+	result.m14 = -(vz.x * eye.x + vz.y * eye.y + vz.z * eye.z);   // Vector3DotProduct(vz, eye)
 	result.m15 =    1;
+	//*/
 
 	return result;
 }

@@ -68,9 +68,9 @@ const char[] BASIC_FRAGMENT =
   "#version 330 core\n"
   "out vec4 FragColor;\n\n"
   "in vec2 TexCoord;\n\n"
-  "uniform sampler2D ourTexture;\n\n"
+  "uniform sampler2D texture1;\n\n"
   "void main() {\n"
-  "  FragColor = texture(ourTexture, TexCoord);\n"
+  "  FragColor = texture(texture1, TexCoord);\n"
   "}\n";
 
 

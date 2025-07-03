@@ -41,32 +41,26 @@ fn Mesh new(float[] vertices = {}) {
   }
 
   output.mat = matrix::IDENTITY;
-  output.mat.print();
 
   return output;
 }
 <* Uploads mesh data to GPU *>
-fn Trio Mesh.upload(&self, float[] override = {}) @private {
+fn Trio Mesh.upload(&self) @private {
   Trio output;
 
   gl::gen_vertex_arrays(1, &output.vao);
   gl::gen_buffers(1, &output.vbo);
-  gl::gen_buffers(1, &output.ebo);
   
   gl::bind_vertex_array(output.vao);
 
   gl::bind_buffer(gl::ARRAY_BUFFER, output.vbo);
-  if (override.len == 0) {
-    gl::buffer_data(gl::ARRAY_BUFFER, self.vertices.len * float.sizeof, self.vertices, gl::STATIC_DRAW);
-  } else {
-    gl::buffer_data(gl::ARRAY_BUFFER, override.len * float.sizeof, override, gl::STATIC_DRAW);
-  }
+  gl::buffer_data(gl::ARRAY_BUFFER, self.vertices.len * float.sizeof, self.vertices, gl::STATIC_DRAW);
 
+  // Position attrib
   gl::vertex_attrib_pointer(0, 3, gl::FLOAT, false, 5 * float.sizeof, null);
   gl::enable_vertex_attrib_array(0);
-  //gl::vertex_attrib_pointer(1, 3, gl::FLOAT, false, 8 * float.sizeof, (void*)(3 * float.sizeof));
-  //gl::enable_vertex_attrib_array(1);
-  gl::vertex_attrib_pointer(1, 2, gl::FLOAT, false, 5 * float.sizeof, (void*)(6 * float.sizeof));
+  // Texture coord attrib
+  gl::vertex_attrib_pointer(1, 2, gl::FLOAT, false, 5 * float.sizeof, (void*)(3 * float.sizeof));
   gl::enable_vertex_attrib_array(1);
 
   gl::bind_buffer(gl::ARRAY_BUFFER, 0);
@@ -86,25 +80,6 @@ fn void Mesh.delete(&self, Trio trio) {
  *>
 // TODO: Position not implemented yet
 fn void Mesh.draw(&self, Vector3 position, Texture* tex = null) {
-  
-  /*
-  Trio trio;
-  if (position != (Vector3){0,0,0}) {
-    float[] vertices = mem::new_array(float, self.vertices.len);
-    mem::copy(vertices, self.vertices, self.vertices.len * float.sizeof);
-    for (int i; i < (self.vertices.len / 8); i++) {
-      usz offset = (usz)i*8;
-      vertices[offset + 0] = self.vertices[offset + 0] + position.x;
-      vertices[offset + 1] = self.vertices[offset + 1] + position.y;
-      vertices[offset + 2] = self.vertices[offset + 2] + position.z;
-    }
-    trio = self.upload(vertices);
-
-    free(vertices);
-  } else {
-    trio = self.upload();
-  } 
-  */
   Trio trio = self.upload();
 
   gl::use_program(ennoia::default_shader.id);
