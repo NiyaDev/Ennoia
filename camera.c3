@@ -11,7 +11,7 @@ struct Camera {
   float fov;
 }
 
-<**>
+<* Creates matrix for camera position *>
 fn Matrix get_matrix() {
   return matrix::look_at(main.position, main.target, main.up);
 }

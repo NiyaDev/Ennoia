@@ -15,5 +15,6 @@
 ==== [7/3/25]
 - Meshes now render properly.
 - Camera now works properly.
+- Re-added framebuffer size callback and it now updates properly.
 - Fixed: Matrixes were using "row-major" instead of "column-major".
   - Need to look to see if I need to fix any matrix functions. look_at and perspective didn't, so possibly not.

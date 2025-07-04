@@ -31,6 +31,7 @@ fn void init(int width, int height, String title) {
   assert(window != null, "[ERROR] - ENNOIA::INIT [Failed to create GLFW window]");
 
   gl::make_context_current(window);
+  gl::set_framebuffer_size_callback(window, &framebuffer_size_callback);
 
   gl::enable(gl::DEPTH_TEST);
 
@@ -48,5 +49,13 @@ fn bool window_should_close() {
   lastFrame = currentFrame;
 
   return gl::window_should_close(window);
+}
+
+fn void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+  scr_width = width;
+  scr_height = height;
+	gl::viewport(0,0,width,height);
+  Matrix proj = matrix::perspective(70 * math::PI / 180, (double)scr_width / (double)scr_height, 0.1, 100.0);
+  default_shader.update_loc("projection", MATRIX4X4, &proj);
 }
 

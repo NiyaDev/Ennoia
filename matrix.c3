@@ -6,12 +6,6 @@ import ennoia::vector;
 
 
 <* Matrix *>
-//struct Matrix {
-//	float m0, m4, m8,  m12;
-//	float m1, m5, m9,  m13;
-//	float m2, m6, m10, m14;
-//	float m3, m7, m11, m15;
-//}
 struct Matrix {
 	float m0,  m1,  m2,  m3;
 	float m4,  m5,  m6,  m7;

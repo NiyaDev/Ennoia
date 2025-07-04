@@ -18,7 +18,7 @@ struct Mesh {
 }
 
 struct Trio {
-  uint vao, vbo, ebo;
+  uint vao, vbo;
 }
 
 const float[] BASIC_TRI = {
@@ -72,14 +72,11 @@ fn Trio Mesh.upload(&self) @private {
 fn void Mesh.delete(&self, Trio trio) {
   gl::delete_vertex_arrays(1, &trio.vao);
   gl::delete_buffers(1, &trio.vbo);
-  gl::delete_buffers(1, &trio.ebo);
 }
 <* Draws Mesh
   @param self
-  @param position: "Position in world to draw at"
  *>
-// TODO: Position not implemented yet
-fn void Mesh.draw(&self, Vector3 position, Texture* tex = null) {
+fn void Mesh.draw(&self, Texture* tex = null) {
   Trio trio = self.upload();
 
   gl::use_program(ennoia::default_shader.id);
