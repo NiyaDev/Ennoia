@@ -1,5 +1,6 @@
 
 module ennoia;
+import std::io;
 import std::math;
 
 
@@ -9,6 +10,8 @@ float deltaTime;
 float lastFrame;
 
 int scr_width, scr_height;
+
+float scrollwheel;
 
 Shader default_shader;
 
@@ -32,6 +35,7 @@ fn void init(int width, int height, String title) {
 
   gl::make_context_current(window);
   gl::set_framebuffer_size_callback(window, &framebuffer_size_callback);
+  gl::set_scroll_callback(window, &mousewheel_callback);
 
   gl::enable(gl::DEPTH_TEST);
 
@@ -57,5 +61,10 @@ fn void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	gl::viewport(0,0,width,height);
   Matrix proj = matrix::perspective(70 * math::PI / 180, (double)scr_width / (double)scr_height, 0.1, 100.0);
   default_shader.update_loc("projection", MATRIX4X4, &proj);
+}
+
+//fn void mousewheel_callback(int wheel, int direction, int x, int y) {
+fn void mousewheel_callback(GLFWwindow* window, double xoffset, double yoffset) {
+  scrollwheel = (float)yoffset;
 }
 

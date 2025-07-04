@@ -18,3 +18,9 @@
 - Re-added framebuffer size callback and it now updates properly.
 - Fixed: Matrixes were using "row-major" instead of "column-major".
   - Need to look to see if I need to fix any matrix functions. look_at and perspective didn't, so possibly not.
+==== [7/4/25]
+- Added wrappers to end drawing and clearing bg.
+- Added scrollwheel handling.
+- Changed camera to function off of target and distance to target instead of target-position.
+  - Rotation is almost done, something went wrong and it crashes.
+- Minor functions added to vector3 and floats.

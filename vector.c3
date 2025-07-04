@@ -793,6 +793,16 @@ fn Color Vector3.to_color(self) @export("vector3_tocolor") {
 
 	return result;
 }
+<* Returns true of two floats are within amount of each other *>
+fn bool float.close(&self, float f2, float amount) {
+	return *self + amount > f2 && *self - amount < f2;
+}
+<* Returns true if xyz all are close to v2 *>
+fn bool Vector3.close(&self, Vector3 v2, float amount) {
+	return self.x.close(v2.x, amount) &&
+				 self.y.close(v2.y, amount) &&
+				 self.z.close(v2.z, amount);
+}
 <* Prints vector3 *>
 fn void Vector3.print(self) @export("vector3_print") {
 	io::printfn("[%f,%f,%f]", self.x, self.y, self.z);

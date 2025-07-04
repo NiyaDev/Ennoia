@@ -90,6 +90,19 @@ fn void Mesh.draw(&self, Texture* tex = null) {
 
 	self.delete(trio);
 }
+<**>
+fn void Mesh.draw_at(&self, Matrix over, Texture* tex = null) {
+  Trio trio = self.upload();
 
+  gl::use_program(ennoia::default_shader.id);
+  Matrix view = camera::get_matrix();
+  ennoia::default_shader.update_loc("view",  MATRIX4X4, &view);
+  ennoia::default_shader.update_loc("model", MATRIX4X4, &over);
+  if (tex != null) gl::bind_texture(gl::TEXTURE_2D, tex.id);
+	gl::bind_vertex_array(trio.vao);
+	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len / 5);
+
+	self.delete(trio);
+}
 
 

@@ -176,7 +176,16 @@ const int KEY_F21 = 310;
 const int KEY_F22 = 311; 
 const int KEY_F23 = 312; 
 const int KEY_F24 = 313; 
-const int KEY_F25 = 314; 
+const int KEY_F25 = 314;
+const int KEY_LEFT_SHIFT = 340;
+const int KEY_LEFT_CONTROL = 341;
+const int KEY_LEFT_ALT = 342;
+const int KEY_LEFT_SUPER = 343;
+const int KEY_RIGHT_SHIFT = 344;
+const int KEY_RIGHT_CONTROL = 345;
+const int KEY_RIGHT_ALT = 346;
+const int KEY_RIGHT_SUPER = 347;
+
 const int KEY_KP_0 = 320; 
 const int KEY_KP_1 = 321; 
 const int KEY_KP_2 = 322; 
@@ -248,6 +257,9 @@ extern fn GLFWwindow* create_window(int, int, char*, GLFWmonitor*, GLFWmonitor*)
 extern fn GLFWmonitor* get_primary_monitor() @extern("glfwGetPrimaryMonitor");
 
 extern fn void viewport(int, int, int, int) @extern("glViewport");
+
+alias CallbackScroll = fn void(GLFWwindow*, double, double);
+extern fn void set_scroll_callback(GLFWwindow*, CallbackScroll) @extern("glfwSetScrollCallback");
 
 alias CallbackSize = fn void(GLFWwindow*, int, int);
 extern fn void set_framebuffer_size_callback(GLFWwindow*, CallbackSize) @extern("glfwSetFramebufferSizeCallback");

@@ -218,12 +218,12 @@ const Matrix IDENTITY = {
 };
 
 <* Create translation matrix *>
-fn Matrix translate(Vector3 v) @export("matrix_translate") {
-	return {
-		1.0, 0.0, 0.0, v.x,
-		0.0, 1.0, 0.0, v.y,
-		0.0, 0.0, 1.0, v.z,
-		0.0, 0.0, 0.0, 1.0,
+fn Matrix Matrix.translate(&self, Vector3 v) @export("matrix_translate") {
+	return *self + (Matrix){
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		v.x, v.y, v.z, 0.0
 	};
 }
 <* Create rotation matrix from axis and angle *>
@@ -363,13 +363,21 @@ fn Matrix rotate_zyx(Vector3 angle) @export("matrix_rotatezyx") {
 	return result;
 }
 <* Get scaling matrix *>
-fn Matrix scale(Vector3 scale) @export("matrix_scale") {
-	return {
+fn Matrix Matrix.scale(&self, Vector3 scale) @export("matrix_scale") {
+	/*
+	return *self + (Matrix){
 		scale.x,     0.0,     0.0, 0.0,
 		    0.0, scale.y,     0.0, 0.0,
 		    0.0,     0.0, scale.z, 0.0,
 		    0.0,     0.0,     0.0, 1.0,
 	};
+	*/
+	Matrix output = *self;
+	output.m0 = scale.x;
+	output.m5 = scale.y;
+	output.m10= scale.z;
+
+	return output;
 }
 <* Get perspective projection matrix *>
 fn Matrix frustum(double left, double right, double bottom, double top, double near, double far) @export("matrix_frustum") {

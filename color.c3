@@ -30,7 +30,6 @@ const Color WHITE				= {255, 255, 255, 255};
 const Color BLACK				= {  0,   0,   0, 255};
 const Color BLANK				= {  0,   0,   0,   0};
 const Color MAGENTA			= {255,   0, 255, 255};
-const Color RAYWHITE		= {245, 245, 245, 255};
 const Color PALETTE_30	= { 48,  56,  67, 255};
 
 
