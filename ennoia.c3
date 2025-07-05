@@ -6,8 +6,8 @@ import std::math;
 
 GLFWwindow* window;
 
-float deltaTime;
-float lastFrame;
+double deltaTime;
+double lastFrame;
 
 int scr_width, scr_height;
 
@@ -48,7 +48,7 @@ fn void init(int width, int height, String title) {
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {
-  float currentFrame = gl::get_time();
+  double currentFrame = gl::get_time();
   deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame;
 

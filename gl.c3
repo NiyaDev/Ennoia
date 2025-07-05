@@ -64,6 +64,8 @@ const VERTEX_SHADER   = 0x00008B31;
 const LINK_STATUS     = 0x00008B82;
 
 const TRIANGLES = 0x00000004;
+const QUADS = 0x00000007;
+const TRIANGLES_ADJACENCY = 0x0000000C;
 const UNSIGNED_BYTE = 0x00001401;
 const UNSIGNED_INT = 0x00001405;
 const FLOAT = 0x00001406;
@@ -212,7 +214,8 @@ extern fn void terminate() @extern("glfwTerminate");
 extern fn int get_key(GLFWwindow*, int) @extern("glfwGetKey");
 extern fn void clear_color(float, float, float, float) @extern("glClearColor");
 extern fn void clear(int) @extern("glClear");
-extern fn float get_time() @extern("glfwGetTime");
+extern fn void set_time(double) @extern("glfwSetTime");
+extern fn double get_time() @extern("glfwGetTime");
 extern fn void enable(int) @extern("glEnable");
 
 extern fn void gen_buffers(uint, uint*) @extern("glGenBuffers");

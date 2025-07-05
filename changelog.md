@@ -24,3 +24,7 @@
 - Changed camera to function off of target and distance to target instead of target-position.
   - Rotation is almost done, something went wrong and it crashes.
 - Minor functions added to vector3 and floats.
+==== [7/5/25]
+- Finished camera rotation.
+- Experimenting with mesh generation.
+
