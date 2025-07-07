@@ -27,4 +27,5 @@
 ==== [7/5/25]
 - Finished camera rotation.
 - Experimenting with mesh generation.
-
+==== [7/6/26]
+- Moved everything hap-hazardly from GLFW to SDL3. It draws, but i still need to properly handle input.

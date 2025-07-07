@@ -34,7 +34,7 @@
     "linux-x64" : {
       "link-args" : [],
       "dependencies" : [ "stb" ],
-      "linked-libraries" : [ "GL", "glfw" ]
+      "linked-libraries" : [ "GL", "glfw", "SDL3" ]
     },
     "macos-aarch64" : {
       "link-args" : [],

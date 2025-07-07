@@ -13,6 +13,7 @@ fn void clear_background(Color color) {
 fn void end_drawing() {
   scrollwheel = 0;
 
-  gl::swap_buffers(window);
-	gl::poll_events();
+  //gl::swap_buffers(window);
+  sdl::gl_swap_window(window);
+	//gl::poll_events();
 }
