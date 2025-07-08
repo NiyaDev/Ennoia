@@ -29,3 +29,9 @@
 - Experimenting with mesh generation.
 ==== [7/6/26]
 - Moved everything hap-hazardly from GLFW to SDL3. It draws, but i still need to properly handle input.
+==== [7/7/25]
+- Added mutliple SDL3 constants.
+==== [7/8/25]
+- Added keybinding system.
+- Re-added mousewheel controls.
+

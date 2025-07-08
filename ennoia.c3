@@ -12,6 +12,7 @@ SDL_Event event;
 
 double deltaTime;
 double lastFrame;
+bool forceClose = false;
 
 int scr_width, scr_height;
 
@@ -56,12 +57,15 @@ fn bool window_should_close() {
   deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame;
 
+  keybinds::update();
   while (sdl::poll_event(&event)) {
     if (event.type == sdl::QUIT) return true;
     // Input
-    if (event.type == sdl::KEYDOWN) event.key.print();
+    if (event.type == sdl::KEYDOWN)    keybinds::add_queue(event.key);
+    if (event.type == sdl::KEYUP)      keybinds::add_queue(event.key);
+    if (event.type == sdl::MOUSEWHEEL) scrollwheel = event.wheel.y;
   }
-  return false;
+  return forceClose;
 }
 
 /*

@@ -355,6 +355,7 @@ union SDL_Event {
   uint type;
 
   SDL_KeyboardEvent key;
+  SDL_MouseWheelEvent wheel;
   
   char[128] padding;
 }
@@ -399,13 +400,13 @@ struct SDL_KeyboardEvent {
   uint which;
   uint scancode; // Make enum? https://wiki.libsdl.org/SDL3/SDL_Scancode
   uint key;
-  uint mod;
+  ushort mod;
   ushort raw;
   bool down;
   bool repeat;
 }
 fn void SDL_KeyboardEvent.print(&self) {
-  io::printfn("(%d)\nw: %d\nk: %d\nscan: %d\nkey: %d\nmod: %d\nd:%b - r:%b",
+  io::printfn("(%d)\nw: %X\nk: %X\nscan: %X\nkey: %X\nmod: %X\nd:%b - r:%b",
     self.timestamp,
     self.windowID,
     self.which,
@@ -415,6 +416,23 @@ fn void SDL_KeyboardEvent.print(&self) {
     self.down, self.repeat,
   );
 }
+
+struct SDL_MouseWheelEvent {
+  uint type;
+  uint reserved;
+
+  ulong timestamp;
+  uint windowID;
+  uint which;
+  float x;
+  float y;
+  int direction;
+  float mouse_x;
+  float mouse_y;
+  int int_x;
+  int int_y;
+}
+
 //struct SDL_ {}
 
 
