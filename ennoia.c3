@@ -29,29 +29,13 @@ fn void init(int width, int height, String title) {
   scr_width = width;
   scr_height = height;
   
-  /*
-  gl::init();
-  gl::window_hint(gl::CONTEXT_VERSION_MAJOR, 3);
-	gl::window_hint(gl::CONTEXT_VERSION_MINOR, 3);
-	gl::window_hint(gl::OPENGL_PROFILE, gl::OPENGL_CORE_PROFILE);
-	*/
 	assert(sdl::init(sdl::INIT_VIDEO | sdl::INIT_AUDIO), "[ERROR] - ENNOIA::INIT::INIT [Failed to initialize SDL3 (%s)]", sdl::get_error());
 	sdl::gl_set_attribute(GLAttr.CONTEXT_MAJOR_VERSION, 3);
 	sdl::gl_set_attribute(GLAttr.CONTEXT_MINOR_VERSION, 3);
 	sdl::gl_set_attribute(GLAttr.CONTEXT_PROFILE_MASK, sdl::CONTEXT_PROFILE_CORE);
 
-  /*
-	window = gl::create_window(scr_width, scr_height, title.zstr_tcopy(), null, null);
-  assert(window != null, "[ERROR] - ENNOIA::INIT [Failed to create GLFW window]");
-  */
   window = sdl::create_window(title.zstr_tcopy(), scr_width, scr_height, sdl::WINDOW_OPENGL);
   assert(window != null, "[ERROR] - ENNOIA::INIT::CREATE_WINDOW [Failed to create sdl3 window(%s)]", sdl::get_error());
-  
-  /*
-  gl::make_context_current(window);
-  gl::set_framebuffer_size_callback(window, &framebuffer_size_callback);
-  gl::set_scroll_callback(window, &mousewheel_callback);
-  */
   
   glcontext = sdl::gl_create_context(window);
   assert(glcontext != null, "[ERROR] - ENNOIA::INIT::CREATE_CONTEXT [Failed to create SDL_GL context (%s)]", (String)sdl::get_error()[..1024]);
@@ -68,15 +52,14 @@ fn void init(int width, int height, String title) {
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {
-  //double currentFrame = gl::get_time();
   double currentFrame = (double)sdl::get_ticks() / 1000;
   deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame;
 
-  //return gl::window_should_close(window);
   while (sdl::poll_event(&event)) {
     if (event.type == sdl::QUIT) return true;
     // Input
+    if (event.type == sdl::KEYDOWN) event.key.print();
   }
   return false;
 }
