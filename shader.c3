@@ -55,7 +55,8 @@ enum UniformType {
 const char[] BASIC_VERTEX = 
   "#version 330 core\n"
   "layout (location = 0) in vec3 aPos;\n"
-  "layout (location = 1) in vec2 aTexCoord;\n\n"
+  "layout (location = 1) in vec3 norm;\n"
+  "layout (location = 2) in vec2 aTexCoord;\n\n"
   "out vec2 TexCoord;\n\n"
   "uniform mat4 model;\n"
   "uniform mat4 view;\n"

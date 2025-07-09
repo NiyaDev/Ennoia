@@ -76,9 +76,5 @@ fn void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
   Matrix proj = matrix::perspective(70 * math::PI / 180, (double)scr_width / (double)scr_height, 0.1, 100.0);
   default_shader.update_loc("projection", MATRIX4X4, &proj);
 }
-
-fn void mousewheel_callback(GLFWwindow* window, double xoffset, double yoffset) {
-  scrollwheel = (float)yoffset;
-}
 */
 

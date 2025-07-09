@@ -200,32 +200,6 @@ const int PRESS = 1;
 const int REPEAT = 2;
 const int KEY_UNKNOWN = -1;
 
-/* Old GLFW functions. Delete when fully uneeded
-alias GLFWwindow = void;
-alias GLFWmonitor = void;
-
-extern fn int init() @extern("glfwInit");
-extern fn void window_hint(int, int) @extern("glfwWindowHint");
-extern fn void make_context_current(GLFWwindow*) @extern("glfwMakeContextCurrent");
-extern fn bool window_should_close(GLFWwindow*) @extern("glfwWindowShouldClose");
-extern fn void set_window_should_close(GLFWwindow*, bool) @extern("glfwSetWindowShouldClose");
-extern fn void swap_buffers(GLFWwindow*) @extern("glfwSwapBuffers");
-extern fn void poll_events() @extern("glfwPollEvents");
-extern fn void terminate() @extern("glfwTerminate");
-extern fn int get_key(GLFWwindow*, int) @extern("glfwGetKey");
-extern fn void set_time(double) @extern("glfwSetTime");
-extern fn double get_time() @extern("glfwGetTime");
-
-extern fn GLFWwindow* create_window(int, int, char*, GLFWmonitor*, GLFWmonitor*) @extern("glfwCreateWindow");
-extern fn GLFWmonitor* get_primary_monitor() @extern("glfwGetPrimaryMonitor");
-
-alias CallbackScroll = fn void(GLFWwindow*, double, double);
-extern fn void set_scroll_callback(GLFWwindow*, CallbackScroll) @extern("glfwSetScrollCallback");
-
-alias CallbackSize = fn void(GLFWwindow*, int, int);
-extern fn void set_framebuffer_size_callback(GLFWwindow*, CallbackSize) @extern("glfwSetFramebufferSizeCallback");
-*/
-
 
 extern fn void clear_color(float, float, float, float) @extern("glClearColor");
 extern fn void clear(int) @extern("glClear");

@@ -34,4 +34,8 @@
 ==== [7/8/25]
 - Added keybinding system.
 - Re-added mousewheel controls.
+==== [7/9/25]
+- Changed Vertexes from an array of floats to an actual structure.
+- Made a wrapper for vertex_attrib_pointer to simmplify code.
+- Removed "Trio" and replaced with a tuple.
 
