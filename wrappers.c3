@@ -17,7 +17,11 @@ fn void end_drawing() {
   sdl::gl_swap_window(window);
 }
 
-<**>
+<* Sets vertex attribute data
+  @param location
+  @param size: "The number of floats in data"
+  @param offset: "Offset to each entry of the data"
+ *>
 fn void set_vertex_attribute(uint location, uint size, void* offset) {
   gl::vertex_attrib_pointer(location, size, gl::FLOAT, false, Vertex.sizeof, offset);
   gl::enable_vertex_attrib_array(location);

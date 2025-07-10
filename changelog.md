@@ -38,4 +38,6 @@
 - Changed Vertexes from an array of floats to an actual structure.
 - Made a wrapper for vertex_attrib_pointer to simmplify code.
 - Removed "Trio" and replaced with a tuple.
+==== [7/10/25]
+- Minor changes
 

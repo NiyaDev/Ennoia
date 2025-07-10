@@ -5,14 +5,6 @@ import stb;
 import ennoia;
 
 
-
-struct Image {
-  Color[] data;
-  int width, height;
-  int mipmaps;
-  int format;
-}
-
 struct Texture {
   uint id;
   uint width, height;
@@ -21,7 +13,7 @@ struct Texture {
 }
 
 
-<**>
+<* Loads image from file *>
 fn Texture load(String filename) {
   Texture output;
 
@@ -34,7 +26,7 @@ fn Texture load(String filename) {
   gl::gen_textures(1, &output.id);
   gl::bind_texture(gl::TEXTURE_2D, output.id);
 
-  gl::texture_parameter_f(gl::TEXTURE_2D, gl::TEXTURE_MAX_ANISOTROPY_EXT, 4);
+  //gl::texture_parameter_f(gl::TEXTURE_2D, gl::TEXTURE_MAX_ANISOTROPY_EXT, 4);
   gl::texture_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
   gl::texture_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 

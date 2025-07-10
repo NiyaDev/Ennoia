@@ -116,7 +116,6 @@ fn void Mesh.draw(&self, Texture* tex = null) {
   Matrix mat = camera::get_matrix();
   ennoia::default_shader.update_loc("view",  MATRIX4X4, &mat);
   ennoia::default_shader.update_loc("model", MATRIX4X4, &self.mat);
-  //gl::use_program(self.shader.id);
   if (tex != null) gl::bind_texture(gl::TEXTURE_2D, tex.id);
 	gl::bind_vertex_array(tup.first);
 	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
