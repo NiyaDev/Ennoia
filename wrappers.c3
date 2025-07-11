@@ -1,5 +1,7 @@
 
 module ennoia;
+import std::collections;
+
 
 
 <* Wrapper for clear color
@@ -10,9 +12,36 @@ fn void clear_background(Color color) {
   gl::clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 }
 
+<**>
+fn void start_drawing() {
+  gl::bind_framebuffer(gl::FRAMEBUFFER, framebuffer);
+  gl::enable(gl::DEPTH_TEST);
+
+  clear_background(bgColor);
+}
 <* Swaps buffers and polls events *>
 fn void end_drawing() {
   scrollwheel = 0;
+
+  gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
+  gl::disable(gl::DEPTH_TEST);
+
+  clear_background(color::ORANGE);
+
+  //renderQuad.draw(&render);
+  renderQuad.shader.use();
+
+  Tuple{uint, uint} tup = renderQuad.upload();
+  gl::bind_vertex_array(tup.first);
+  gl::bind_texture(gl::TEXTURE_2D, render.id);
+  gl::draw_arrays(gl::TRIANGLES, 0, renderQuad.vertices.len);
+
+  renderQuad.delete(tup);
+
+  //clear_background(color::WHITE);
+  //gl::active_texture(gl::TEXTURE0);
+  //QUAD_DATA.draw(&render);
+
 
   sdl::gl_swap_window(window);
 }

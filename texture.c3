@@ -38,3 +38,21 @@ fn Texture load(String filename) {
 
   return output;
 }
+<* Create a new blank texture
+  @param width: "The width of the image"
+  @require width > 0
+  @param height: "The height of the image"
+  @require height > 0
+ *>
+fn Texture new(int width, int height) {
+  Texture output;
+
+  gl::gen_textures(1, &output.id);
+  gl::bind_texture(gl::TEXTURE_2D, output.id);
+  gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGB, width, height, 0, gl::RGB, gl::UNSIGNED_BYTE, null);
+  
+  gl::texture_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+  gl::texture_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
+
+  return output;
+}

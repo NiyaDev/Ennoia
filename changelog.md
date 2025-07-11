@@ -40,4 +40,8 @@
 - Removed "Trio" and replaced with a tuple.
 ==== [7/10/25]
 - Minor changes
+==== [7/11/25]
+- Started on adding rendering to a texture
+  - Something is wrong, but i don't know what yet...
+- Added int shader uniforms
 

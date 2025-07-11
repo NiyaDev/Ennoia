@@ -79,7 +79,7 @@ fn Mesh generate_mesh_test(uint[][] data) {
 }
 
 <* Uploads mesh data to GPU *>
-fn Tuple{uint, uint} Mesh.upload(&self) @private {
+fn Tuple{uint, uint} Mesh.upload(&self) {
   Tuple{uint, uint} output;
 
   gl::gen_vertex_arrays(1, &output.first);

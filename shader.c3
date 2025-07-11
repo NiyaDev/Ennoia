@@ -74,6 +74,24 @@ const char[] BASIC_FRAGMENT =
   "  FragColor = texture(texture1, TexCoord);\n"
   "}\n";
 
+const char[] FB_VERTEX =
+  "#version 330 core\n"
+  "layout (location = 0) in vec2 aPos;\n"
+  "layout (location = 2) in vec2 aTexCoords;\n\n"
+  "out vec2 TexCoords;\n\n"
+  "void main() {\n"
+  "  TexCoords = aTexCoords;\n"
+  "  gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);\n"
+  "}\n";
+const char[] FB_FRAGMENT =
+  "#version 330 core\n"
+  "out vec4 FragColor;\n\n"
+  "in vec2 TexCoords;\n\n"
+  "uniform sampler2D screenTexture;\n\n"
+  "void main() {\n"
+  "  vec3 col = texture(screenTexture, TexCoords).rgb;\n"
+  "  FragColor = vec4(col, 1.0);\n"
+  "}\n";
 
 
 <* Load shader files and compile
@@ -171,9 +189,14 @@ fn void Shader.update_loc(&self, String name, UniformType type, any data) {
   }
 
   switch (type) {
+    case INT:       gl::program_uniform_i(self.id, self.locs[name]!!, *((int*)data));
     case FLOAT:     gl::program_uniform_f(self.id, self.locs[name]!!, *((float*)data));
     case MATRIX4X4: gl::program_uniform_matrix4_fv(self.id, self.locs[name]!!, 1, false, (float*)data);
     default: io::printfn("[WARNING] - ENNOIA::SHADER::ADD_LOC [Attempted to edit non-implemented data type (%s)]", type);
   }
+}
+<**>
+fn void Shader.use(&self) {
+  gl::use_program(self.id);
 }
 

@@ -84,126 +84,30 @@ const LINEAR  = 0x00002601;
 
 const DEPTH_TEST = 0x0000B71;
 
-
-const int KEY_SPACE = 32;
-const int KEY_APOSTROPHE = 39;  /* ' */
-const int KEY_COMMA = 44;  /* , */
-const int KEY_MINUS = 45;  /* - */
-const int KEY_PERIOD = 46;  /* . */
-const int KEY_SLASH = 47;  /* / */
-const int KEY_0 = 48; 
-const int KEY_1 = 49; 
-const int KEY_2 = 50; 
-const int KEY_3 = 51; 
-const int KEY_4 = 52; 
-const int KEY_5 = 53; 
-const int KEY_6 = 54; 
-const int KEY_7 = 55; 
-const int KEY_8 = 56; 
-const int KEY_9 = 57; 
-const int KEY_SEMICOLON = 59;  /* ; */
-const int KEY_EQUAL = 61;  /* = */
-const int KEY_A = 65; 
-const int KEY_B = 66; 
-const int KEY_C = 67; 
-const int KEY_D = 68; 
-const int KEY_E = 69; 
-const int KEY_F = 70; 
-const int KEY_G = 71; 
-const int KEY_H = 72; 
-const int KEY_I = 73; 
-const int KEY_J = 74; 
-const int KEY_K = 75; 
-const int KEY_L = 76; 
-const int KEY_M = 77; 
-const int KEY_N = 78; 
-const int KEY_O = 79; 
-const int KEY_P = 80; 
-const int KEY_Q = 81; 
-const int KEY_R = 82; 
-const int KEY_S = 83; 
-const int KEY_T = 84; 
-const int KEY_U = 85; 
-const int KEY_V = 86; 
-const int KEY_W = 87; 
-const int KEY_X = 88; 
-const int KEY_Y = 89; 
-const int KEY_Z = 90; 
-const int KEY_LEFT_BRACKET = 91;  /* [ */
-const int KEY_BACKSLASH = 92;  /* \ */
-const int KEY_RIGHT_BRACKET = 93;  /* ] */
-const int KEY_GRAVE_ACCENT = 96;  /* ` */
-const int KEY_WORLD_1 = 161;  /* non-US #1 */
-const int KEY_WORLD_2 = 162;  /* non-US #2 */
-const int KEY_ESCAPE = 256; 
-const int KEY_ENTER = 257; 
-const int KEY_TAB = 258; 
-const int KEY_BACKSPACE = 259; 
-const int KEY_INSERT = 260; 
-const int KEY_DELETE = 261; 
-const int KEY_RIGHT = 262; 
-const int KEY_LEFT = 263; 
-const int KEY_DOWN = 264; 
-const int KEY_UP = 265; 
-const int KEY_PAGE_UP = 266; 
-const int KEY_PAGE_DOWN = 267; 
-const int KEY_HOME = 268; 
-const int KEY_END = 269; 
-const int KEY_CAPS_LOCK = 280; 
-const int KEY_SCROLL_LOCK = 281; 
-const int KEY_NUM_LOCK = 282; 
-const int KEY_PRINT_SCREEN = 283; 
-const int KEY_PAUSE = 284; 
-const int KEY_F1 = 290; 
-const int KEY_F2 = 291; 
-const int KEY_F3 = 292; 
-const int KEY_F4 = 293; 
-const int KEY_F5 = 294; 
-const int KEY_F6 = 295; 
-const int KEY_F7 = 296; 
-const int KEY_F8 = 297; 
-const int KEY_F9 = 298; 
-const int KEY_F10 = 299; 
-const int KEY_F11 = 300; 
-const int KEY_F12 = 301; 
-const int KEY_F13 = 302; 
-const int KEY_F14 = 303; 
-const int KEY_F15 = 304; 
-const int KEY_F16 = 305; 
-const int KEY_F17 = 306; 
-const int KEY_F18 = 307; 
-const int KEY_F19 = 308; 
-const int KEY_F20 = 309; 
-const int KEY_F21 = 310; 
-const int KEY_F22 = 311; 
-const int KEY_F23 = 312; 
-const int KEY_F24 = 313; 
-const int KEY_F25 = 314;
-const int KEY_LEFT_SHIFT = 340;
-const int KEY_LEFT_CONTROL = 341;
-const int KEY_LEFT_ALT = 342;
-const int KEY_LEFT_SUPER = 343;
-const int KEY_RIGHT_SHIFT = 344;
-const int KEY_RIGHT_CONTROL = 345;
-const int KEY_RIGHT_ALT = 346;
-const int KEY_RIGHT_SUPER = 347;
-
-const int KEY_KP_0 = 320; 
-const int KEY_KP_1 = 321; 
-const int KEY_KP_2 = 322; 
-const int KEY_KP_3 = 323; 
-const int KEY_KP_4 = 324; 
-const int KEY_KP_5 = 325; 
-
-const int RELEASE = 0;
-const int PRESS = 1;
-const int REPEAT = 2;
-const int KEY_UNKNOWN = -1;
+const FRAMEBUFFER	= 0x00008D40;
+const COLOR_ATTACHMENT0	=	0x00008CE0;
+const DEPTH_ATTACHMENT = 0x00008D00;
+const DEPTH_COMPONENT = 0x00001902;
+const RENDERBUFFER = 0x00008D41;
+const FRAMEBUFFER_COMPLETE = 0x00008CD5;
 
 
 extern fn void clear_color(float, float, float, float) @extern("glClearColor");
 extern fn void clear(int) @extern("glClear");
 extern fn void enable(int) @extern("glEnable");
+extern fn void disable(int) @extern("glDisable");
+
+// Framebuffer drawing
+extern fn void gen_framebuffers(int, uint*) @extern("glGenFramebuffers");
+extern fn void bind_framebuffer(int, uint) @extern("glBindFramebuffer");
+extern fn void draw_buffers(int n, int* buffs) @extern("glDrawBuffers");
+extern fn void framebuffer_texture(int target, int attachment, uint texture, int level) @extern("glFramebufferTexture");
+extern fn void framebuffer_texture_2d(int target, int attachment, int textarget, uint texture, int level) @extern("glFramebufferTexture2D");
+extern fn void framebuffer_renderbuffer(int target, int attachment, int renderbufferTarget, uint renderbuffer) @extern("glFramebufferRenderbuffer");
+extern fn void gen_renderbuffers(int n, uint* renderbuffers) @extern("glGenRenderbuffers");
+extern fn void bind_renderbuffer(int target, uint renderbuffer) @extern("glBindRenderbuffer");
+extern fn void renderbuffer_storage(int target, int internalformat, int width, int height) @extern("glRenderbufferStorage");
+extern fn int  check_framebuffer_status(int target) @extern("glCheckFramebufferStatus"); 
 
 extern fn void gen_buffers(uint, uint*) @extern("glGenBuffers");
 extern fn void bind_buffer(int, uint) @extern("glBindBuffer");
@@ -221,6 +125,7 @@ extern fn void get_programiv(uint, int, int*) @extern("glGetProgramiv");
 extern fn void get_program_info_log(uint, usz, usz*, char*) @extern("glGetProgramInfoLog");
 extern fn void delete_shader(uint) @extern("glDeleteShader");
 extern fn int get_uniform_location(uint, char*) @extern("glGetUniformLocation");
+extern fn void program_uniform_i(uint program, int location, int v0) @extern("glProgramUniform1i");
 extern fn void program_uniform_f(uint, int, float) @extern("glProgramUniform1f");
 extern fn void program_uniform_matrix4_fv(uint, int, int, bool, float*) @extern("glProgramUniformMatrix4fv");
 extern fn void delete_vertex_arrays(int, uint*) @extern("glDeleteVertexArrays");
@@ -233,8 +138,8 @@ extern fn void texture_parameter_fv(int, int, float[]) @extern("glTextureParamet
 // Textures
 extern fn void gen_textures(int, uint*) @extern("glGenTextures");
 extern fn void bind_texture(int, uint) @extern("glBindTexture");
-extern fn void tex_image_2d(int, int, int, uint, uint, int, int, int, char*) @extern("glTexImage2D");
 extern fn void generate_mipmap(int) @extern("glGenerateMipmap");
+extern fn void tex_image_2d(int target, int level, int internalFormat, int width, int height, int border, int format, int type, void* data) @extern("glTexImage2D");
 
 extern fn void vertex_attrib_pointer(uint, int, int, bool, int, void*) @extern("glVertexAttribPointer");
 extern fn void enable_vertex_attrib_array(uint) @extern("glEnableVertexAttribArray");
