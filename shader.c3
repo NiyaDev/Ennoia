@@ -76,23 +76,33 @@ const char[] BASIC_FRAGMENT =
 
 const char[] FB_VERTEX =
   "#version 330 core\n"
-  "layout (location = 0) in vec2 aPos;\n"
+  "layout (location = 0) in vec3 aPos;\n"
+  "layout (location = 1) in vec3 normals;\n"
   "layout (location = 2) in vec2 aTexCoords;\n\n"
   "out vec2 TexCoords;\n\n"
   "void main() {\n"
-  "  TexCoords = aTexCoords;\n"
+  "  TexCoords = vec2(aTexCoords.x, aTexCoords.y);\n"
   "  gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);\n"
   "}\n";
 const char[] FB_FRAGMENT =
   "#version 330 core\n"
   "out vec4 FragColor;\n\n"
   "in vec2 TexCoords;\n\n"
+  "uniform sampler2D texture1;\n\n"
+  "void main() {\n"
+  "  FragColor = texture(texture1, TexCoords);\n"
+  "}\n";
+/*
+  "#version 330 core\n"
+  "out vec4 FragColor;\n\n"
+  "in vec2 TexCoords;\n\n"
   "uniform sampler2D screenTexture;\n\n"
   "void main() {\n"
-  "  vec3 col = texture(screenTexture, TexCoords).rgb;\n"
-  "  FragColor = vec4(col, 1.0);\n"
-  "}\n";
+  "  FragColor = texture(screenTexture, TexCoords);\n"
+  "}\n";*/
 
+  //"  vec3 col = texture(screenTexture, TexCoords).rgb;\n"
+  //"  FragColor = vec4(col, 1.0);\n"
 
 <* Load shader files and compile
   @param vert: "Filename of uncompiled Vertex Shader"
@@ -196,6 +206,10 @@ fn void Shader.update_loc(&self, String name, UniformType type, any data) {
   }
 }
 <**>
+fn void Shader.set_int(&self, String name, int i) {
+  gl::program_uniform_i(self.id, gl::get_uniform_location(self.id, name.zstr_tcopy()), i);
+}
+<* Activates shader *>
 fn void Shader.use(&self) {
   gl::use_program(self.id);
 }

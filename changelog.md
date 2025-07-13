@@ -44,4 +44,11 @@
 - Started on adding rendering to a texture
   - Something is wrong, but i don't know what yet...
 - Added int shader uniforms
+==== [7/12/25]
+- Mesh:
+  - Removed Matrix and draw_at
+  - Added VAO/VBO, position, scale, and rotation to draw
+- Fixed Matrix rotation
+- Started changing how shader uniforms are changed and set.
+- Render texture quad is being rendered and a *different* texture can be drawn on it, but for some reason the render texture cant...
 

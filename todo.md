@@ -9,3 +9,4 @@
 - Swap from GLFW to SDL3?
 - Keybindings
 - Filestorage
+- Bulk

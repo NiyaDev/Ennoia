@@ -90,6 +90,10 @@ const DEPTH_ATTACHMENT = 0x00008D00;
 const DEPTH_COMPONENT = 0x00001902;
 const RENDERBUFFER = 0x00008D41;
 const FRAMEBUFFER_COMPLETE = 0x00008CD5;
+const DEPTH24_STENCIL8 = 0x000088F0;
+const DEPTH_STENCIL_ATTACHMENT = 0x0000821A;
+const TEXTURE0 = 0x000084C0;
+const CULL_FACE = 0x00000B44;
 
 
 extern fn void clear_color(float, float, float, float) @extern("glClearColor");
@@ -108,6 +112,8 @@ extern fn void gen_renderbuffers(int n, uint* renderbuffers) @extern("glGenRende
 extern fn void bind_renderbuffer(int target, uint renderbuffer) @extern("glBindRenderbuffer");
 extern fn void renderbuffer_storage(int target, int internalformat, int width, int height) @extern("glRenderbufferStorage");
 extern fn int  check_framebuffer_status(int target) @extern("glCheckFramebufferStatus"); 
+extern fn void active_texture(int texture) @extern("glActiveTexture");
+extern fn void read_pixels(int x, int y, int width, int height, int format, int type, void* data) @extern("glReadPixels");
 
 extern fn void gen_buffers(uint, uint*) @extern("glGenBuffers");
 extern fn void bind_buffer(int, uint) @extern("glBindBuffer");

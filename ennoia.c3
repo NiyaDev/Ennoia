@@ -15,7 +15,6 @@ uint depthRenderBuffer;
 Texture render;
 int[1] drawBuffers = {gl::COLOR_ATTACHMENT0};
 Mesh renderQuad;
-//Shader renderShader;
 Color bgColor = color::PURPLE;
 
 double deltaTime;
@@ -48,29 +47,10 @@ fn void init(int width, int height, String title) {
   window = sdl::create_window(title.zstr_tcopy(), scrWidth, scrHeight, sdl::WINDOW_OPENGL);
   assert(window != null, "[ERROR] - ENNOIA::INIT::CREATE_WINDOW [Failed to create sdl3 window(%s)]", sdl::get_error());
 
-  // Generate texture framebuffer
-  gl::gen_framebuffers(1, &framebuffer);
-  gl::bind_framebuffer(gl::FRAMEBUFFER, framebuffer);
-  render = texture::new(scrWidth, scrHeight);
-  gl::framebuffer_texture_2d(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, gl::TEXTURE_2D, render.id, 0);
-
-  gl::gen_renderbuffers(1, &depthRenderBuffer);
-  gl::bind_renderbuffer(gl::RENDERBUFFER, depthRenderBuffer);
-  // TODO: Change from DEPTH_COMPONENT to DEPTH24_STENCIL8 and DEPTH_ATTACHMENT to DEPTH_STENCIL_ATTACHMENT
-  gl::renderbuffer_storage(gl::RENDERBUFFER, gl::DEPTH_COMPONENT, scrWidth, scrHeight);
-  gl::framebuffer_renderbuffer(gl::FRAMEBUFFER,gl::DEPTH_ATTACHMENT, gl::RENDERBUFFER, depthRenderBuffer);
-  assert(gl::check_framebuffer_status(gl::FRAMEBUFFER) != gl::FRAMEBUFFER_COMPLETE, "[ERROR] - ENNOIA::INIT::CHECKFRAMEBUFFERSTATUS [Framebuffer failed to initialize]");
-  gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
-
-  //gl::framebuffer_texture(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, render.id, 0);
-  //gl::draw_buffers(1, &drawBuffers);
-
-  gl::bind_framebuffer(gl::FRAMEBUFFER, framebuffer);
-
   // Create OpenGL context
   glcontext = sdl::gl_create_context(window);
   assert(glcontext != null, "[ERROR] - ENNOIA::INIT::CREATE_CONTEXT [Failed to create SDL_GL context (%s)]", (String)sdl::get_error()[..1024]);
-  assert(sdl::gl_make_current(window, glcontext), "[ERROR] - ENNOIA::INIT::MAKE_CURRENT [Failed to make gl context current (%s)]", sdl::get_error());
+  assert(sdl::gl_make_current(window, glcontext), "[ERROR] - ENNOIA::INIT::MAKE_CURRENT [Failed to make gl context current (%s)]", sdl::get_error()); 
 
   // Enable depth testing
   gl::enable(gl::DEPTH_TEST);
@@ -84,22 +64,35 @@ fn void init(int width, int height, String title) {
   default_shader.update_loc("projection", MATRIX4X4, &proj);
 
   // Ready render quad
-  renderQuad = {
+  renderQuad = mesh::new(
     {
-      {{-1, 1, 0}, {0,0,0}, {0,1}},
-      {{-1,-1, 0}, {0,0,0}, {0,0}},
-      {{ 1,-1, 0}, {0,0,0}, {1,0}},
+      {{-1, 1, 0}, {}, {0,1}},
+      {{-1,-1, 0}, {}, {0,0}},
+      {{ 1,-1, 0}, {}, {1,0}},
 
-      {{-1, 1, 0}, {0,0,0}, {0,1}},
-      {{ 1,-1, 0}, {0,0,0}, {1,0}},
-      {{ 1, 1, 0}, {0,0,0}, {1,1}},
-    },
-    matrix::IDENTITY,
-    shader::compile(shader::FB_VERTEX, shader::FB_FRAGMENT),
-  };
-  renderQuad.shader.add_loc("screenTexture", INT);
-  int zero;
-  renderQuad.shader.update_loc("screenTexture", INT, &zero);
+      {{-1, 1, 0}, {}, {0,1}},
+      {{ 1,-1, 0}, {}, {1,0}},
+      {{ 1, 1, 0}, {}, {1,1}},
+    }
+  );
+  renderQuad.shader = shader::compile(shader::FB_VERTEX, shader::FB_FRAGMENT);
+  renderQuad.shader.set_int("screenTexture", 0);
+
+  // Generate texture framebuffer
+  gl::gen_framebuffers(1, &framebuffer);
+  gl::bind_framebuffer(gl::FRAMEBUFFER, framebuffer);
+  render = texture::new(scrWidth, scrHeight);
+  gl::framebuffer_texture_2d(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, gl::TEXTURE_2D, render.id, 0);
+  assert(gl::check_framebuffer_status(gl::FRAMEBUFFER) == gl::FRAMEBUFFER_COMPLETE, "[ERROR] - ENNOIA::INIT::CHECKFRAMEBUFFERSTATUS [Framebuffer failed to initialize]");
+
+  gl::gen_renderbuffers(1, &depthRenderBuffer);
+  gl::bind_renderbuffer(gl::RENDERBUFFER, depthRenderBuffer);
+  gl::renderbuffer_storage(gl::RENDERBUFFER, gl::DEPTH24_STENCIL8, scrWidth, scrHeight);
+  gl::framebuffer_renderbuffer(gl::FRAMEBUFFER,gl::DEPTH_STENCIL_ATTACHMENT, gl::RENDERBUFFER, depthRenderBuffer);
+  gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
+
+  //gl::framebuffer_texture(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, render.id, 0);
+  //gl::draw_buffers(1, &drawBuffers);
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {

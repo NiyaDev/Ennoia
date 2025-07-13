@@ -202,10 +202,10 @@ fn Vector4 Matrix.quaternion_transform(self, vector::Quaternion q) @export("matr
 <* Prints matrix to console *>
 fn void Matrix.print(&self) @export("matrix_print") {
 	io::printfn("[\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n]",
-		self.m0, self.m4, self.m8,  self.m12,
-		self.m1, self.m5, self.m9,  self.m13,
-		self.m2, self.m6, self.m10, self.m14,
-		self.m3, self.m7, self.m11, self.m15,
+		self.m0, self.m1, self.m2,  self.m3,
+		self.m4, self.m5, self.m6,  self.m7,
+		self.m8, self.m9, self.m10, self.m11,
+		self.m12, self.m13, self.m14, self.m15,
 	);
 }
 
@@ -217,7 +217,9 @@ const Matrix IDENTITY = {
 	0.0, 0.0, 0.0, 1.0,
 };
 
-<* Create translation matrix *>
+<* Create translation matrix
+	@param v: "Position offset"
+ *>
 fn Matrix Matrix.translate(&self, Vector3 v) @export("matrix_translate") {
 	return *self + (Matrix){
 		0.0, 0.0, 0.0, 0.0,
@@ -225,47 +227,6 @@ fn Matrix Matrix.translate(&self, Vector3 v) @export("matrix_translate") {
 		0.0, 0.0, 0.0, 0.0,
 		v.x, v.y, v.z, 0.0
 	};
-}
-<* Create rotation matrix from axis and angle *>
-fn Matrix rotate(Vector3 axis, float angle) @export("matrix_rotate") {
-	Matrix result;
-	float x = axis.x;
-	float y = axis.y;
-	float z = axis.z;
-
-	float length_squared = x*x + y*y + z*z;
-	if (length_squared != 1.0 && (length_squared != 0.0)) {
-	    float ilength = 1.0 / math::sqrt(length_squared);
-	    x *= ilength;
-	    y *= ilength;
-	    z *= ilength;
-	}
-
-	float sinres = math::sin(angle);
-	float cosres = math::cos(angle);
-	float t = 1 - cosres;
-
-	result.m0 = x*x*t + cosres;
-	result.m1 = y*x*t + z*sinres;
-	result.m2 = z*x*t - y*sinres;
-	result.m3 = 0;
-
-	result.m4 = x*y*t - z*sinres;
-	result.m5 = y*y*t + cosres;
-	result.m6 = z*y*t + x*sinres;
-	result.m7 = 0;
-
-	result.m8 = x*z*t + y*sinres;
-	result.m9 = y*z*t - x*sinres;
-	result.m10 = z*z*t + cosres;
-	result.m11 = 0;
-
-	result.m12 = 0;
-	result.m13 = 0;
-	result.m14 = 0;
-	result.m15 = 1;
-
-	return result;
 }
 <* Get x-rotation matrix *>
 fn Matrix rotate_x(float angle) @export("matrix_rotatex") {
@@ -306,29 +267,31 @@ fn Matrix rotate_z(float angle) @export("matrix_rotatez") {
 
 	return result;
 }
-<* Get xyz-rotation matrix *>
-fn Matrix rotate_xyz(Vector3 angle) @export("matrix_rotatexyz") {
-	Matrix result;
-	float cosz = math::cos(-angle.z);
-	float sinz = math::sin(-angle.z);
-	float cosy = math::cos(-angle.y);
-	float siny = math::sin(-angle.y);
-	float cosx = math::cos(-angle.x);
-	float sinx = math::sin(-angle.x);
+<* Get xyz-rotation matrix
+	@param angle: "New rotation for matrix in degrees"
+ *>
+fn Matrix Matrix.rotate(&self, Vector3 angle) @export("matrix_rotatexyz") {
+	//Matrix result;
+	float cosz = math::cos(angle.z * (float)(math::PI / 180));
+	float sinz = math::sin(angle.z * (float)(math::PI / 180));
+	float cosy = math::cos(angle.y * (float)(math::PI / 180));
+	float siny = math::sin(angle.y * (float)(math::PI / 180));
+	float cosx = math::cos(angle.x * (float)(math::PI / 180));
+	float sinx = math::sin(angle.x * (float)(math::PI / 180));
 
-	result.m0 =  cosz * cosy;
-	result.m1 = (cosz * siny * sinx) - (sinz * cosx);
-	result.m2 = (cosz * siny * cosx) + (sinz * sinx);
+	self.m0 =  cosz * cosy;
+	self.m1 = (cosz * siny * sinx) - (sinz * cosx);
+	self.m2 = (cosz * siny * cosx) + (sinz * sinx);
 
-	result.m4 =  sinz * cosy;
-	result.m5 = (sinz * siny * sinx) + (cosz * cosx);
-	result.m6 = (sinz * siny * cosx) - (cosz * sinx);
+	self.m4 =  sinz * cosy;
+	self.m5 = (sinz * siny * sinx) + (cosz * cosx);
+	self.m6 = (sinz * siny * cosx) - (cosz * sinx);
 
-	result.m8 = -siny;
-	result.m9 =  cosy * sinx;
-	result.m10=  cosy * cosx;
+	self.m8 = -siny;
+	self.m9 =  cosy * sinx;
+	self.m10=  cosy * cosx;
 
-	return result;
+	return *self;
 }
 <* Get xyz-rotation matrix *>
 fn Matrix rotate_zyx(Vector3 angle) @export("matrix_rotatezyx") {
@@ -362,16 +325,10 @@ fn Matrix rotate_zyx(Vector3 angle) @export("matrix_rotatezyx") {
 
 	return result;
 }
-<* Get scaling matrix *>
+<* Get scaling matrix
+	@param scale: "New scale values"
+ *>
 fn Matrix Matrix.scale(&self, Vector3 scale) @export("matrix_scale") {
-	/*
-	return *self + (Matrix){
-		scale.x,     0.0,     0.0, 0.0,
-		    0.0, scale.y,     0.0, 0.0,
-		    0.0,     0.0, scale.z, 0.0,
-		    0.0,     0.0,     0.0, 1.0,
-	};
-	*/
 	Matrix output = *self;
 	output.m0 = scale.x;
 	output.m5 = scale.y;

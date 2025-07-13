@@ -3,20 +3,12 @@ module ennoia::mesh;
 import std::io;
 import std::collections;
 import ennoia;
-/*
-import ennoia::gl;
-import ennoia::shader;
-import ennoia::texture;
-import ennoia::vector;
-import ennoia::matrix;
-import ennoia::camera;
-*/
 
 
 struct Mesh {
   Vertex[] vertices;
 
-  Matrix mat;
+  uint vao, vbo;
 
   Shader shader;
 }
@@ -25,10 +17,14 @@ struct Vertex {
   Vector3 position;
   Vector3 normal;
   Vector2 texCoords;
+  //Color   colors;
+  //Vector4 tangents;
+  //Vector2 texCoords2;
 }
 const void* VERTEX_POSITION = null;
 const void* VERTEX_NORMAL   = (void*)(Vector3.sizeof);
-const void* VERTEX_TEXCOORD = (void*)(Vector3.sizeof * 2);
+const void* VERTEX_TEXCOORD = (void*)((long)VERTEX_NORMAL * 2);
+const void* VERTEX_COLORS   = (void*)(Color.sizeof);
 
 const Vertex[] BASIC_TRI = {
   {{ 0.0,  0.5, 0.0}, {0,0,1}, {1,1}},
@@ -50,7 +46,7 @@ fn Mesh new(Vertex[] vertices = {}) {
     output.vertices = BASIC_TRI;
   }
 
-  output.mat = matrix::IDENTITY;
+  output.upload();
 
   return output;
 }
@@ -71,7 +67,6 @@ fn Mesh generate_mesh_test(uint[][] data) {
       }
     }
   }
-  output.mat = matrix::IDENTITY;
   output.vertices = vert_list.to_array(allocator::heap());
   vert_list.free();
 
@@ -79,15 +74,13 @@ fn Mesh generate_mesh_test(uint[][] data) {
 }
 
 <* Uploads mesh data to GPU *>
-fn Tuple{uint, uint} Mesh.upload(&self) {
-  Tuple{uint, uint} output;
-
-  gl::gen_vertex_arrays(1, &output.first);
-  gl::gen_buffers(1, &output.second);
+fn void Mesh.upload(&self) {
+  gl::gen_vertex_arrays(1, &self.vao);
+  gl::gen_buffers(1, &self.vbo);
   
-  gl::bind_vertex_array(output.first);
+  gl::bind_vertex_array(self.vao);
 
-  gl::bind_buffer(gl::ARRAY_BUFFER, output.second);
+  gl::bind_buffer(gl::ARRAY_BUFFER, self.vbo);
   gl::buffer_data(gl::ARRAY_BUFFER, self.vertices.len * Vertex.sizeof, self.vertices, gl::STATIC_DRAW);
 
   ennoia::set_vertex_attribute(0, 3, VERTEX_POSITION);
@@ -96,49 +89,38 @@ fn Tuple{uint, uint} Mesh.upload(&self) {
 
   gl::bind_buffer(gl::ARRAY_BUFFER, 0);
   gl::bind_vertex_array(0);
-
-  return output;
 }
 <* Deletes trio from gpu *>
-fn void Mesh.delete(&self, Tuple{uint, uint} tup) {
-  gl::delete_vertex_arrays(1, &tup.first);
-  gl::delete_buffers(1, &tup.second);
+fn void Mesh.delete(&self) {
+  gl::delete_vertex_arrays(1, &self.vao);
+  gl::delete_buffers(1, &self.vbo);
 }
 
 <* Draws Mesh
-  @param self
-  @param tex: "Texture to draw on mesh, set to null by default"
+  @param position: "Position in space to draw mesh. Default is {0,0,0}."
+  @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
+  @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
+  @param texture:  "Texture to draw on mesh, set to null by default"
  *>
-fn void Mesh.draw(&self, Texture* tex = null) {
-  Tuple{uint, uint} tup = self.upload();
+fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
+  self.upload();
 
-  gl::use_program(ennoia::default_shader.id);
-  Matrix mat = camera::get_matrix();
-  ennoia::default_shader.update_loc("view",  MATRIX4X4, &mat);
-  ennoia::default_shader.update_loc("model", MATRIX4X4, &self.mat);
-  if (tex != null) gl::bind_texture(gl::TEXTURE_2D, tex.id);
-	gl::bind_vertex_array(tup.first);
-	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
+  if (self.shader.id != 0) {
+    self.shader.use();
+  } else {
+    ennoia::default_shader.use();
+  }
 
-	self.delete(tup);
-}
-<* Draws mesh using matrix override
-  @param self
-  @param over: "Matrix used as an override to meshes inbuilt"
-  @param tex: "Texture to draw on mesh, set to null by default"
- *>
-fn void Mesh.draw_at(&self, Matrix over, Texture* tex = null) {
-  Tuple{uint, uint} tup = self.upload();
-
-  gl::use_program(ennoia::default_shader.id);
   Matrix view = camera::get_matrix();
   ennoia::default_shader.update_loc("view",  MATRIX4X4, &view);
-  ennoia::default_shader.update_loc("model", MATRIX4X4, &over);
-  if (tex != null) gl::bind_texture(gl::TEXTURE_2D, tex.id);
-	gl::bind_vertex_array(tup.first);
+
+  Matrix transform = matrix::IDENTITY.translate(position).rotate(rotation).scale(scale);
+  ennoia::default_shader.update_loc("model", MATRIX4X4, &transform);
+  if (texture != null) gl::bind_texture(gl::TEXTURE_2D, texture.id);
+	gl::bind_vertex_array(self.vao);
 	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
 
-	self.delete(tup);
+	self.delete();
 }
 
 

@@ -1,5 +1,6 @@
 
 module ennoia;
+import std::io;
 import std::collections;
 
 
@@ -25,22 +26,21 @@ fn void end_drawing() {
 
   gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
   gl::disable(gl::DEPTH_TEST);
+  gl::clear_color((float)color::ORANGE.r / 255, (float)color::ORANGE.g / 255, (float)color::ORANGE.b / 255, (float)color::ORANGE.a / 255);
+  gl::clear(gl::COLOR_BUFFER_BIT);
 
-  clear_background(color::ORANGE);
 
-  //renderQuad.draw(&render);
   renderQuad.shader.use();
-
-  Tuple{uint, uint} tup = renderQuad.upload();
-  gl::bind_vertex_array(tup.first);
+  //gl::active_texture(gl::TEXTURE0);
+  gl::bind_vertex_array(renderQuad.vao);
   gl::bind_texture(gl::TEXTURE_2D, render.id);
   gl::draw_arrays(gl::TRIANGLES, 0, renderQuad.vertices.len);
 
-  renderQuad.delete(tup);
+  //renderQuad.delete();
 
   //clear_background(color::WHITE);
   //gl::active_texture(gl::TEXTURE0);
-  //QUAD_DATA.draw(&render);
+  //renderQuad.draw(texture:&render);
 
 
   sdl::gl_swap_window(window);
