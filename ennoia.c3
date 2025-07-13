@@ -4,7 +4,6 @@ import std::io;
 import std::math;
 
 
-//GLFWwindow* window;
 SDL_Window* window;
 SDL_Surface* surface;
 SDL_GLContext* glcontext;
@@ -13,7 +12,6 @@ SDL_Event event;
 uint framebuffer = 0;
 uint depthRenderBuffer;
 Texture render;
-int[1] drawBuffers = {gl::COLOR_ATTACHMENT0};
 Mesh renderQuad;
 Color bgColor = color::PURPLE;
 
@@ -22,6 +20,8 @@ double lastFrame;
 bool forceClose = false;
 
 int scrWidth, scrHeight;
+int renWidth, renHeight;
+float renRes;
 
 float scrollwheel;
 
@@ -33,9 +33,12 @@ Shader default_shader;
   @param height: "Initial height of screen"
   @param title:  "Title of window"
  *>
-fn void init(int width, int height, String title) {
-  scrWidth = width;
+fn void init(int width, int height, String title, float renderRes = 1) {
+  scrWidth  = width;
   scrHeight = height;
+  renWidth  = (int)((float)width  * renderRes);
+  renHeight = (int)((float)height * renderRes);
+  renRes = renderRes;
   
   // Initialize SDL3
 	assert(sdl::init(sdl::INIT_VIDEO | sdl::INIT_AUDIO), "[ERROR] - ENNOIA::INIT::INIT [Failed to initialize SDL3 (%s)]", sdl::get_error());
@@ -57,11 +60,7 @@ fn void init(int width, int height, String title) {
 
   // Create default texture
   default_shader = shader::compile();
-  default_shader.add_loc("view", MATRIX4X4);
-  default_shader.add_loc("model", MATRIX4X4);
-  default_shader.add_loc("projection", MATRIX4X4);
-  Matrix proj = matrix::perspective(70 * math::PI / 180, (double)scrWidth / (double)scrHeight, 0.1, 100.0);
-  default_shader.update_loc("projection", MATRIX4X4, &proj);
+  default_shader.set_mat4x4("projection", matrix::perspective(70 * math::PI / 180, (double)renWidth / (double)renHeight, 0.1, 100.0));
 
   // Ready render quad
   renderQuad = mesh::new(
@@ -78,21 +77,21 @@ fn void init(int width, int height, String title) {
   renderQuad.shader = shader::compile(shader::FB_VERTEX, shader::FB_FRAGMENT);
   renderQuad.shader.set_int("screenTexture", 0);
 
-  // Generate texture framebuffer
+  // Framebuffer
   gl::gen_framebuffers(1, &framebuffer);
   gl::bind_framebuffer(gl::FRAMEBUFFER, framebuffer);
-  render = texture::new(scrWidth, scrHeight);
-  gl::framebuffer_texture_2d(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, gl::TEXTURE_2D, render.id, 0);
-  assert(gl::check_framebuffer_status(gl::FRAMEBUFFER) == gl::FRAMEBUFFER_COMPLETE, "[ERROR] - ENNOIA::INIT::CHECKFRAMEBUFFERSTATUS [Framebuffer failed to initialize]");
 
+  // Framebuffer texture
+  render = texture::new(renWidth, renHeight);
+  gl::framebuffer_texture_2d(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, gl::TEXTURE_2D, render.id, 0);
+
+  // Renderbuffer
   gl::gen_renderbuffers(1, &depthRenderBuffer);
   gl::bind_renderbuffer(gl::RENDERBUFFER, depthRenderBuffer);
-  gl::renderbuffer_storage(gl::RENDERBUFFER, gl::DEPTH24_STENCIL8, scrWidth, scrHeight);
+  gl::renderbuffer_storage(gl::RENDERBUFFER, gl::DEPTH24_STENCIL8, renWidth,renHeight);
   gl::framebuffer_renderbuffer(gl::FRAMEBUFFER,gl::DEPTH_STENCIL_ATTACHMENT, gl::RENDERBUFFER, depthRenderBuffer);
+  assert(gl::check_framebuffer_status(gl::FRAMEBUFFER) == gl::FRAMEBUFFER_COMPLETE, "[ERROR] - ENNOIA::INIT::CHECKFRAMEBUFFERSTATUS [Framebuffer failed to initialize]");
   gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
-
-  //gl::framebuffer_texture(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, render.id, 0);
-  //gl::draw_buffers(1, &drawBuffers);
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {

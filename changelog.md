@@ -51,4 +51,9 @@
 - Fixed Matrix rotation
 - Started changing how shader uniforms are changed and set.
 - Render texture quad is being rendered and a *different* texture can be drawn on it, but for some reason the render texture cant...
+==== [7/13/25]
+- Finally fixed render texture. The problem was I was using glTextureParameteri instead of glTexParameteri. So stupid.
+- Added rendering at a lower or higher resolution than screen.
+- Added shader cleanup and rendertexture shader changing.
+- Changed over from using add_loc and set_loc to just using set_X where X is the data type.
 

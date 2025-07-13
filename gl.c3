@@ -100,10 +100,11 @@ extern fn void clear_color(float, float, float, float) @extern("glClearColor");
 extern fn void clear(int) @extern("glClear");
 extern fn void enable(int) @extern("glEnable");
 extern fn void disable(int) @extern("glDisable");
+extern fn int get_error() @extern("glGetError");
 
 // Framebuffer drawing
-extern fn void gen_framebuffers(int, uint*) @extern("glGenFramebuffers");
-extern fn void bind_framebuffer(int, uint) @extern("glBindFramebuffer");
+extern fn void gen_framebuffers(int size, uint* ids) @extern("glGenFramebuffers");
+extern fn void bind_framebuffer(int target, uint framebuffer) @extern("glBindFramebuffer");
 extern fn void draw_buffers(int n, int* buffs) @extern("glDrawBuffers");
 extern fn void framebuffer_texture(int target, int attachment, uint texture, int level) @extern("glFramebufferTexture");
 extern fn void framebuffer_texture_2d(int target, int attachment, int textarget, uint texture, int level) @extern("glFramebufferTexture2D");
@@ -133,10 +134,12 @@ extern fn void delete_shader(uint) @extern("glDeleteShader");
 extern fn int get_uniform_location(uint, char*) @extern("glGetUniformLocation");
 extern fn void program_uniform_i(uint program, int location, int v0) @extern("glProgramUniform1i");
 extern fn void program_uniform_f(uint, int, float) @extern("glProgramUniform1f");
+extern fn void program_uniform_2f(uint, int, float, float) @extern("glProgramUniform2f");
 extern fn void program_uniform_matrix4_fv(uint, int, int, bool, float*) @extern("glProgramUniformMatrix4fv");
 extern fn void delete_vertex_arrays(int, uint*) @extern("glDeleteVertexArrays");
 extern fn void delete_buffers(int, uint*) @extern("glDeleteBuffers");
 
+extern fn void tex_parameter_i(int, int, int) @extern("glTexParameteri");
 extern fn void texture_parameter_i(int, int, int) @extern("glTextureParameteri");
 extern fn void texture_parameter_f(int, int, float) @extern("glTextureParameterf");
 extern fn void texture_parameter_fv(int, int, float[]) @extern("glTextureParameterfv");

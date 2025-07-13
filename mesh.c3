@@ -111,12 +111,18 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
     ennoia::default_shader.use();
   }
 
-  Matrix view = camera::get_matrix();
-  ennoia::default_shader.update_loc("view",  MATRIX4X4, &view);
+  //Matrix view = camera::get_matrix();
+  //ennoia::default_shader.update_loc("view",  MATRIX4X4, &view);
+  ennoia::default_shader.set_mat4x4("view", camera::get_matrix());
 
-  Matrix transform = matrix::IDENTITY.translate(position).rotate(rotation).scale(scale);
-  ennoia::default_shader.update_loc("model", MATRIX4X4, &transform);
-  if (texture != null) gl::bind_texture(gl::TEXTURE_2D, texture.id);
+  //Matrix transform = matrix::IDENTITY.translate(position).rotate(rotation).scale(scale);
+  //ennoia::default_shader.update_loc("model", MATRIX4X4, &transform);
+  ennoia::default_shader.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
+  if (texture != null) {
+    gl::bind_texture(gl::TEXTURE_2D, texture.id);
+  } else {
+    gl::bind_texture(gl::TEXTURE_2D, 0);
+  }
 	gl::bind_vertex_array(self.vao);
 	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
 

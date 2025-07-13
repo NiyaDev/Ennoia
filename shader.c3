@@ -1,13 +1,15 @@
 
 module ennoia::shader;
 import ennoia::gl;
+import ennoia::vector;
+import ennoia::matrix;
+import ennoia::texture;
 import std::io;
 import std::collections;
 
 
 struct Shader {
   uint id;
-  HashMap{String, int} locs;
 }
 
 enum UniformType {
@@ -88,21 +90,12 @@ const char[] FB_FRAGMENT =
   "#version 330 core\n"
   "out vec4 FragColor;\n\n"
   "in vec2 TexCoords;\n\n"
-  "uniform sampler2D texture1;\n\n"
+  "uniform sampler2D texture0;\n\n"
   "void main() {\n"
-  "  FragColor = texture(texture1, TexCoords);\n"
+  "  FragColor = texture(texture0, TexCoords);\n"
   "}\n";
-/*
-  "#version 330 core\n"
-  "out vec4 FragColor;\n\n"
-  "in vec2 TexCoords;\n\n"
-  "uniform sampler2D screenTexture;\n\n"
-  "void main() {\n"
-  "  FragColor = texture(screenTexture, TexCoords);\n"
-  "}\n";*/
 
-  //"  vec3 col = texture(screenTexture, TexCoords).rgb;\n"
-  //"  FragColor = vec4(col, 1.0);\n"
+
 
 <* Load shader files and compile
   @param vert: "Filename of uncompiled Vertex Shader"
@@ -172,43 +165,40 @@ fn Shader compile(char[] vert = {}, char[] frag = {}) {
   gl::delete_shader(vertex_shader);
 	gl::delete_shader(fragment_shader);
 
-  return {program, {}};
+  return {program};
 }
-<* Add uniform location to shader
-  @param name: "name of uniform"
-  @param type: "Type of variable"
- *>
-fn void Shader.add_loc(&self, String name, UniformType type) {
-  if (self.locs.has_key(name)) {
-    io::printfn("[WARNING] - ENNOIA::SHADER::ADD_LOC [Added new location that already existed. Replacing old entry with new one.]");
-  }
+<* Cleans up shader *>
+fn void Shader.clean(&self) {
+  gl::delete_shader(self.id);
+}
 
-  int location = gl::get_uniform_location(self.id, name.zstr_tcopy());
-  self.locs.set(name, location);
-}
-<* Update uniform value
-  @param name: "name of uniform"
-  @param type: "Type of variable"
-  @param data: "Pointer to data"
- *>
-fn void Shader.update_loc(&self, String name, UniformType type, any data) {
-  if (!self.locs.has_key(name)) {
-    io::printfn("[WARNING] - ENNOIA::SHADER::UPDATE_LOC [Attempted to update a location that doesn't exist. Adding it as a new one.]");
-    self.add_loc(name, type);
-    return;
-  }
-
-  switch (type) {
-    case INT:       gl::program_uniform_i(self.id, self.locs[name]!!, *((int*)data));
-    case FLOAT:     gl::program_uniform_f(self.id, self.locs[name]!!, *((float*)data));
-    case MATRIX4X4: gl::program_uniform_matrix4_fv(self.id, self.locs[name]!!, 1, false, (float*)data);
-    default: io::printfn("[WARNING] - ENNOIA::SHADER::ADD_LOC [Attempted to edit non-implemented data type (%s)]", type);
-  }
-}
-<**>
+<* Sets integer uniform value *>
 fn void Shader.set_int(&self, String name, int i) {
   gl::program_uniform_i(self.id, gl::get_uniform_location(self.id, name.zstr_tcopy()), i);
 }
+<* Sets float uniform value *>
+fn void Shader.set_float(&self, String name, float f) {
+  gl::program_uniform_f(self.id, gl::get_uniform_location(self.id, name.zstr_tcopy()), f);
+}
+<* Sets vector2 uniform value *>
+fn void Shader.set_vec2(&self, String name, Vector2 v2) {
+  gl::program_uniform_2f(self.id, gl::get_uniform_location(self.id, name.zstr_tcopy()), v2.x, v2.y);
+}
+<* Sets 4x4matrix uniform value *>
+fn void Shader.set_mat4x4(&self, String name, Matrix mat) {
+  gl::program_uniform_matrix4_fv(
+    self.id,
+    gl::get_uniform_location(self.id, name.zstr_tcopy()),
+    1,
+    false,
+    (float*)&mat,
+  );
+}
+<**>
+fn void Shader.set_sampler2d(&self, String name, Texture texture) {
+  gl::program_uniform_i(self.id, gl::get_uniform_location(self.id, name.zstr_tcopy()), texture.id);
+}
+
 <* Activates shader *>
 fn void Shader.use(&self) {
   gl::use_program(self.id);
