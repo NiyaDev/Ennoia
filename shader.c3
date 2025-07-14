@@ -169,7 +169,7 @@ fn Shader compile(char[] vert = {}, char[] frag = {}) {
 }
 <* Cleans up shader *>
 fn void Shader.clean(&self) {
-  gl::delete_shader(self.id);
+  gl::delete_program(self.id);
 }
 
 <* Sets integer uniform value *>

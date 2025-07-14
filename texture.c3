@@ -26,9 +26,8 @@ fn Texture load(String filename) {
   gl::gen_textures(1, &output.id);
   gl::bind_texture(gl::TEXTURE_2D, output.id);
 
-  //gl::texture_parameter_f(gl::TEXTURE_2D, gl::TEXTURE_MAX_ANISOTROPY_EXT, 4);
-  gl::texture_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
-  gl::texture_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
+  gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+  gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
   gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGB, gl::UNSIGNED_BYTE, data);
   gl::generate_mipmap(gl::TEXTURE_2D);

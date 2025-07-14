@@ -56,4 +56,7 @@
 - Added rendering at a lower or higher resolution than screen.
 - Added shader cleanup and rendertexture shader changing.
 - Changed over from using add_loc and set_loc to just using set_X where X is the data type.
+==== [7/14/25]
+- Moved drawing functiond from wrappers to ennoia, but might still move them to render.
+- Created render.c3 and moved rendertexture initialization over.
 

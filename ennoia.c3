@@ -9,10 +9,10 @@ SDL_Surface* surface;
 SDL_GLContext* glcontext;
 SDL_Event event;
 
-uint framebuffer = 0;
-uint depthRenderBuffer;
-Texture render;
-Mesh renderQuad;
+//uint framebuffer = 0;
+//uint depthRenderBuffer;
+//Texture render;
+//Mesh renderQuad;
 Color bgColor = color::PURPLE;
 
 double deltaTime;
@@ -58,40 +58,12 @@ fn void init(int width, int height, String title, float renderRes = 1) {
   // Enable depth testing
   gl::enable(gl::DEPTH_TEST);
 
-  // Create default texture
+  // Create default shader
   default_shader = shader::compile();
   default_shader.set_mat4x4("projection", matrix::perspective(70 * math::PI / 180, (double)renWidth / (double)renHeight, 0.1, 100.0));
 
-  // Ready render quad
-  renderQuad = mesh::new(
-    {
-      {{-1, 1, 0}, {}, {0,1}},
-      {{-1,-1, 0}, {}, {0,0}},
-      {{ 1,-1, 0}, {}, {1,0}},
-
-      {{-1, 1, 0}, {}, {0,1}},
-      {{ 1,-1, 0}, {}, {1,0}},
-      {{ 1, 1, 0}, {}, {1,1}},
-    }
-  );
-  renderQuad.shader = shader::compile(shader::FB_VERTEX, shader::FB_FRAGMENT);
-  renderQuad.shader.set_int("screenTexture", 0);
-
   // Framebuffer
-  gl::gen_framebuffers(1, &framebuffer);
-  gl::bind_framebuffer(gl::FRAMEBUFFER, framebuffer);
-
-  // Framebuffer texture
-  render = texture::new(renWidth, renHeight);
-  gl::framebuffer_texture_2d(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, gl::TEXTURE_2D, render.id, 0);
-
-  // Renderbuffer
-  gl::gen_renderbuffers(1, &depthRenderBuffer);
-  gl::bind_renderbuffer(gl::RENDERBUFFER, depthRenderBuffer);
-  gl::renderbuffer_storage(gl::RENDERBUFFER, gl::DEPTH24_STENCIL8, renWidth,renHeight);
-  gl::framebuffer_renderbuffer(gl::FRAMEBUFFER,gl::DEPTH_STENCIL_ATTACHMENT, gl::RENDERBUFFER, depthRenderBuffer);
-  assert(gl::check_framebuffer_status(gl::FRAMEBUFFER) == gl::FRAMEBUFFER_COMPLETE, "[ERROR] - ENNOIA::INIT::CHECKFRAMEBUFFERSTATUS [Framebuffer failed to initialize]");
-  gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
+  render::init(renWidth, renHeight);
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {
@@ -108,6 +80,36 @@ fn bool window_should_close() {
     if (event.type == sdl::MOUSEWHEEL) scrollwheel = event.wheel.y;
   }
   return forceClose;
+}
+
+<* Starts the process of drawing *>
+fn void start_drawing() {
+  gl::bind_framebuffer(gl::FRAMEBUFFER, render::framebuffer);
+  gl::enable(gl::DEPTH_TEST);
+  gl::viewport(0, 0, renWidth, renHeight);
+
+  clear_background(bgColor);
+}
+<* Swaps buffers and polls events *>
+fn void end_drawing() {
+  scrollwheel = 0;
+
+  // Set up default framebuffer
+  gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
+  gl::disable(gl::DEPTH_TEST);
+  gl::clear_color((float)color::ORANGE.r / 255, (float)color::ORANGE.g / 255, (float)color::ORANGE.b / 255, (float)color::ORANGE.a / 255);
+  gl::clear(gl::COLOR_BUFFER_BIT);
+  gl::viewport(0, 0, scrWidth, scrHeight);
+
+
+  // Draw renderquad to screen
+  render::renderQuad.shader.use();
+  gl::active_texture(gl::TEXTURE0);
+  gl::bind_vertex_array(render::renderQuad.vao);
+  gl::bind_texture(gl::TEXTURE_2D, render::renderTexture.id);
+  gl::draw_arrays(gl::TRIANGLES, 0, render::renderQuad.vertices.len);
+
+  sdl::gl_swap_window(window);
 }
 
 /*

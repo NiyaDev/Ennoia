@@ -131,6 +131,7 @@ extern fn void use_program(uint) @extern("glUseProgram");
 extern fn void get_programiv(uint, int, int*) @extern("glGetProgramiv");
 extern fn void get_program_info_log(uint, usz, usz*, char*) @extern("glGetProgramInfoLog");
 extern fn void delete_shader(uint) @extern("glDeleteShader");
+extern fn void delete_program(uint) @extern("glDeleteProgram");
 extern fn int get_uniform_location(uint, char*) @extern("glGetUniformLocation");
 extern fn void program_uniform_i(uint program, int location, int v0) @extern("glProgramUniform1i");
 extern fn void program_uniform_f(uint, int, float) @extern("glProgramUniform1f");
