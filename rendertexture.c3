@@ -15,17 +15,7 @@ Mesh renderQuad;
 <* Initializes the Framebuffer and Renderbuffer *>
 fn void init(int width, int height) {
   // Render quad
-  renderQuad = mesh::new(
-    {
-      {{-1, 1, 0}, {}, {0,1}},
-      {{-1,-1, 0}, {}, {0,0}},
-      {{ 1,-1, 0}, {}, {1,0}},
-
-      {{-1, 1, 0}, {}, {0,1}},
-      {{ 1,-1, 0}, {}, {1,0}},
-      {{ 1, 1, 0}, {}, {1,1}},
-    }
-  );
+  renderQuad = mesh::gen_quad();
   renderQuad.shader = shader::compile(shader::FB_VERTEX, shader::FB_FRAGMENT);
   renderQuad.shader.set_int("screenTexture", 0);
 

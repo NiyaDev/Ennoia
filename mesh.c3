@@ -31,6 +31,59 @@ const Vertex[] BASIC_TRI = {
   {{-0.5, -0.5, 0.0}, {0,0,1}, {1,0}},
   {{ 0.5, -0.5, 0.0}, {0,0,1}, {0,1}},
 };
+const Vertex[] BASIC_QUAD = {
+  {{-1, 1, 0}, {}, {0,1}},
+  {{-1,-1, 0}, {}, {0,0}},
+  {{ 1,-1, 0}, {}, {1,0}},
+
+  {{-1, 1, 0}, {}, {0,1}},
+  {{ 1,-1, 0}, {}, {1,0}},
+  {{ 1, 1, 0}, {}, {1,1}},
+};
+const Vertex[] BASIC_CUBE = {
+  // Back
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,0}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{1,0}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
+  {{-0.5,  0.5, -0.5},{0,0,1},{0,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,0}},
+  // Front
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1}},
+  {{-0.5,  0.5,  0.5},{0,0,1},{0,1}},
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
+  // Left
+  {{-0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  {{-0.5,  0.5, -0.5},{0,0,1},{1,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
+  {{-0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  // Right
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{0,0}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  // Bottom
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{1,1}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0}},
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
+  // Top
+  {{-0.5,  0.5, -0.5},{0,0,1},{0,1}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  {{-0.5,  0.5,  0.5},{0,0,1},{0,0}},
+  {{-0.5,  0.5, -0.5},{0,0,1},{0,1}},
+};
 
 
 <* Creates a new Mesh using input vertices and indices
@@ -46,6 +99,32 @@ fn Mesh new(Vertex[] vertices = {}) {
     output.vertices = BASIC_TRI;
   }
 
+  output.upload();
+
+  return output;
+}
+
+// Mesh generation
+<* Generates a simple Triangle mesh *>
+fn Mesh gen_triangle() {
+  Mesh output = {mem::new_array(Vertex, BASIC_TRI.len), 0, 0, {}};
+  mem::copy(output.vertices, BASIC_TRI, Vertex.sizeof * BASIC_TRI.len);
+  output.upload();
+
+  return output;
+}
+<* Generates a simple Quad mesh *>
+fn Mesh gen_quad() {
+  Mesh output = {mem::new_array(Vertex, BASIC_QUAD.len), 0, 0, {}};
+  mem::copy(output.vertices, BASIC_QUAD, Vertex.sizeof * BASIC_QUAD.len);
+  output.upload();
+
+  return output;
+}
+<* Generates a simple Cube mesh *>
+fn Mesh gen_cube() {
+  Mesh output = {mem::new_array(Vertex, BASIC_CUBE.len), 0, 0, {}};
+  mem::copy(output.vertices, BASIC_CUBE, Vertex.sizeof * BASIC_CUBE.len);
   output.upload();
 
   return output;
@@ -69,6 +148,7 @@ fn Mesh generate_mesh_test(uint[][] data) {
   }
   output.vertices = vert_list.to_array(allocator::heap());
   vert_list.free();
+  output.upload();
 
   return output;
 }
@@ -103,7 +183,7 @@ fn void Mesh.delete(&self) {
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
 fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
-  self.upload();
+  //self.upload();
 
   if (self.shader.id != 0) {
     self.shader.use();
@@ -111,22 +191,30 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
     ennoia::default_shader.use();
   }
 
-  //Matrix view = camera::get_matrix();
-  //ennoia::default_shader.update_loc("view",  MATRIX4X4, &view);
   ennoia::default_shader.set_mat4x4("view", camera::get_matrix());
-
-  //Matrix transform = matrix::IDENTITY.translate(position).rotate(rotation).scale(scale);
-  //ennoia::default_shader.update_loc("model", MATRIX4X4, &transform);
   ennoia::default_shader.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
+  
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
   } else {
     gl::bind_texture(gl::TEXTURE_2D, 0);
   }
+
 	gl::bind_vertex_array(self.vao);
 	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
 
-	self.delete();
+	//self.delete();
+}
+fn void Mesh.draw_2d(&self, Vector2 position, Vector2 scale, float rotation, Texture* img) {
+  
 }
 
+<* Prints info on vertex *>
+fn void Vertex.print(&self) {
+  io::printfn("Position: [%f,%f,%f]\nNormals: [%f,%f,%f]\nTexCoords: [%f,%f]\n",
+    self.position.x, self.position.y, self.position.z,
+    self.normal.x, self.normal.y, self.normal.z,
+    self.texCoords.x, self.texCoords.y,
+  );
+}
 

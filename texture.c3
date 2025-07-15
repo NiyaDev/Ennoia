@@ -5,6 +5,7 @@ import stb;
 import ennoia;
 
 
+
 struct Texture {
   uint id;
   uint width, height;

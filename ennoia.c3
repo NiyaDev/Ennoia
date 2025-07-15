@@ -9,11 +9,8 @@ SDL_Surface* surface;
 SDL_GLContext* glcontext;
 SDL_Event event;
 
-//uint framebuffer = 0;
-//uint depthRenderBuffer;
-//Texture render;
-//Mesh renderQuad;
 Color bgColor = color::PURPLE;
+Mesh textureMesh;
 
 double deltaTime;
 double lastFrame;
@@ -64,6 +61,9 @@ fn void init(int width, int height, String title, float renderRes = 1) {
 
   // Framebuffer
   render::init(renWidth, renHeight);
+
+  // Texture mesh
+  textureMesh = mesh::gen_quad();
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {
@@ -90,6 +90,8 @@ fn void start_drawing() {
 
   clear_background(bgColor);
 }
+<**>
+fn void start_ui() {}
 <* Swaps buffers and polls events *>
 fn void end_drawing() {
   scrollwheel = 0;
