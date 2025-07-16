@@ -56,3 +56,24 @@ fn Texture new(int width, int height) {
 
   return output;
 }
+<* Cleans up texture *>
+fn void Texture.clean(&self) {
+  gl::delete_textures(1, &self.id);
+}
+
+<* Draw texture to screen *>
+fn void Texture.draw(&self, Vector2 position = {}, Vector2 size = {-1,-1}) {
+  // Calculating size on screen
+  Vector2 new_size = size;
+  if (size == {-1,-1}) new_size = {self.width, self.height};
+  Vector2 scale = {
+    new_size.x / (float)ennoia::renWidth,
+    new_size.y / (float)ennoia::renHeight,
+  };
+
+  // Calculating position on screen
+  Vector2 pos = position + new_size - (Vector2){(float)ennoia::renWidth, (float)ennoia::renHeight};
+
+  ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
+}
+

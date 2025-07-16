@@ -35,6 +35,13 @@ fn void init(int width, int height) {
   assert(gl::check_framebuffer_status(gl::FRAMEBUFFER) == gl::FRAMEBUFFER_COMPLETE, "[ERROR] - ENNOIA::RENDERTEXTURE::INIT::CHECK_FRAMEBUFFER_STATUS [Framebuffer failed to initialize]");
   gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
 }
+<* Clean up the framebuffer *>
+fn void clean() {
+  renderQuad.clean();
+  renderTexture.clean();
+  gl::delete_framebuffers(1, &framebuffer);
+  gl::delete_renderbuffers(1, &renderbuffer);
+}
 
 <* Replaces old rendershader, cleaning up the old one *>
 fn void set_shader(Shader newShader) {

@@ -115,6 +115,8 @@ extern fn void renderbuffer_storage(int target, int internalformat, int width, i
 extern fn int  check_framebuffer_status(int target) @extern("glCheckFramebufferStatus"); 
 extern fn void active_texture(int texture) @extern("glActiveTexture");
 extern fn void read_pixels(int x, int y, int width, int height, int format, int type, void* data) @extern("glReadPixels");
+extern fn void delete_renderbuffers(int size, uint* renderbuffers) @extern("glDeleteRenderbuffers");
+extern fn void delete_framebuffers(int size, uint* framebuffers) @extern("glDeleteFramebuffers");
 
 extern fn void gen_buffers(uint, uint*) @extern("glGenBuffers");
 extern fn void bind_buffer(int, uint) @extern("glBindBuffer");
@@ -139,6 +141,7 @@ extern fn void program_uniform_2f(uint, int, float, float) @extern("glProgramUni
 extern fn void program_uniform_matrix4_fv(uint, int, int, bool, float*) @extern("glProgramUniformMatrix4fv");
 extern fn void delete_vertex_arrays(int, uint*) @extern("glDeleteVertexArrays");
 extern fn void delete_buffers(int, uint*) @extern("glDeleteBuffers");
+extern fn void delete_textures(int size, uint* textures) @extern("glDeleteTextures");
 
 extern fn void tex_parameter_i(int, int, int) @extern("glTexParameteri");
 extern fn void texture_parameter_i(int, int, int) @extern("glTextureParameteri");

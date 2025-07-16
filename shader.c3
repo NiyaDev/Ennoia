@@ -54,7 +54,7 @@ enum UniformType {
   MATRIX4X3,
 }
 
-const char[] BASIC_VERTEX = 
+const char[] DEFAULT_VERTEX_3D = 
   "#version 330 core\n"
   "layout (location = 0) in vec3 aPos;\n"
   "layout (location = 1) in vec3 norm;\n"
@@ -67,7 +67,30 @@ const char[] BASIC_VERTEX =
   "  gl_Position = projection * view * model * vec4(aPos, 1.0f);\n"
   "  TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
   "}\n";
-const char[] BASIC_FRAGMENT = 
+const char[] DEFAULT_FRAGMENT_3D = 
+  "#version 330 core\n"
+  "out vec4 FragColor;\n\n"
+  "in vec2 TexCoord;\n\n"
+  "uniform sampler2D texture1;\n\n"
+  "void main() {\n"
+  "  FragColor = texture(texture1, TexCoord);\n"
+  "}\n";
+
+const char[] DEFAULT_VERTEX_2D = 
+  "#version 330 core\n"
+  "layout (location = 0) in vec3 aPos;\n"
+  "layout (location = 2) in vec2 aTexCoord;\n\n"
+  "out vec2 TexCoord;\n\n"
+  "uniform vec2 screensize;\n"
+  "uniform vec2 position;\n"
+  "uniform vec2 scale;\n"
+  "void main() {\n"
+  "  vec4 scaled = (vec4(aPos, 1.0f) * vec4(scale.x, scale.y, 1.0f, 1.0f));\n"
+  "  vec4 pixel_pos = (vec4(position.x, -position.y, 0.0f, 0.0f) / vec4(screensize, 1.0f, 1.0f));\n"
+  "  gl_Position = scaled + pixel_pos;\n"
+  "  TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
+  "}\n";
+const char[] DEFAULT_FRAGMENT_2D = 
   "#version 330 core\n"
   "out vec4 FragColor;\n\n"
   "in vec2 TexCoord;\n\n"
@@ -122,7 +145,7 @@ fn Shader compile(char[] vert = {}, char[] frag = {}) {
   if (vert.len > 0) {
     gl::shader_source(vertex_shader, 1, &&((char*)vert), null);
   } else {
-    gl::shader_source(vertex_shader, 1, &&((char*)BASIC_VERTEX), null);
+    gl::shader_source(vertex_shader, 1, &&((char*)DEFAULT_VERTEX_3D), null);
   }
   gl::compile_shader(vertex_shader);
   gl::get_shaderiv(vertex_shader, gl::COMPILE_STATUS, &success);
@@ -139,7 +162,7 @@ fn Shader compile(char[] vert = {}, char[] frag = {}) {
   if (frag.len > 0) {
     gl::shader_source(fragment_shader, 1, &&((char*)frag), null);
   } else {
-    gl::shader_source(fragment_shader, 1, &&((char*)BASIC_FRAGMENT), null);
+    gl::shader_source(fragment_shader, 1, &&((char*)DEFAULT_FRAGMENT_3D), null);
   }
   gl::compile_shader(fragment_shader);
   gl::get_shaderiv(fragment_shader, gl::COMPILE_STATUS, &success);

@@ -91,17 +91,7 @@ const Vertex[] BASIC_CUBE = {
   @return "Mesh struct"
  *>
 fn Mesh new(Vertex[] vertices = {}) {
-  Mesh output;
-
-  if (vertices.len != 0) {
-    output.vertices = vertices;
-  } else {
-    output.vertices = BASIC_TRI;
-  }
-
-  output.upload();
-
-  return output;
+  return gen_triangle();
 }
 
 // Mesh generation
@@ -152,6 +142,12 @@ fn Mesh generate_mesh_test(uint[][] data) {
 
   return output;
 }
+<* Cleans up data *>
+fn void Mesh.clean(&self) {
+  self.delete();
+  free(self.vertices);
+  self.shader.clean();
+}
 
 <* Uploads mesh data to GPU *>
 fn void Mesh.upload(&self) {
@@ -183,16 +179,14 @@ fn void Mesh.delete(&self) {
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
 fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
-  //self.upload();
-
   if (self.shader.id != 0) {
     self.shader.use();
   } else {
-    ennoia::default_shader.use();
+    ennoia::default_shader_3d.use();
   }
 
-  ennoia::default_shader.set_mat4x4("view", camera::get_matrix());
-  ennoia::default_shader.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
+  ennoia::default_shader_3d.set_mat4x4("view", camera::get_matrix());
+  ennoia::default_shader_3d.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
   
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
@@ -202,11 +196,26 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
 
 	gl::bind_vertex_array(self.vao);
 	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
-
-	//self.delete();
 }
-fn void Mesh.draw_2d(&self, Vector2 position, Vector2 scale, float rotation, Texture* img) {
-  
+fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) {
+  if (self.shader.id != 0) {
+    self.shader.use();
+  } else {
+    ennoia::default_shader_2d.use();
+  }
+
+  //ennoia::default_shader_2d.set_mat4x4("model", matrix::IDENTITY.translate({position.x, position.y, 0}).rotate({0,0,rotation}).scale({scale.x, scale.y, 1}));
+  ennoia::default_shader_2d.set_vec2("position", position);
+  ennoia::default_shader_2d.set_vec2("scale", scale);
+
+  if (texture != null) {
+    gl::bind_texture(gl::TEXTURE_2D, texture.id);
+  } else {
+    gl::bind_texture(gl::TEXTURE_2D, 0);
+  }
+
+  gl::bind_vertex_array(self.vao);
+  gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
 }
 
 <* Prints info on vertex *>
