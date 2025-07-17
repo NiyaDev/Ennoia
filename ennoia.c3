@@ -91,7 +91,7 @@ fn void start_drawing() {
   gl::enable(gl::DEPTH_TEST);
   gl::viewport(0, 0, renWidth, renHeight);
 
-  clear_background(bgColor);
+  clear_background(bgColor, gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 }
 <**>
 fn void start_ui() {}
@@ -102,8 +102,7 @@ fn void end_drawing() {
   // Set up default framebuffer
   gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
   gl::disable(gl::DEPTH_TEST);
-  gl::clear_color((float)color::ORANGE.r / 255, (float)color::ORANGE.g / 255, (float)color::ORANGE.b / 255, (float)color::ORANGE.a / 255);
-  gl::clear(gl::COLOR_BUFFER_BIT);
+  clear_background(color::ORANGE, gl::COLOR_BUFFER_BIT);
   gl::viewport(0, 0, scrWidth, scrHeight);
 
 

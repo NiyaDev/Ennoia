@@ -8,9 +8,9 @@ import std::collections;
 <* Wrapper for clear color
   @param color: "Color to draw background"
  *>
-fn void clear_background(Color color) {
+fn void clear_background(Color color, int flags) {
   gl::clear_color((float)color.r / 255, (float)color.g / 255, (float)color.b / 255, (float)color.a / 255);
-  gl::clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+  gl::clear(flags);
 }
 
 <* Sets vertex attribute data

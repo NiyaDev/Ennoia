@@ -84,3 +84,6 @@
 - Added clean functions for Mesh, Render texture, texture, and ennoia in general.
 - Fully added drawing a texture to screen.
 
+==== [7/17/25]
+- Minor changes
+
