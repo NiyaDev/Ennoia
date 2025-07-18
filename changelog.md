@@ -87,3 +87,6 @@
 ==== [7/17/25]
 - Minor changes
 
+==== [7/18/25]
+- Started work on Bulk v2 and then restarted because I wanted to go in a different direction.
+

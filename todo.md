@@ -10,3 +10,8 @@
 - Keybindings
 - Filestorage
 - Bulk
+  - Loading different file types
+    - Images
+    - Meshes
+    - etc
+  - Program to create files automatically
