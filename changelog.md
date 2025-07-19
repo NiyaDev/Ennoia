@@ -90,3 +90,6 @@
 ==== [7/18/25]
 - Started work on Bulk v2 and then restarted because I wanted to go in a different direction.
 
+==== [7/19/25]
+- Minor md changes
+

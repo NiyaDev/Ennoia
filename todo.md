@@ -6,9 +6,6 @@
   - matrix.c3
 - Confirm all matrix.c3 functions work
 - UI
-- Swap from GLFW to SDL3?
-- Keybindings
-- Filestorage
 - Bulk
   - Loading different file types
     - Images
