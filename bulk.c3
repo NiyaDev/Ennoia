@@ -54,8 +54,6 @@ fn char[] load(String filepath, String dataname) {
       file.seek(file.read_long())!!;
       break;
     } else {
-      file.read_long();
-      file.read_long();
     }
   }
 
@@ -66,7 +64,36 @@ fn char[] load(String filepath, String dataname) {
 
   return data;
 }
+<**>
+fn String[] get_entries(String filepath) {
+  List{String} list;
+  File file = file::open(filepath, "rb")!!;
 
+  // Ensure correct version
+  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  
+  // Skip bytes
+  file.read_byte()!!;
+  file.read_byte()!!;
+
+  // Find data
+  while (true) {
+    String name = file.read_string();
+    io::printfn("[%s]",name);
+    if (name.len == 0) break;
+
+    file.read_long();
+    file.read_long();
+
+    list.push(name);
+  }
+
+  String[] output = list.to_array(allocator::heap());
+  list.free();
+
+  return output;
+}
 
 <* Reads a short from file since the base language doesn't have one *>
 fn short File.read_short(&self) {

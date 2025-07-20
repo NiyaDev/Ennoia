@@ -93,3 +93,6 @@
 ==== [7/19/25]
 - Minor md changes
 
+==== [7/20/25]
+- Worked on adding more functionality to Bulk and started making bulk_packer to make bulk files
+
