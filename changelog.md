@@ -96,3 +96,6 @@
 ==== [7/20/25]
 - Worked on adding more functionality to Bulk and started making bulk_packer to make bulk files
 
+==== [7/21/25]
+- Continued on Bulk loading and almost finished the packer
+

@@ -50,7 +50,6 @@ fn char[] load(String filepath, String dataname) {
     String str = file.read_string();
     if (str == dataname) {
       length = file.read_long();
-      io::printfn("%d", length);
       file.seek(file.read_long())!!;
       break;
     } else {
@@ -80,7 +79,6 @@ fn String[] get_entries(String filepath) {
   // Find data
   while (true) {
     String name = file.read_string();
-    io::printfn("[%s]",name);
     if (name.len == 0) break;
 
     file.read_long();
@@ -148,5 +146,18 @@ fn String File.read_string(&self) {
   String output = (String)constr.to_array(allocator::heap());
   constr.free();
   return output;
+}
+
+
+<* Reads a long from file since the base language doesn't have one *>
+fn void File.write_long(&self, long val) {
+  self.write_byte((char)(val >>  0))!!;
+  self.write_byte((char)(val >>  8))!!;
+  self.write_byte((char)(val >> 16))!!;
+  self.write_byte((char)(val >> 24))!!;
+  self.write_byte((char)(val >> 32))!!;
+  self.write_byte((char)(val >> 40))!!;
+  self.write_byte((char)(val >> 48))!!;
+  self.write_byte((char)(val >> 56))!!;
 }
 
