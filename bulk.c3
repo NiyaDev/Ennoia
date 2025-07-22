@@ -6,33 +6,12 @@ import std::collections;
 
 const char VERSION_MAJOR = 2;
 const char VERSION_MINOR = 0;
-//const char VERSION_PATCH = 0;
-
-//alias Entry = char[];
-/*
-struct Bulk {
-  String name;
-  String path;
-
-  char major, minor, patch;
-
-  HashMap{String, Entry} entries;
-}
-
-struct Entry {
-  Compression compression;
-
-  char[] data;
-}
-
-enum Compression {
-  NONE,
-  DEFLATE,
-}
-*/
 
 
-<**>
+<* Load file from Bulk
+  @param filepath: "Path to bulk file"
+  @param dataname: "Name of data inside bulk file"
+ *>
 fn char[] load(String filepath, String dataname) {
   File file = file::open(filepath, "rb")!!;
 
@@ -63,8 +42,22 @@ fn char[] load(String filepath, String dataname) {
 
   return data;
 }
-<**>
+<* Shorthand for loading a texture from a bulk file
+  @param filepath: "Path to bulk file"
+  @param dataname: "Name of data inside bulk file"
+ *>
+fn Texture load_texture(filepath, String dataname) {
+  char[] data = load(filepath, dataname);
+
+  return texture::load_from_mem(data);
+}
+
+<* Gets a list of entries inside bulk
+  @param filepath: "Bulk file to get entries from"
+ *>
 fn String[] get_entries(String filepath) {
+  if (file::get_size(filepath)!! < 4) return {};
+
   List{String} list;
   File file = file::open(filepath, "rb")!!;
 
@@ -91,6 +84,55 @@ fn String[] get_entries(String filepath) {
   list.free();
 
   return output;
+}
+<* Get length of entry data
+  @param filepath: "Bulk file to get entry from"
+  @param dataname: "Entry name to get length of"
+ *>
+fn usz get_entry_len(String filepath, String dataname) {
+  File file = file::open(filepath, "rb")!!;
+
+  // Ensure correct version
+  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  
+  // Skip bytes
+  file.read_byte()!!;
+  file.read_byte()!!;
+
+  // Find data
+  usz length;
+  for (int i; true; i++) {
+    String str = file.read_string();
+    if (str == dataname) {
+      return file.read_long();
+    }
+  }
+}
+<* Gets postion of data inside bulk file
+  @param filepath: "Bulk file to get entry from"
+  @param dataname: "Entry name to get position of"
+ *>
+fn usz get_entry_ptr(String filepath, String dataname) {
+  File file = file::open(filepath, "rb")!!;
+
+  // Ensure correct version
+  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  
+  // Skip bytes
+  file.read_byte()!!;
+  file.read_byte()!!;
+
+  // Find data
+  usz length;
+  for (int i; true; i++) {
+    String str = file.read_string();
+    if (str == dataname) {
+      file.read_long();
+      return file.read_long();
+    }
+  }
 }
 
 <* Reads a short from file since the base language doesn't have one *>

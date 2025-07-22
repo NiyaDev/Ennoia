@@ -99,3 +99,10 @@
 ==== [7/21/25]
 - Continued on Bulk loading and almost finished the packer
 
+==== [7/22/25]
+- Bulk:
+  - Basic Bulk packer finished and able to add and remove entries from bulk files.
+  - Functions for getting entry length or pointer.
+  - Function for getting textures.
+- Function for loading texture from array (memory).
+

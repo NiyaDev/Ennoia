@@ -32,10 +32,11 @@ fn int main(String[] args) {
 	if (file::is_file(filename)) {
 		String[] allEntries = bulk::get_entries(filename);
 		for (int i; i < allEntries.len; i++) {
-			names.set(allEntries[i], {filename,file::get_size(filename)!!,0});
+			names.set(allEntries[i], {filename,bulk::get_entry_len(filename, allEntries[i]),0});
 		}
 	}
 
+	// Read flags
 	usz numEntries = args.len;
 	usz head = 2;
 	for (int i; head < numEntries; i++) {
@@ -50,8 +51,8 @@ fn int main(String[] args) {
 		}
 	}
 
-	// This needs to calculate the file size correctly when dealing with a bulk
-	usz headerSize = 4;
+	// Calculate sizes of Header and content
+	usz headerSize = 5;
 	usz dataSize;
 	names.@each(; String key, Entry val) {
 		headerSize += key.len + 1 + 8 + 8;
@@ -64,6 +65,7 @@ fn int main(String[] args) {
 		 head += ref.length;
 	};
 
+	// Write to temp file
 	head = 0;
 	File data = file::open("temp", "wb")!!;
 	data.write_byte(bulk::VERSION_MAJOR)!!;
@@ -77,16 +79,30 @@ fn int main(String[] args) {
 		data.write_long(val.pointer);
 
 		usz old = data.seek(0,Seek.CURSOR)!!;
-		//data.seek(val.pointer)!!;
+		data.seek(val.pointer)!!;
 
+		File dat = file::open(val.filepath,"rb")!!;
+		if (val.filepath == filename) dat.seek(bulk::get_entry_ptr(filename, key))!!;
+		
+		for (int i; i < val.length; i++) {
+			data.write_byte(dat.read_byte()!!)!!;
+		}
+		dat.close()!!;
+
+		data.seek(old)!!;
 	};
+	data.close()!!;
 
-	io::printfn("%d-%d",headerSize,dataSize);
-	
-	// Load new files
-	
-	
-	//file.close()!!;
+	// Copy temp file to new file
+	File file = file::open(filename, "wb")!!;
+	File temp = file::open("temp", "rb")!!;
+	for (int i; i < headerSize+dataSize; i++) {
+		file.write_byte(temp.read_byte()!!)!!;
+	}
+	file.close()!!;
+
+	// Delete temp
+	file::delete("temp")!!;
 
 	return 0;
 }

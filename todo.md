@@ -1,6 +1,5 @@
 
 == v0.1.0
-==== Minor
 - Re-write files from Pleroma:
   - vector.c3
   - matrix.c3
@@ -8,7 +7,12 @@
 - UI
 - Bulk
   - Loading different file types
-    - Images
+    - ~~Images~~
     - Meshes
     - etc
-  - Program to create files automatically
+    - Keybinds
+  - ~~Program to create files automatically~~
+- Saving/Loading keybinds array
+- Write tests
+- Options
+- Localization
