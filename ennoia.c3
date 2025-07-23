@@ -67,6 +67,9 @@ fn void init(int width, int height, String title, float renderRes = 1) {
 
   // Texture mesh
   textureMesh = mesh::gen_quad();
+
+  // Keybinds
+  bulk::load_all_keybinds("resources/keybinds");
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {

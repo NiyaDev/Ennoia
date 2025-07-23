@@ -106,3 +106,8 @@
   - Function for getting textures.
 - Function for loading texture from array (memory).
 
+==== [7/23/25]
+- Added keybinds loading from bulk
+- Added saving Keybinds to file
+- Added Options system as well as saving and loading from bulk. Still needs to be tested.
+

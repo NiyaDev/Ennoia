@@ -1,5 +1,6 @@
 
 module ennoia::bulk;
+import ennoia;
 import std::io;
 import std::collections;
 
@@ -46,10 +47,73 @@ fn char[] load(String filepath, String dataname) {
   @param filepath: "Path to bulk file"
   @param dataname: "Name of data inside bulk file"
  *>
-fn Texture load_texture(filepath, String dataname) {
+fn Texture load_texture(String filepath, String dataname) {
   char[] data = load(filepath, dataname);
 
   return texture::load_from_mem(data);
+}
+<* Shorthand for loading a keybind from a bulk file
+  @param filepath: "Path to bulk file"
+  @param dataname: "Name of data inside bulk file"
+ *>
+fn void load_keybind(String filepath, String dataname) {
+  char[] data = load(filepath, dataname);
+
+  Keybind kb = {
+    ((uint)(data[0])) + ((uint)(data[1]) << 8) + ((uint)(data[2]) << 16) + ((uint)(data[3]) << 24),
+    ((ushort)(data[4])) + ((ushort)(data[5]) << 8),
+  };
+
+  keybinds::binds.set(dataname,kb);
+}
+<* Shorthand for loading an option from a bulk file
+  @param filepath: "Path to bulk file"
+  @param dataname: "Name of data inside bulk file"
+ *>
+fn void load_option(String filepath, String dataname) {
+  char[] data = load(filepath, dataname);
+
+  Option opt;
+  opt.type = OptionType.from_ordinal(data[0]);
+
+  switch (opt.type) {
+    case CHAR:
+      opt.data.as_char   =    data[1];
+    case SHORT:
+      opt.data.as_short  = *(&data[1]);
+    case INT:
+      opt.data.as_int    = *(&data[1]);
+    case LONG:
+      opt.data.as_long   = *(&data[1]);
+
+    case FLOAT:
+      opt.data.as_float  = *(&data[1]);
+    case DOUBLE:
+      opt.data.as_double = *(&data[1]);
+  }
+
+  options::options.set(dataname, opt);
+}
+
+<* Loads all keybinds in file
+  @param filepath: "File path of file to load"
+ *>
+fn void load_all_keybinds(String filepath) {
+  String[] entries = bulk::get_entries(filepath);
+
+  for (int i; i < entries.len; i++) {
+    bulk::load_keybind(filepath, entries[i]);
+  }
+}
+<* Loads all keybinds in file
+  @param filepath: "File path of file to load"
+ *>
+fn void load_all_options(String filepath) {
+  String[] entries = bulk::get_entries(filepath);
+
+  for (int i; i < entries.len; i++) {
+    bulk::load_option(filepath, entries[i]);
+  }
 }
 
 <* Gets a list of entries inside bulk
@@ -137,7 +201,7 @@ fn usz get_entry_ptr(String filepath, String dataname) {
 
 <* Reads a short from file since the base language doesn't have one *>
 fn short File.read_short(&self) {
-  return ((short)self.read_byte()!!)       + ((short)self.read_byte()!! <<  8);
+  return ((short)self.read_byte()!!) + ((short)self.read_byte()!! <<  8);
 }
 <* Reads an int from file since the base language doesn't have one *>
 fn int File.read_int(&self) {
@@ -191,6 +255,18 @@ fn String File.read_string(&self) {
 }
 
 
+<* Reads a short from file since the base language doesn't have one *>
+fn void File.write_short(&self, short val) {
+  self.write_byte((char)(val >>  0))!!;
+  self.write_byte((char)(val >>  8))!!;
+}
+<* Reads a int from file since the base language doesn't have one *>
+fn void File.write_int(&self, int val) {
+  self.write_byte((char)(val >>  0))!!;
+  self.write_byte((char)(val >>  8))!!;
+  self.write_byte((char)(val >> 16))!!;
+  self.write_byte((char)(val >> 24))!!;
+}
 <* Reads a long from file since the base language doesn't have one *>
 fn void File.write_long(&self, long val) {
   self.write_byte((char)(val >>  0))!!;
@@ -201,5 +277,30 @@ fn void File.write_long(&self, long val) {
   self.write_byte((char)(val >> 40))!!;
   self.write_byte((char)(val >> 48))!!;
   self.write_byte((char)(val >> 56))!!;
+}
+
+<* Reads a float from file since the base language doesn't have one *>
+fn void File.write_float(&self, float val) {
+  char[] dat = mem::new_array(char, 4);
+  mem::copy(dat, &val, 4);
+
+  self.write_byte(dat[0])!!;
+  self.write_byte(dat[1])!!;
+  self.write_byte(dat[2])!!;
+  self.write_byte(dat[3])!!;
+}
+<* Reads a double from file since the base language doesn't have one *>
+fn void File.write_double(&self, double val) {
+  char[] dat = mem::new_array(char, 8);
+  mem::copy(dat, &val, 8);
+
+  self.write_byte(dat[0])!!;
+  self.write_byte(dat[1])!!;
+  self.write_byte(dat[2])!!;
+  self.write_byte(dat[3])!!;
+  self.write_byte(dat[4])!!;
+  self.write_byte(dat[5])!!;
+  self.write_byte(dat[6])!!;
+  self.write_byte(dat[7])!!;
 }
 

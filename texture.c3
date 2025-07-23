@@ -45,8 +45,8 @@ fn Texture load_from_mem(char[] data) {
   stb::stbi_set_flip_vertically_on_load(true);
 
   uint channels;
-  char* data = stb::stbi_load((char*)data, data.len, &output.width, &output.height, &channels, 0);
-  assert(data != null, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to load image]");
+  char* img = stb::stbi_load_from_memory((char*)data, (uint)data.len, &output.width, &output.height, &channels, 0);
+  assert(img != null, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to load image]");
 
   gl::gen_textures(1, &output.id);
   gl::bind_texture(gl::TEXTURE_2D, output.id);
@@ -54,11 +54,11 @@ fn Texture load_from_mem(char[] data) {
   gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
   gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
-  gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGB, gl::UNSIGNED_BYTE, data);
+  gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGB, gl::UNSIGNED_BYTE, img);
   gl::generate_mipmap(gl::TEXTURE_2D);
   assert(output.id != 0, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to bind texture]");
 
-  stb::stbi_image_free(data);
+  stb::stbi_image_free(img);
 
   return output;
 }

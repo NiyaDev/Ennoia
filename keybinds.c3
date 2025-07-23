@@ -3,6 +3,7 @@ module ennoia::keybinds;
 import std::io;
 import std::collections;
 import ennoia::sdl;
+import ennoia::bulk;
 
 
 alias KeyboardKey = uint;
@@ -23,6 +24,22 @@ struct Keybind {
   KeyboardMod mod;
 }
 
+<* Saves all keybinds as a file *>
+fn void save_keybinds() {
+  // Calculate size of file
+  usz length = binds.len() * 6;
+  binds.@each(; String key, Keybind val) {
+    length += key.len + 1;
+  };
+
+  // Create file
+  binds.@each(; String key, Keybind val) {
+    File file = file::open(key, "wb")!!;
+    file.write_int(val.key);
+    file.write_short(val.mod);
+    file.close()!!;
+  };
+}
 <* Prints all information from keydata entry *>
 fn void KeyData.print(&self) {
   io::printfn("%X - %X (%s|%s)",self.key, self.mod, self.down, self.repeat);
@@ -71,20 +88,6 @@ fn void add_queue(SDL_KeyboardEvent data) {
 fn void rem_queue(SDL_KeyboardEvent data) {
   int val = queue_contains(data);
   if (val != -1) keyqueue.remove_at(val);
-}
-
-// NOTE: TEMP
-fn void init() @init {
-  binds.set("up",     {sdl::KEY_W, sdl::KEY_UNKNOWN});
-  binds.set("down",   {sdl::KEY_S, sdl::KEY_UNKNOWN});
-  binds.set("left",   {sdl::KEY_A, sdl::KEY_UNKNOWN});
-  binds.set("right",  {sdl::KEY_D, sdl::KEY_UNKNOWN});
-  binds.set("ascend", {sdl::KEY_LSHIFT, sdl::KEY_UNKNOWN});
-  binds.set("descend",{sdl::KEY_LCTRL, sdl::KEY_UNKNOWN});
-  binds.set("left_rot", {sdl::KEY_Q, sdl::KEY_UNKNOWN});
-  binds.set("right_rot",{sdl::KEY_E, sdl::KEY_UNKNOWN});
-  binds.set("quit",   {sdl::KEY_ESCAPE, sdl::KEY_UNKNOWN});
-  binds.set("debug",  {sdl::KEY_P, sdl::KEY_UNKNOWN});
 }
 
 <* Returns whether the input keybind is currently pressed down for the first time.
