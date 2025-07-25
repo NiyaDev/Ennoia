@@ -12,7 +12,11 @@
     - etc
     - Keybinds
   - ~~Program to create files automatically~~
-- Saving/Loading keybinds array
+- ~~Saving/Loading keybinds array~~
 - Write tests
-- Options
+- ~~Options~~
 - Localization
+- Meshes
+  - Functions to edit specific vertex things and have it update the mesh internally
+- Textures
+  - Draw tiled

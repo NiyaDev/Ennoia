@@ -86,18 +86,47 @@ fn void Texture.clean(&self) {
 }
 
 <* Draw texture to screen *>
-fn void Texture.draw(&self, Vector2 position = {}, Vector2 size = {-1,-1}) {
+fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}) {
   // Calculating size on screen
-  Vector2 new_size = size;
-  if (size == {-1,-1}) new_size = {self.width, self.height};
+  Vector2 newSize = {dest.w, dest.h};
+  if (dest.w < -1) newSize.x = (float)self.width;
+  if (dest.h < -1) newSize.y = (float)self.height;
   Vector2 scale = {
-    new_size.x / (float)ennoia::renWidth,
-    new_size.y / (float)ennoia::renHeight,
+    newSize.x / (float)ennoia::renWidth,
+    newSize.y / (float)ennoia::renHeight,
   };
 
-  // Calculating position on screen
-  Vector2 pos = position + new_size - (Vector2){(float)ennoia::renWidth, (float)ennoia::renHeight};
+  // Change texcoords
+  ennoia::textureMesh.delete();
+  Rectangle newSrc = src;
+  if (src.w < 0) newSrc.w = (float)self.width;
+  if (src.h < 0) newSrc.h = (float)self.height;
+  Vector2 topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
+  Vector2 topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
+  Vector2 botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
+  Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
+  ennoia::textureMesh.vertices[0].texCoords = topLeft;
+  ennoia::textureMesh.vertices[1].texCoords = botLeft;
+  ennoia::textureMesh.vertices[2].texCoords = botRight;
+  ennoia::textureMesh.vertices[3].texCoords = topLeft;
+  ennoia::textureMesh.vertices[4].texCoords = botRight;
+  ennoia::textureMesh.vertices[5].texCoords = topRight;
+  ennoia::textureMesh.upload();
 
+  // Calculating position on screen
+  Vector2 pos = (Vector2){dest.x, dest.y} + newSize - (Vector2){(float)ennoia::renWidth, (float)ennoia::renHeight};
+
+  // Draw
   ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
+
+  // Reset TexCoords
+  ennoia::textureMesh.delete();
+  ennoia::textureMesh.vertices[0].texCoords = {0,1};
+  ennoia::textureMesh.vertices[1].texCoords = {0,0};
+  ennoia::textureMesh.vertices[2].texCoords = {1,0};
+  ennoia::textureMesh.vertices[3].texCoords = {0,1};
+  ennoia::textureMesh.vertices[4].texCoords = {1,0};
+  ennoia::textureMesh.vertices[5].texCoords = {1,1};
+  ennoia::textureMesh.upload();
 }
 

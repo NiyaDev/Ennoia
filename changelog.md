@@ -111,3 +111,9 @@
 - Added saving Keybinds to file
 - Added Options system as well as saving and loading from bulk. Still needs to be tested.
 
+==== [7/24/25]
+- Added Rectangles
+- Texture Draw
+  - Moved Position + Size into a rectangle dest.
+  - Added Rectangle src to draw a specific portion of the texture.
+
