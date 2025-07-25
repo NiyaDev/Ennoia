@@ -117,3 +117,7 @@
   - Moved Position + Size into a rectangle dest.
   - Added Rectangle src to draw a specific portion of the texture.
 
+==== [7/25/25]
+- Font loading, both from file and data
+- Font drawing with scaling and spacing
+

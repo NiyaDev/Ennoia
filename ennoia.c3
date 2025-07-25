@@ -97,7 +97,11 @@ fn void start_drawing() {
   clear_background(bgColor, gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 }
 <**>
-fn void start_ui() {}
+fn void draw_ui() {
+  
+
+  
+}
 <* Swaps buffers and polls events *>
 fn void end_drawing() {
   scrollwheel = 0;
@@ -107,7 +111,6 @@ fn void end_drawing() {
   gl::disable(gl::DEPTH_TEST);
   clear_background(color::ORANGE, gl::COLOR_BUFFER_BIT);
   gl::viewport(0, 0, scrWidth, scrHeight);
-
 
   // Draw renderquad to screen
   render::renderQuad.shader.use();

@@ -30,7 +30,7 @@ fn Texture load(String filename) {
   gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
   gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
-  gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGB, gl::UNSIGNED_BYTE, data);
+  gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGBA, gl::UNSIGNED_BYTE, data);
   gl::generate_mipmap(gl::TEXTURE_2D);
   assert(output.id != 0, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to bind texture]");
 
@@ -54,7 +54,7 @@ fn Texture load_from_mem(char[] data) {
   gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
   gl::tex_parameter_i(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
-  gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGB, gl::UNSIGNED_BYTE, img);
+  gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGBA, gl::UNSIGNED_BYTE, img);
   gl::generate_mipmap(gl::TEXTURE_2D);
   assert(output.id != 0, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to bind texture]");
 
@@ -114,7 +114,10 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
   ennoia::textureMesh.upload();
 
   // Calculating position on screen
-  Vector2 pos = (Vector2){dest.x, dest.y} + newSize - (Vector2){(float)ennoia::renWidth, (float)ennoia::renHeight};
+  Vector2 pos = {
+    dest.x + newSize.x - (float)ennoia::renWidth,
+    dest.y + newSize.y - (float)ennoia::renHeight,
+  };
 
   // Draw
   ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);

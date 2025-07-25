@@ -18,5 +18,7 @@
 - Localization
 - Meshes
   - Functions to edit specific vertex things and have it update the mesh internally
+  - Blending
+  - Culling
 - Textures
   - Draw tiled
