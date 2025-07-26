@@ -121,3 +121,7 @@
 - Font loading, both from file and data
 - Font drawing with scaling and spacing
 
+==== [7/26/25]
+- Moved wrapper.c3 funtions to ennoia.c3
+- Added function to meshes to update texcoords
+

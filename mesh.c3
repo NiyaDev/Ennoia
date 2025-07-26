@@ -172,6 +172,19 @@ fn void Mesh.delete(&self) {
   gl::delete_buffers(1, &self.vbo);
 }
 
+<* Changes the TexCoords of the mesh and re-uploads it
+  @param newCoords: "Array of new texCoords"
+  @require newCoords.len == self.vertices.len
+ *>
+fn void Mesh.update_texcoords(&self, Vector2[] newCoords) {
+  for (int i; i < newCoords.len; i++) {
+    self.vertices[i].texCoords = newCoords[i];
+  }
+
+  self.delete();
+  self.upload();
+}
+
 <* Draws Mesh
   @param position: "Position in space to draw mesh. Default is {0,0,0}."
   @param scale:    "Scale to draw mesh at. Default is {1,1,1}."

@@ -97,21 +97,14 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
   };
 
   // Change texcoords
-  ennoia::textureMesh.delete();
   Rectangle newSrc = src;
   if (src.w < 0) newSrc.w = (float)self.width;
   if (src.h < 0) newSrc.h = (float)self.height;
   Vector2 topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
   Vector2 topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
   Vector2 botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
-  Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
-  ennoia::textureMesh.vertices[0].texCoords = topLeft;
-  ennoia::textureMesh.vertices[1].texCoords = botLeft;
-  ennoia::textureMesh.vertices[2].texCoords = botRight;
-  ennoia::textureMesh.vertices[3].texCoords = topLeft;
-  ennoia::textureMesh.vertices[4].texCoords = botRight;
-  ennoia::textureMesh.vertices[5].texCoords = topRight;
-  ennoia::textureMesh.upload();
+  Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))}; 
+  ennoia::textureMesh.update_texcoords({topLeft, botLeft, botRight, topLeft, botRight, topRight});
 
   // Calculating position on screen
   Vector2 pos = {
@@ -123,13 +116,6 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
   ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
 
   // Reset TexCoords
-  ennoia::textureMesh.delete();
-  ennoia::textureMesh.vertices[0].texCoords = {0,1};
-  ennoia::textureMesh.vertices[1].texCoords = {0,0};
-  ennoia::textureMesh.vertices[2].texCoords = {1,0};
-  ennoia::textureMesh.vertices[3].texCoords = {0,1};
-  ennoia::textureMesh.vertices[4].texCoords = {1,0};
-  ennoia::textureMesh.vertices[5].texCoords = {1,1};
-  ennoia::textureMesh.upload();
+  ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
 }
 

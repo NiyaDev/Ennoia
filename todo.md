@@ -7,14 +7,10 @@
 - UI
 - Bulk
   - Loading different file types
-    - ~~Images~~
     - Meshes
     - etc
-    - Keybinds
-  - ~~Program to create files automatically~~
-- ~~Saving/Loading keybinds array~~
 - Write tests
-- ~~Options~~
+  - There IS a leak in the test program. I need to find it.
 - Localization
 - Meshes
   - Functions to edit specific vertex things and have it update the mesh internally
@@ -22,3 +18,4 @@
   - Culling
 - Textures
   - Draw tiled
+- Move SDL3 and OpenGL binds to seperate projects for simplicity
