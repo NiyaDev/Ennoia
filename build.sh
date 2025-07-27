@@ -2,5 +2,5 @@
 
 clear
 
-zip ./ennoia.c3l ./*.c3 ./manifest.json
+zip -r -0 ./ennoia.c3l ./*.c3 ./manifest.json
 

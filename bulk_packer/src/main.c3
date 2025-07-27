@@ -45,6 +45,10 @@ fn int main(String[] args) {
 				String name = args[head++];
 				String path = args[head++];
 				names.set(name, {path,file::get_size(path)!!,0});
+			case "-t": // Text
+				String name = args[head++];
+				String path = args[head++];
+				names.set(name, {path,path.len,0});
 			case "-r": // Remove
 				names.remove(args[head++]);
 			default:
@@ -70,8 +74,7 @@ fn int main(String[] args) {
 	File data = file::open("temp", "wb")!!;
 	data.write_byte(bulk::VERSION_MAJOR)!!;
 	data.write_byte(bulk::VERSION_MINOR)!!;
-	data.write_byte(0xff)!!;
-	data.write_byte(0xff)!!;
+	data.write_short((short)names.len());
 	names.@each(; String key, Entry val) {
 		data.write((char[])key)!!;
 		data.write_byte('\0')!!;
@@ -81,13 +84,20 @@ fn int main(String[] args) {
 		usz old = data.seek(0,Seek.CURSOR)!!;
 		data.seek(val.pointer)!!;
 
-		File dat = file::open(val.filepath,"rb")!!;
-		if (val.filepath == filename) dat.seek(bulk::get_entry_ptr(filename, key))!!;
+		//File dat = file::open(val.filepath,"rb")!!;
+		File? dat = file::open(val.filepath,"rb");
+		if (catch dat) {
+			for (int i; i < val.filepath.len; i++) {
+				data.write_byte(val.filepath[i])!!;
+			}
+		} else {
+			if (val.filepath == filename) dat.seek(bulk::get_entry_ptr(filename, key))!!;
 		
-		for (int i; i < val.length; i++) {
-			data.write_byte(dat.read_byte()!!)!!;
+			for (int i; i < val.length; i++) {
+				data.write_byte(dat.read_byte()!!)!!;
+			}
+			dat.close()!!;
 		}
-		dat.close()!!;
 
 		data.seek(old)!!;
 	};

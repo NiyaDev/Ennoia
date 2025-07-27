@@ -20,19 +20,24 @@ fn char[] load(String filepath, String dataname) {
   assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
   assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
   
-  // Skip bytes
-  file.read_byte()!!;
-  file.read_byte()!!;
+  // Read number of entries
+  short num = file.read_short();
 
   // Find data
   usz length;
-  for (int i; true; i++) {
+  for (int i; i < num; i++) {
     String str = file.read_string();
     if (str == dataname) {
+      // Read data length and pointer
       length = file.read_long();
       file.seek(file.read_long())!!;
+      // Free string and leave loop
+      str.free(allocator::heap());
       break;
     } else {
+      file.read_long();
+      file.read_long();
+      str.free(allocator::heap());
     }
   }
 
@@ -50,13 +55,16 @@ fn char[] load(String filepath, String dataname) {
 fn Texture load_texture(String filepath, String dataname) {
   char[] data = load(filepath, dataname);
 
-  return texture::load_from_mem(data);
+  Texture tex = texture::load_from_mem(data);
+  free(data);
+
+  return tex;
 }
 <* Shorthand for loading a keybind from a bulk file
   @param filepath: "Path to bulk file"
   @param dataname: "Name of data inside bulk file"
  *>
-fn void load_keybind(String filepath, String dataname) {
+fn Keybind load_keybind(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
 
   Keybind kb = {
@@ -64,35 +72,51 @@ fn void load_keybind(String filepath, String dataname) {
     ((ushort)(data[4])) + ((ushort)(data[5]) << 8),
   };
 
-  keybinds::binds.set(dataname,kb);
+  if (send) keybinds::binds.set(dataname,kb);
+  free(data);
+
+  return kb;
 }
 <* Shorthand for loading an option from a bulk file
   @param filepath: "Path to bulk file"
   @param dataname: "Name of data inside bulk file"
  *>
-fn void load_option(String filepath, String dataname) {
+fn Option load_option(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
 
   Option opt;
-  opt.type = OptionType.from_ordinal(data[0]);
+  opt.type = OptionType.from_ordinal(data[0]); 
 
   switch (opt.type) {
     case CHAR:
       opt.data.as_char   =    data[1];
     case SHORT:
-      opt.data.as_short  = *(&data[1]);
+      short sh;
+      mem::copy(&sh, &data[1], 2);
+      opt.data.as_short  = sh;
     case INT:
-      opt.data.as_int    = *(&data[1]);
+      int sh;
+      mem::copy(&sh, &data[1], 4);
+      opt.data.as_int    = sh;
     case LONG:
-      opt.data.as_long   = *(&data[1]);
+      long sh;
+      mem::copy(&sh, &data[1], 8);
+      opt.data.as_long   = sh;
 
     case FLOAT:
-      opt.data.as_float  = *(&data[1]);
+      float sh;
+      mem::copy(&sh, &data[1], 4);
+      opt.data.as_float  = sh;
     case DOUBLE:
-      opt.data.as_double = *(&data[1]);
+      double sh;
+      mem::copy(&sh, &data[1], 8);
+      opt.data.as_double = sh;
   }
 
-  options::options.set(dataname, opt);
+  if (send) options::options.set(dataname, opt);
+  free(data);
+
+  return opt;
 }
 
 <* Loads all keybinds in file
@@ -160,18 +184,20 @@ fn usz get_entry_len(String filepath, String dataname) {
   assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
   assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
   
-  // Skip bytes
-  file.read_byte()!!;
-  file.read_byte()!!;
+  // Read number of entries
+  short num = file.read_short();
 
   // Find data
   usz length;
-  for (int i; true; i++) {
+  for (int i; i < num; i++) {
     String str = file.read_string();
     if (str == dataname) {
+      str.free(allocator::heap());
       return file.read_long();
     }
+    str.free(allocator::heap());
   }
+  return -1;
 }
 <* Gets postion of data inside bulk file
   @param filepath: "Bulk file to get entry from"
@@ -184,19 +210,21 @@ fn usz get_entry_ptr(String filepath, String dataname) {
   assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
   assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
   
-  // Skip bytes
-  file.read_byte()!!;
-  file.read_byte()!!;
+  // Read number of entries
+  short num = file.read_short();
 
   // Find data
   usz length;
-  for (int i; true; i++) {
+  for (int i; i < num; i++) {
     String str = file.read_string();
     if (str == dataname) {
+      str.free(allocator::heap());
       file.read_long();
       return file.read_long();
     }
+    str.free(allocator::heap());
   }
+  return -1;
 }
 
 <* Reads a short from file since the base language doesn't have one *>
@@ -241,6 +269,7 @@ fn double File.read_double(&self) {
 fn String File.read_string(&self) {
   List{char} constr;
 
+  // Copy all bytes into list until null termination
   char curr_char = 'b';
   for (int i; curr_char != '\0'; i++) {
     curr_char = self.read_byte()!!;
@@ -249,8 +278,11 @@ fn String File.read_string(&self) {
     constr.push(curr_char);
   }
 
+  // Copy list to String
   String output = (String)constr.to_array(allocator::heap());
+  // Cleanup list
   constr.free();
+
   return output;
 }
 
