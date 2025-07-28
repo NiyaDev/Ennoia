@@ -2,7 +2,7 @@
 module ennoia::keybinds;
 import std::io;
 import std::collections;
-import ennoia::sdl;
+import sdl3;
 import ennoia::bulk;
 
 

@@ -130,3 +130,5 @@
 - Created bounds.c3 for bounding box checking.
 - Made tests for Bulk and fixed memory leaks in loading, read_entries, and get_entry_len/ptr.
 
+==== [7/28/25]
+- Moved SDL3 bindings to their own project.

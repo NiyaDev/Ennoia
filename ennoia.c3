@@ -2,6 +2,7 @@
 module ennoia;
 import std::io;
 import std::math;
+import sdl3;
 
 
 SDL_Window* window;
@@ -39,19 +40,19 @@ fn void init(int width, int height, String title, float renderRes = 1) {
   renRes = renderRes;
   
   // Initialize SDL3
-	assert(sdl::init(sdl::INIT_VIDEO | sdl::INIT_AUDIO), "[ERROR] - ENNOIA::INIT::INIT [Failed to initialize SDL3 (%s)]", sdl::get_error());
-	sdl::gl_set_attribute(GLAttr.CONTEXT_MAJOR_VERSION, 3);
-	sdl::gl_set_attribute(GLAttr.CONTEXT_MINOR_VERSION, 3);
-	sdl::gl_set_attribute(GLAttr.CONTEXT_PROFILE_MASK, sdl::CONTEXT_PROFILE_CORE);
+	assert(sdl3::init(sdl3::INIT_VIDEO | sdl3::INIT_AUDIO), "[ERROR] - ENNOIA::INIT::INIT [Failed to initialize SDL3 (%s)]", sdl3::get_error());
+	sdl3::gl_set_attribute(GLAttr.CONTEXT_MAJOR_VERSION, 3);
+	sdl3::gl_set_attribute(GLAttr.CONTEXT_MINOR_VERSION, 3);
+	sdl3::gl_set_attribute(GLAttr.CONTEXT_PROFILE_MASK, sdl3::CONTEXT_PROFILE_CORE);
 
   // Create window
-  window = sdl::create_window(title.zstr_tcopy(), scrWidth, scrHeight, sdl::WINDOW_OPENGL);
-  assert(window != null, "[ERROR] - ENNOIA::INIT::CREATE_WINDOW [Failed to create sdl3 window(%s)]", sdl::get_error());
+  window = sdl3::create_window(title.zstr_tcopy(), scrWidth, scrHeight, sdl3::WINDOW_OPENGL);
+  assert(window != null, "[ERROR] - ENNOIA::INIT::CREATE_WINDOW [Failed to create sdl3 window(%s)]", sdl3::get_error());
 
   // Create OpenGL context
-  glcontext = sdl::gl_create_context(window);
-  assert(glcontext != null, "[ERROR] - ENNOIA::INIT::CREATE_CONTEXT [Failed to create SDL_GL context (%s)]", (String)sdl::get_error()[..1024]);
-  assert(sdl::gl_make_current(window, glcontext), "[ERROR] - ENNOIA::INIT::MAKE_CURRENT [Failed to make gl context current (%s)]", sdl::get_error()); 
+  glcontext = sdl3::gl_create_context(window);
+  assert(glcontext != null, "[ERROR] - ENNOIA::INIT::CREATE_CONTEXT [Failed to create SDL_GL context (%s)]", (String)sdl3::get_error()[..1024]);
+  assert(sdl3::gl_make_current(window, glcontext), "[ERROR] - ENNOIA::INIT::MAKE_CURRENT [Failed to make gl context current (%s)]", sdl3::get_error()); 
 
   // Enable depth testing
   gl::enable(gl::DEPTH_TEST);
@@ -73,17 +74,17 @@ fn void init(int width, int height, String title, float renderRes = 1) {
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {
-  double currentFrame = (double)sdl::get_ticks() / 1000;
+  double currentFrame = (double)sdl3::get_ticks() / 1000;
   deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame;
 
   keybinds::update();
-  while (sdl::poll_event(&event)) {
-    if (event.type == sdl::QUIT) return true;
+  while (sdl3::poll_event(&event)) {
+    if (event.type == sdl3::QUIT) return true;
     // Input
-    if (event.type == sdl::KEYDOWN)    keybinds::add_queue(event.key);
-    if (event.type == sdl::KEYUP)      keybinds::add_queue(event.key);
-    if (event.type == sdl::MOUSEWHEEL) scrollwheel = event.wheel.y;
+    if (event.type == sdl3::KEYDOWN)    keybinds::add_queue(event.key);
+    if (event.type == sdl3::KEYUP)      keybinds::add_queue(event.key);
+    if (event.type == sdl3::MOUSEWHEEL) scrollwheel = event.wheel.y;
   }
   return forceClose;
 }
@@ -119,7 +120,7 @@ fn void end_drawing() {
   gl::bind_texture(gl::TEXTURE_2D, render::renderTexture.id);
   gl::draw_arrays(gl::TRIANGLES, 0, render::renderQuad.vertices.len);
 
-  sdl::gl_swap_window(window);
+  sdl3::gl_swap_window(window);
 }
 <* Cleans up resources *>
 fn void clean() {
@@ -128,8 +129,8 @@ fn void clean() {
 
   render::clean();
 
-  sdl::destroy_window(ennoia::window);
-  sdl::quit();
+  sdl3::destroy_window(ennoia::window);
+  sdl3::quit();
 }
 
 <* Wrapper for clear color
