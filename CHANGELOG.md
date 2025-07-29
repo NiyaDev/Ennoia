@@ -132,3 +132,7 @@
 
 ==== [7/28/25]
 - Moved SDL3 bindings to their own project.
+
+==== [7/29/25]
+- Minor
+

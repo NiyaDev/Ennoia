@@ -71,6 +71,9 @@ fn void init(int width, int height, String title, float renderRes = 1) {
 
   // Keybinds
   bulk::load_all_keybinds("resources/keybinds");
+
+  // Options
+  bulk::load_all_options("resources/options");
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {
