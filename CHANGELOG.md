@@ -136,3 +136,9 @@
 ==== [7/29/25]
 - Minor
 
+==== [7/30/25]
+- Added more error handling to bulk functions.
+- Tests for Camera.
+- Contracts for ennoia::init, and font funcs.
+- 
+

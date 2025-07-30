@@ -11,14 +11,20 @@ const char VERSION_MINOR = 0;
 
 <* Load file from Bulk
   @param filepath: "Path to bulk file"
+  @require filepath != ""
   @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
  *>
 fn char[] load(String filepath, String dataname) {
-  File file = file::open(filepath, "rb")!!;
+  File? file = file::open(filepath, "rb");
+  if (catch file) {
+    io::printfn("[ERROR] - ENNOIA::BULK::LOAD [Failed to open file %s]", filepath);
+    return {};
+  }
 
   // Ensure correct version
-  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
-  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Major version]");
+  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Minor version]");
   
   // Read number of entries
   short num = file.read_short();
@@ -41,6 +47,7 @@ fn char[] load(String filepath, String dataname) {
     }
   }
 
+  // Read into array
   char[] data = mem::new_array(char, length);
   for (int i; i < length; i++) data[i] = file.read_byte()!!;
 
@@ -50,7 +57,9 @@ fn char[] load(String filepath, String dataname) {
 }
 <* Shorthand for loading a texture from a bulk file
   @param filepath: "Path to bulk file"
+  @require filepath != ""
   @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
  *>
 fn Texture load_texture(String filepath, String dataname) {
   char[] data = load(filepath, dataname);
@@ -62,7 +71,9 @@ fn Texture load_texture(String filepath, String dataname) {
 }
 <* Shorthand for loading a keybind from a bulk file
   @param filepath: "Path to bulk file"
+  @require filepath != ""
   @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
  *>
 fn Keybind load_keybind(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
@@ -79,7 +90,10 @@ fn Keybind load_keybind(String filepath, String dataname, bool send = true) {
 }
 <* Shorthand for loading an option from a bulk file
   @param filepath: "Path to bulk file"
+  @require filepath != ""
   @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
+  @param send: "If true, it adds it to the keybinds global registry"
  *>
 fn Option load_option(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
@@ -89,7 +103,7 @@ fn Option load_option(String filepath, String dataname, bool send = true) {
 
   switch (opt.type) {
     case CHAR:
-      opt.data.as_char   =    data[1];
+      opt.data.as_char   = data[1];
     case SHORT:
       short sh;
       mem::copy(&sh, &data[1], 2);
@@ -121,6 +135,7 @@ fn Option load_option(String filepath, String dataname, bool send = true) {
 
 <* Loads all keybinds in file
   @param filepath: "File path of file to load"
+  @require filepath != ""
  *>
 fn void load_all_keybinds(String filepath) {
   String[] entries = bulk::get_entries(filepath);
@@ -129,8 +144,9 @@ fn void load_all_keybinds(String filepath) {
     bulk::load_keybind(filepath, entries[i]);
   }
 }
-<* Loads all keybinds in file
+<* Loads all options in file
   @param filepath: "File path of file to load"
+  @require filepath != ""
  *>
 fn void load_all_options(String filepath) {
   String[] entries = bulk::get_entries(filepath);
@@ -142,12 +158,15 @@ fn void load_all_options(String filepath) {
 
 <* Gets a list of entries inside bulk
   @param filepath: "Bulk file to get entries from"
+  @require filepath != ""
  *>
 fn String[] get_entries(String filepath) {
-  if (file::get_size(filepath)!! < 4) return {};
-
   List{String} list;
-  File file = file::open(filepath, "rb")!!;
+  File? file = file::open(filepath, "rb");
+  if (catch file) {
+    io::printfn("[ERROR] - ENNOIA::BULK::GET_ENTRIES [Failed to open file %s]", filepath);
+    return {};
+  }
 
   // Ensure correct version
   assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
@@ -174,11 +193,17 @@ fn String[] get_entries(String filepath) {
   return output;
 }
 <* Get length of entry data
-  @param filepath: "Bulk file to get entry from"
-  @param dataname: "Entry name to get length of"
+  @param filepath: "Path to bulk file"
+  @require filepath != ""
+  @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
  *>
 fn usz get_entry_len(String filepath, String dataname) {
-  File file = file::open(filepath, "rb")!!;
+  File? file = file::open(filepath, "rb");
+  if (catch file) {
+    io::printfn("[ERROR] - ENNOIA::BULK::ENTRY_LEN [Failed to open file %s]", filepath);
+    return {};
+  }
 
   // Ensure correct version
   assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
@@ -200,11 +225,17 @@ fn usz get_entry_len(String filepath, String dataname) {
   return -1;
 }
 <* Gets postion of data inside bulk file
-  @param filepath: "Bulk file to get entry from"
-  @param dataname: "Entry name to get position of"
+  @param filepath: "Path to bulk file"
+  @require filepath != ""
+  @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
  *>
 fn usz get_entry_ptr(String filepath, String dataname) {
-  File file = file::open(filepath, "rb")!!;
+  File? file = file::open(filepath, "rb");
+  if (catch file) {
+    io::printfn("[ERROR] - ENNOIA::BULK::ENTRY_PTR [Failed to open file %s]", filepath);
+    return {};
+  }
 
   // Ensure correct version
   assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");

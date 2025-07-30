@@ -6,7 +6,13 @@ import ennoia::vector;
 import ennoia::matrix;
 
 
-Camera main = {{0,0,0}, {0,5,5}, {0,1,0}, 70, 0, 0};
+const Vector3 DEF_TARGET = {0,0,0};
+const Vector3 DEF_DISTANCE = {0,5,5};
+const Vector3 DEF_UP = {0,1,0};
+const float   DEF_FOV = 70;
+const float   DEF_ROTATION = 0;
+
+Camera main = {DEF_TARGET, DEF_DISTANCE, DEF_UP, DEF_FOV, DEF_ROTATION, DEF_ROTATION};
 
 struct Camera {
   Vector3 target, distance, up;
@@ -14,40 +20,40 @@ struct Camera {
 }
 
 <* Updates main camera rotation *>
-fn void update() {
-  if (!main.rotation.close(main.rot_target, 5)) {
+fn void update(Camera* cam = &main) {
+  if (!cam.rotation.close(cam.rot_target, 5)) {
     float dir;
-    if ((main.rot_target - main.rotation) > 0) dir =  1;
-    if ((main.rot_target - main.rotation) < 0) dir = -1;
+    if ((cam.rot_target - cam.rotation) > 0) dir =  1;
+    if ((cam.rot_target - cam.rotation) < 0) dir = -1;
 
-    main.rotation += dir * (500 * (float)ennoia::deltaTime);
+    cam.rotation += dir * (500 * (float)ennoia::deltaTime);
   } else {
-    main.rotation = main.rot_target;
+    cam.rotation = cam.rot_target;
 
-    if (main.rotation < 0) {
-      main.rotation += 360;
-      main.rot_target += 360;
+    if (cam.rotation < 0) {
+      cam.rotation += 360;
+      cam.rot_target += 360;
     }
-    if (main.rotation > 360) {
-      main.rotation -= 360;
-      main.rot_target -= 360;
+    if (cam.rotation > 360) {
+      cam.rotation -= 360;
+      cam.rot_target -= 360;
     }
   }
 }
 <* Creates matrix for camera position *>
-fn Matrix get_matrix() {
-  return matrix::look_at(main.target.rotate(main.distance, main.rotation), main.target, main.up);
+fn Matrix get_matrix(Camera* cam = &main) {
+  return matrix::look_at(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
 }
 
 <* Adds to the main cameras current rotation
   @param target: "The amount to add to the rotation"
  *>
-fn void rotate(float target) {
-  main.rot_target += target;
+fn void rotate(float target, Camera* cam = &main) {
+  cam.rot_target += target;
 }
 <* Returns true if the main camera is currently rotating *>
-fn bool is_rotating() {
-  return main.rotation != main.rot_target;
+fn bool is_rotating(Camera* cam = &main) {
+  return cam.rotation != cam.rot_target;
 }
 
 <* Prints all data about the main camera *>

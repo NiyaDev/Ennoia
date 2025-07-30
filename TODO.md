@@ -5,7 +5,7 @@
 - Write tests
   - There IS a leak in the test program. I need to find it.
   - If I wait too long the debt is going to be insane...
-- Move SDL3 and OpenGL binds to seperate projects for simplicity
+- Move ~SDL3~ and OpenGL binds to seperate projects for simplicity
 
 === Mid prio
 - Bulk

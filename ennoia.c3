@@ -29,8 +29,13 @@ Shader default_shader_2d;
 
 <* Initializes Ennoia
   @param width:  "Initial width of screen"
+  @require width > 1
   @param height: "Initial height of screen"
+  @require height > 1
   @param title:  "Title of window"
+  @require title != ""
+  @param renderRes: "The value to multiple the screen resolution by to get render resolution"
+  @require renderRes > 0.0
  *>
 fn void init(int width, int height, String title, float renderRes = 1) {
   scrWidth  = width;
@@ -99,12 +104,6 @@ fn void start_drawing() {
   gl::viewport(0, 0, renWidth, renHeight);
 
   clear_background(bgColor, gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-}
-<**>
-fn void draw_ui() {
-  
-
-  
 }
 <* Swaps buffers and polls events *>
 fn void end_drawing() {

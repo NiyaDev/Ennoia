@@ -12,7 +12,7 @@ struct Font {
   HashMap{char, Rectangle} rects;
 }
 
-<**>
+<* Loads font from file *>
 fn Font load(String filename, Vector2 size) {
   Font output;
   output.atlas = texture::load(filename);
@@ -112,7 +112,7 @@ fn Font load(String filename, Vector2 size) {
 
   return output;
 }
-<**>
+<* Loads font from data *>
 fn Font load_from_mem(char[] data, Vector2 size) {
   Font output;
   output.atlas = texture::load_from_mem(data);
@@ -213,7 +213,14 @@ fn Font load_from_mem(char[] data, Vector2 size) {
   return output;
 }
 
-<**>
+<* Draws font to screen
+  @param text: "Text to draw in font"
+  @require text != ""
+  @param position: "Position on screen to draw"
+  @param scale: "Multiplier to size of font"
+  @require scale > 0.0
+  @param spacing: "Space inbetween chaarcters"
+ *>
 fn void Font.draw(&self, String text, Vector2 position = {0,0}, float scale = 1, float spacing = 0) {
   float char_x = 0;
   float char_y = 0;
