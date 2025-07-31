@@ -3,15 +3,12 @@ module ennoia::keybinds;
 import std::io;
 import std::collections;
 import sdl3;
-import ennoia::bulk;
+import ennoia;
 
 
 alias KeyboardKey = uint;
 alias KeyboardMod = ushort;
 alias Keybindings = HashMap{String, Keybind};
-
-Keybindings binds;
-List{KeyData} keyqueue;
 
 struct KeyData {
   KeyboardKey key;
@@ -27,13 +24,13 @@ struct Keybind {
 <* Saves all keybinds as a file *>
 fn void save_keybinds() {
   // Calculate size of file
-  usz length = binds.len() * 6;
-  binds.@each(; String key, Keybind val) {
+  usz length = ennoia::keybinds.len() * 6;
+  ennoia::keybinds.@each(; String key, Keybind val) {
     length += key.len + 1;
   };
 
   // Create file
-  binds.@each(; String key, Keybind val) {
+  ennoia::keybinds.@each(; String key, Keybind val) {
     File file = file::open(key, "wb")!!;
     file.write_int(val.key);
     file.write_short(val.mod);
@@ -47,10 +44,10 @@ fn void KeyData.print(&self) {
 
 <* Sets any existing key in the queue to repeat and remove any that are still up *>
 fn void update() {
-  for (int i; i < keyqueue.len(); i++) {
-    keyqueue[i].repeat = true;
-    if (keyqueue[i].down == false) {
-      keyqueue.remove_at(i);
+  for (int i; i < ennoia::keyqueue.len(); i++) {
+    ennoia::keyqueue[i].repeat = true;
+    if (ennoia::keyqueue[i].down == false) {
+      ennoia::keyqueue.remove_at(i);
       i--;
     }
   }
@@ -60,8 +57,8 @@ fn void update() {
  *>
 fn int queue_contains(SDL_KeyboardEvent data) {
   int result;
-  for (int i; i < keyqueue.len(); i++) {
-    if (data.key == keyqueue[i].key && data.mod == keyqueue[i].mod) return i;
+  for (int i; i < ennoia::keyqueue.len(); i++) {
+    if (data.key == ennoia::keyqueue[i].key && data.mod == ennoia::keyqueue[i].mod) return i;
   }
   return -1;
 }
@@ -71,15 +68,15 @@ fn int queue_contains(SDL_KeyboardEvent data) {
 fn void add_queue(SDL_KeyboardEvent data) {
   int val = queue_contains(data);
   if (val == -1) {
-    keyqueue.push({
+    ennoia::keyqueue.push({
       data.key,
       data.mod,
       data.down,
       false,
     });
   } else {
-    keyqueue[val].down = data.down;
-    keyqueue[val].repeat = true;
+    ennoia::keyqueue[val].down = data.down;
+    ennoia::keyqueue[val].repeat = true;
   }
 }
 <* Removes input key from queue
@@ -87,24 +84,24 @@ fn void add_queue(SDL_KeyboardEvent data) {
  *>
 fn void rem_queue(SDL_KeyboardEvent data) {
   int val = queue_contains(data);
-  if (val != -1) keyqueue.remove_at(val);
+  if (val != -1) ennoia::keyqueue.remove_at(val);
 }
 
 <* Returns whether the input keybind is currently pressed down for the first time.
   @param key: "Name of keybind"
  *>
 fn bool pressed(String key) {
-  Keybind? kb = binds.get(key);
+  Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
     io::printfn("[WARNING] - ENNOIA::KEYBINDS::PRESSED [Attempted to use keybinding that doesn't exist.]");
     return false;
   }
 
-  for (int i; i < keyqueue.len(); i++) {
-    if (kb.key == keyqueue[i].key &&
-        kb.mod == keyqueue[i].mod &&
-        keyqueue[i].down == true &&
-        keyqueue[i].repeat == false) return true;
+  for (int i; i < ennoia::keyqueue.len(); i++) {
+    if (kb.key == ennoia::keyqueue[i].key &&
+        kb.mod == ennoia::keyqueue[i].mod &&
+        ennoia::keyqueue[i].down == true &&
+        ennoia::keyqueue[i].repeat == false) return true;
   }
   return false;
 }
@@ -112,15 +109,15 @@ fn bool pressed(String key) {
   @param key: "Name of keybind"
  *>
 fn bool down(String key) {
-  Keybind? kb = binds.get(key);
+  Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
     io::printfn("[WARNING] - ENNOIA::KEYBINDS::DOWN [Attempted to use keybinding that doesn't exist.]");
     return false;
   }
-  for (int i; i < keyqueue.len(); i++) {
-    if (kb.key == keyqueue[i].key &&
-        kb.mod == keyqueue[i].mod &&
-        keyqueue[i].down == true) return true;
+  for (int i; i < ennoia::keyqueue.len(); i++) {
+    if (kb.key == ennoia::keyqueue[i].key &&
+        kb.mod == ennoia::keyqueue[i].mod &&
+        ennoia::keyqueue[i].down == true) return true;
   }
   return false;
 }
@@ -128,16 +125,16 @@ fn bool down(String key) {
   @param key: "Name of keybind"
  *>
 fn bool up(String key) {
-  Keybind? kb = binds.get(key);
+  Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
     io::printfn("[WARNING] - ENNOIA::KEYBINDS::UP [Attempted to use keybinding that doesn't exist.]");
     return false;
   }
 
-  for (int i; i < keyqueue.len(); i++) {
-    if (kb.key == keyqueue[i].key &&
-        kb.mod == keyqueue[i].mod &&
-        keyqueue[i].down == false) return true;
+  for (int i; i < ennoia::keyqueue.len(); i++) {
+    if (kb.key == ennoia::keyqueue[i].key &&
+        kb.mod == ennoia::keyqueue[i].mod &&
+        ennoia::keyqueue[i].down == false) return true;
   }
   return false;
 }

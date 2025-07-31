@@ -140,5 +140,13 @@
 - Added more error handling to bulk functions.
 - Tests for Camera.
 - Contracts for ennoia::init, and font funcs.
-- 
+
+==== [7/31/25]
+- Finished simple box bounds checking.
+- Operator overloads for addition/subtraction for rectangles.
+- Grabbed YAML from Pleroma and slapped it in.
+- Added loading localization from bulk.
+- Edited bulks::loading_keybinds/options test to include load_all_keybinds/options and fixed all leaks.
+- Added loading all textures in a bulk.
+- Moved localization, Keybinds, and options to storage fill in main ennoia module.
 

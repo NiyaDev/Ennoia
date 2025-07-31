@@ -2,9 +2,9 @@
 module ennoia::options;
 import std::collections;
 import std::io;
+import ennoia;
 
 
-Options options;
 
 alias Options = HashMap{String, Option};
 
@@ -38,38 +38,38 @@ enum OptionType : char {
   @param optname: "Name of option"
  *>
 fn char get_char(String optname) {
-  return options[optname].data.as_char!!;
+  return ennoia::options[optname].data.as_char!!;
 }
 <* Get short from options
   @param optname: "Name of option"
  *>
 fn short get_short(String optname) {
-  return options[optname].data.as_short!!;
+  return ennoia::options[optname].data.as_short!!;
 }
 <* Get int from options
   @param optname: "Name of option"
  *>
 fn int get_int(String optname) {
-  return options[optname].data.as_int!!;
+  return ennoia::options[optname].data.as_int!!;
 }
 <* Get long from options
   @param optname: "Name of option"
  *>
 fn long get_long(String optname) {
-  return options[optname].data.as_long!!;
+  return ennoia::options[optname].data.as_long!!;
 }
 
 <* Get float from options
   @param optname: "Name of option"
  *>
 fn float get_float(String optname) {
-  return options[optname].data.as_float!!;
+  return ennoia::options[optname].data.as_float!!;
 }
 <* Get double from options
   @param optname: "Name of option"
  *>
 fn double get_double(String optname) {
-  return options[optname].data.as_double!!;
+  return ennoia::options[optname].data.as_double!!;
 }
 
 <* Sets option to input char
@@ -81,7 +81,7 @@ fn void set_char(String optname, char data) {
     OptionType.CHAR,
     {.as_char=data},
   };
-  options.set(optname, result);
+  ennoia::options.set(optname, result);
 }
 <* Sets option to input short
   @param optname: "Name of option"
@@ -92,7 +92,7 @@ fn void set_short(String optname, short data) {
     OptionType.SHORT,
     {.as_short=data},
   };
-  options.set(optname, result);
+  ennoia::options.set(optname, result);
 }
 <* Sets option to input int
   @param optname: "Name of option"
@@ -103,7 +103,7 @@ fn void set_int(String optname, int data) {
     OptionType.INT,
     {.as_int=data},
   };
-  options.set(optname, result);
+  ennoia::options.set(optname, result);
 }
 <* Sets option to input long
   @param optname: "Name of option"
@@ -114,7 +114,7 @@ fn void set_long(String optname, long data) {
     OptionType.LONG,
     {.as_long=data},
   };
-  options.set(optname, result);
+  ennoia::options.set(optname, result);
 }
 
 <* Sets option to input float
@@ -126,7 +126,7 @@ fn void set_float(String optname, float data) {
     OptionType.FLOAT,
     {.as_float=data},
   };
-  options.set(optname, result);
+  ennoia::options.set(optname, result);
 }
 <* Sets option to input double
   @param optname: "Name of option"
@@ -137,14 +137,14 @@ fn void set_double(String optname, double data) {
     OptionType.DOUBLE,
     {.as_double=data},
   };
-  options.set(optname, result);
+  ennoia::options.set(optname, result);
 }
 
 <* Saves all options as a file *>
 fn void save_options() {
   // Calculate size of file
   usz length;
-  options.@each(; String key, Option val) {
+  ennoia::options.@each(; String key, Option val) {
     length += key.len + 1;
     switch (val.type) {
       case CHAR:
@@ -164,7 +164,7 @@ fn void save_options() {
   };
 
   // Create file
-  options.@each(; String key, Option val) {
+  ennoia::options.@each(; String key, Option val) {
     File file = file::open(key, "wb")!!;
     file.write_byte(val.type.ordinal)!!;
     switch (val.type) {

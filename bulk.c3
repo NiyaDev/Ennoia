@@ -63,9 +63,9 @@ fn char[] load(String filepath, String dataname) {
  *>
 fn Texture load_texture(String filepath, String dataname) {
   char[] data = load(filepath, dataname);
+  defer free(data);
 
   Texture tex = texture::load_from_mem(data);
-  free(data);
 
   return tex;
 }
@@ -77,14 +77,14 @@ fn Texture load_texture(String filepath, String dataname) {
  *>
 fn Keybind load_keybind(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
+  defer free(data);
 
   Keybind kb = {
     ((uint)(data[0])) + ((uint)(data[1]) << 8) + ((uint)(data[2]) << 16) + ((uint)(data[3]) << 24),
     ((ushort)(data[4])) + ((ushort)(data[5]) << 8),
   };
 
-  if (send) keybinds::binds.set(dataname,kb);
-  free(data);
+  if (send) ennoia::keybinds.set(dataname,kb);
 
   return kb;
 }
@@ -97,6 +97,7 @@ fn Keybind load_keybind(String filepath, String dataname, bool send = true) {
  *>
 fn Option load_option(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
+  defer free(data);
 
   Option opt;
   opt.type = OptionType.from_ordinal(data[0]); 
@@ -127,33 +128,104 @@ fn Option load_option(String filepath, String dataname, bool send = true) {
       opt.data.as_double = sh;
   }
 
-  if (send) options::options.set(dataname, opt);
-  free(data);
+  if (send) ennoia::options.set(dataname, opt);
 
   return opt;
 }
+<* Shorthand for loading a set of localization strings from a bulk file
+  @param filepath: "Path to bulk file"
+  @require filepath != ""
+  @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
+  @param send: "If true, it adds it to the keybinds global registry"
+ *>
+fn Localization load_local(String filepath, String dataname, bool send = true) {
+  char[] data = load(filepath,dataname);
+  defer free(data);
+  Yaml y = yaml::parse((String)data);
 
+  Localization output;
+
+  y.@each(; String key, TypedValue val) {
+    Local local;
+    assert(val.type == OBJECT, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
+    
+    yaml::Object o = *((yaml::Object*)val.value);
+    o.@each(; String key_inner, TypedValue val_inner) {
+      assert(val_inner.type == STRING, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
+      local.set(key, val_inner.v_string);
+    };
+
+    output.set(key, local);
+  };
+
+  if (send) ennoia::localization += &output;
+  
+  return output;
+}
+
+<* Loads all textures in file
+  @param filepath: "File path of file to load"
+  @require filepath != ""
+ *>
+fn HashMap{String, Texture} load_all_textures(String filepath, bool send = true) {
+  String[] entries = get_entries(filepath);
+
+  HashMap{String, Texture} output;
+  
+  for (int i; i < entries.len; i++) {
+    output.set(entries[i], load_texture(filepath, entries[i]));
+  }
+
+  return output;
+}
 <* Loads all keybinds in file
   @param filepath: "File path of file to load"
   @require filepath != ""
  *>
-fn void load_all_keybinds(String filepath) {
-  String[] entries = bulk::get_entries(filepath);
+fn void load_all_keybinds(String filepath, bool send = true) {
+  String[] entries = get_entries(filepath);
 
   for (int i; i < entries.len; i++) {
-    bulk::load_keybind(filepath, entries[i]);
+    load_keybind(filepath, entries[i], send);
   }
+
+  for (int i; i < entries.len; i++) {
+    entries[i].free(allocator::heap());
+  }
+  free(entries);
 }
 <* Loads all options in file
   @param filepath: "File path of file to load"
   @require filepath != ""
  *>
-fn void load_all_options(String filepath) {
-  String[] entries = bulk::get_entries(filepath);
+fn void load_all_options(String filepath, bool send = true) {
+  String[] entries = get_entries(filepath);
 
   for (int i; i < entries.len; i++) {
-    bulk::load_option(filepath, entries[i]);
+    load_option(filepath, entries[i], send);
   }
+
+  for (int i; i < entries.len; i++) {
+    entries[i].free(allocator::heap());
+  }
+  free(entries);
+}
+<* Loads all localizations in file
+  @param filepath: "File path of file to load"
+  @require filepath != ""
+ *>
+fn void load_all_localization(String filepath, bool send = true) {
+  String[] entries = get_entries(filepath);
+
+  for (int i; i < entries.len; i++) {
+    load_local(filepath, entries[i], send);
+  }
+
+  for (int i; i < entries.len; i++) {
+    entries[i].free(allocator::heap());
+  }
+  free(entries);
 }
 
 <* Gets a list of entries inside bulk
