@@ -1,0 +1,24 @@
+%YAML 1.2
+---
+
+
+keybinds:
+  [KEYBIND, ascend,    1073742049, 0],
+  [KEYBIND, descend,   1073742048, 0],
+  [KEYBIND, up,        119, 0],
+  [KEYBIND, down,      115, 0],
+  [KEYBIND, left,       97, 0],
+  [KEYBIND, right,     100, 0],
+  [KEYBIND, rot_left,  113, 0],
+  [KEYBIND, rot_right, 101, 0],
+  [KEYBIND, quit,       27, 0],
+  [KEYBIND, debug,     112, 0],
+
+
+options: [
+  [OPTION, screen_width,   INT, 1280],
+  [OPTION, screen_height,  INT,  720],
+  [OPTION, render_width,   INT,  640],
+  [OPTION, render_height,  INT,  360],
+  [OPTION, fps,           BYTE,   60],
+]

@@ -150,3 +150,7 @@
 - Added loading all textures in a bulk.
 - Moved localization, Keybinds, and options to storage fill in main ennoia module.
 
+==== [8/1/25]
+- Started re-writing Bulk for v3.0, but need to redo YAML.
+- Started on re-doing YAML.
+

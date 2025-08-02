@@ -5,11 +5,34 @@ import std::io;
 import std::collections;
 
 
-const char VERSION_MAJOR = 2;
+const char VERSION_MAJOR = 3;
 const char VERSION_MINOR = 0;
 
+struct TableEntry {
+  String name;
+  ulong length, pointer;
+  DataType type;
+  CompType comp;
+}
+enum DataType : short {
+  EMPTY,
+  RAW,
+  TEXT,
+  KEYBIND,
+  OPTION,
+  
+  // OpenGL/SDL3
+  TEXTURE,
+  SHADER,
+}
+enum CompType : short {
+  NONE,
+  DEFLATE,
+}
 
-<* Load file from Bulk
+
+
+<* Load file from Bulk raw
   @param filepath: "Path to bulk file"
   @require filepath != ""
   @param dataname: "Name of data inside bulk file"
@@ -25,31 +48,22 @@ fn char[] load(String filepath, String dataname) {
   // Ensure correct version
   assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Major version]");
   assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Minor version]");
-  
+
+  // Skip reserved
+  file.read_byte()!!;
+  file.read_byte()!!;
+
   // Read number of entries
   short num = file.read_short();
 
-  // Find data
-  usz length;
-  for (int i; i < num; i++) {
-    String str = file.read_string();
-    if (str == dataname) {
-      // Read data length and pointer
-      length = file.read_long();
-      file.seek(file.read_long())!!;
-      // Free string and leave loop
-      str.free(allocator::heap());
-      break;
-    } else {
-      file.read_long();
-      file.read_long();
-      str.free(allocator::heap());
-    }
-  }
+  TableEntry tableEntry = get_table_entry(filepath, dataname);
+  file.seek(tableEntry.pointer)!!;
 
   // Read into array
-  char[] data = mem::new_array(char, length);
-  for (int i; i < length; i++) data[i] = file.read_byte()!!;
+  char[] data = mem::new_array(char, tableEntry.length);
+  for (int i; i < tableEntry.length; i++) data[i] = file.read_byte()!!;
+
+  // Decompress data
 
   file.close()!!;
 
@@ -264,6 +278,58 @@ fn String[] get_entries(String filepath) {
 
   return output;
 }
+<* Gets a list of entries inside bulk
+  @param filepath: "Bulk file to get entries from"
+  @require filepath != ""
+ *>
+fn HashMap{String, TableEntry} get_table(String filepath) {
+  HashMap{String, TableEntry} output;
+  File? file = file::open(filepath, "rb");
+  if (catch file) {
+    io::printfn("[ERROR] - ENNOIA::BULK::GET_ENTRIES [Failed to open file %s]", filepath);
+    return {};
+  }
+
+  // Ensure correct version
+  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  
+  // Skip reserved
+  file.read_byte()!!;
+  file.read_byte()!!;
+
+  // Read number of entries
+  short num = file.read_short();
+
+  // Grab all entries
+  for (int i; i < num; i++) {
+    TableEntry ent;
+
+    ent.name = file.read_string();
+    ent.length = file.read_long();
+    ent.pointer = file.read_long();
+    ent.type = DataType.from_ordinal(file.read_short());
+    ent.comp = CompType.from_ordinal(file.read_short());
+
+    output.set(ent.name, ent);
+  }
+
+  file.close()!!;
+
+  return output;
+}
+<* Load file from Bulk raw
+  @param filepath: "Path to bulk file"
+  @require filepath != ""
+  @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
+ *>
+fn TableEntry get_table_entry(String filepath, String dataname) {
+  HashMap{String, TableEntry} map = get_table(filepath);
+  TableEntry output = map[dataname]!!;
+  map.free();
+  return output;
+}
 <* Get length of entry data
   @param filepath: "Path to bulk file"
   @require filepath != ""
@@ -329,6 +395,16 @@ fn usz get_entry_ptr(String filepath, String dataname) {
   }
   return -1;
 }
+
+
+// Table Entry
+<* == Overload *>
+fn bool TableEntry.equals_str(&self, String rhs) @operator(==) {
+  return self.name == rhs;
+}
+
+
+// File reading
 
 <* Reads a short from file since the base language doesn't have one *>
 fn short File.read_short(&self) {

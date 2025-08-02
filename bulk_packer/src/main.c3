@@ -2,7 +2,7 @@
 module bulk_packer;
 import std::io;
 import std::collections;
-import ennoia::bulk;
+import ennoia;
 
 
 
@@ -18,7 +18,46 @@ struct Entry {
 }
 
 fn int main(String[] args) {
+
+	// Check for manifest
+	if (!file::exists("resources/manifest.yaml") && (args.len == 1 && file::exists(args[1]))) {
+		io::printfn("[ERROR] - BULK_PACKER::MAIN [Manifest file doesn't exist and none is specified]");
+		return 1;
+	}
+
+	// Load YAML file
+	Yaml y;
+	if (args.len > 1 && file::exists(args[1])) {
+		y = yaml::parse_file(args[1]);
+	} else if (file::exists("resources/manifest.yaml")) {
+		y = yaml::parse_file("resources/manifest.yaml");
+	}
+
+	y.@each(; String key, TypedValue val) {
+		String filename = string::tformat("resources/%s",key);
+		File? newBulk = file::open(filename, "wb");
+		if (catch newBulk) {
+			io::printfn("[ERROR] - BULK_PACKER::MAIN [Failed to open new bulk file]");
+			return 1;
+		}
+
+		Array arr = *((Array*)val.value);
+		for (int i; i < arr.len(); i++) {io::printfn("%s",arr[i].type);}
+		//io::printfn("%d",arr.len());
+
+		//newBulk.write_byte(bulk::VERSION_MAJOR)!!;
+		//newBulk.write_byte(bulk::VERSION_MINOR)!!;
+		//newBulk.write_byte(0xff)!!;
+		//newBulk.write_byte(0xff)!!;
+
+		//newBulk.write_short(val)
+	};
 	
+	return 0;
+	//return old_ver(args);
+}
+
+fn int old_ver(String[] args) {
 	// Ensures a bulk file is listed
 	if (args.len == 1) {
 		io::printfn(HELP);
@@ -116,6 +155,4 @@ fn int main(String[] args) {
 
 	return 0;
 }
-
-
 
