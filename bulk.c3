@@ -164,10 +164,11 @@ fn Localization load_local(String filepath, String dataname, bool send = true) {
     Local local;
     assert(val.type == OBJECT, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
     
-    yaml::Object o = *((yaml::Object*)val.value);
+    //yaml::Object o = *((yaml::Object*)val.value);
+    yaml::Object o = val.as_object;
     o.@each(; String key_inner, TypedValue val_inner) {
       assert(val_inner.type == STRING, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
-      local.set(key, val_inner.v_string);
+      local.set(key, val_inner.as_string);
     };
 
     output.set(key, local);
