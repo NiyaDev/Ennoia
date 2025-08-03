@@ -33,24 +33,110 @@ fn int main(String[] args) {
 		y = yaml::parse_file("resources/manifest.yaml");
 	}
 
-	y.@each(; String key, TypedValue val) {
-		String filename = string::tformat("resources/%s",key);
-		File? newBulk = file::open(filename, "wb");
-		if (catch newBulk) {
-			io::printfn("[ERROR] - BULK_PACKER::MAIN [Failed to open new bulk file]");
+	y.@each(; String newFile, TypedValue yObj) {
+		List{TableEntry} table;
+		usz total = 6;
+
+		// Create list of all entries
+		yObj.as_object.@each(; String key, TypedValue val) {
+			TableEntry t;
+			t.name = key;
+			total += t.size();
+			
+			switch (val.get_array(0).as_string) {
+				case "KEYBIND":
+					t.length = 6;
+					t.type = KEYBIND;
+					t.comp = NONE;
+				case "OPTION":
+					switch (val.get_array(1).as_string) {
+						case "BYTE":   t.length = 1;
+						case "SHORT":  t.length = 2;
+						case "INT":    t.length = 4;
+						case "LONG":   t.length = 8;
+						case "FLOAT":  t.length = 4;
+						case "DOUBLE": t.length = 8;
+						case "STRING": t.length = val.get_array(2).as_string.len + 1;
+					}
+					t.type = OPTION;
+					t.comp = NONE;
+				case "STRING":
+					t.length = val.get_array(1).as_string.len + 1;
+					t.type = TEXT;
+					t.comp = NONE;
+				case "RAW":
+					t.length = file::get_size(val.get_array(1).as_string)!!;
+					t.type = RAW;
+					t.comp = NONE;
+					// TODO Compression on raw files
+					//t.comp = val.get_array(2).as_int;
+			}
+			table.push(t);
+		};
+
+		// Set position of every pointer
+		for (int i; i < table.len(); i++) {
+			table[i].pointer = total;
+			total += table[i].length;
+		}
+
+		// Save data
+		String path = string::tformat("resources/%s",newFile);
+		File? file = file::open(path, "wb");
+		if (catch file) {
+			io::printfn("[ERROR] - BULK_PACKER::MAIN [Failed to open file to write bulk]");
 			return 1;
 		}
 
-		Array arr = *((Array*)val.value);
-		for (int i; i < arr.len(); i++) {io::printfn("%s",arr[i].type);}
-		//io::printfn("%d",arr.len());
+		file.write_byte(bulk::VERSION_MAJOR)!!;
+		file.write_byte(bulk::VERSION_MINOR)!!;
+		file.write_byte(0xFF)!!;
+		file.write_byte(0xFF)!!;
 
-		//newBulk.write_byte(bulk::VERSION_MAJOR)!!;
-		//newBulk.write_byte(bulk::VERSION_MINOR)!!;
-		//newBulk.write_byte(0xff)!!;
-		//newBulk.write_byte(0xff)!!;
+		file.write_short((short)table.len());
 
-		//newBulk.write_short(val)
+		for (int i; i < table.len(); i++) {
+			file.write_string(table[i].name);
+			file.write_long(table[i].length);
+			file.write_long(table[i].pointer);
+			file.write_short(table[i].type.ordinal);
+			file.write_short(table[i].comp.ordinal);
+
+			usz old = file.seek(0,Seek.CURSOR)!!;
+			file.seek(table[i].pointer)!!;
+
+			TypedValue val = yObj.get_object(table[i].name);
+
+			switch (table[i].type) {
+				case KEYBIND:
+					file.write_int(val.get_array(1).as_int);
+					file.write_short((short)val.get_array(2).as_int);
+				case OPTION:
+					switch (val.get_array(1).as_string) {
+						case "BYTE":   file.write_byte(  (char)val.get_array(2).as_int)!!;
+						case "SHORT":  file.write_short((short)val.get_array(2).as_int);
+						case "INT":    file.write_int(         val.get_array(2).as_int);
+						case "LONG":   file.write_long(  (long)val.get_array(2).as_int);
+						case "FLOAT":  file.write_float((float)val.get_array(2).as_double);
+						case "DOUBLE": file.write_double(      val.get_array(2).as_double);
+					}
+				case TEXT:
+					file.write_string(val.get_array(1).as_string);
+				case RAW:
+					File? data = file::open(val.get_array(1).as_string, "rb");
+					if (catch data) {
+						io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
+						return 1;
+					}
+					for (int l; l < table[i].length; l++) {
+						file.write_byte(data.read_byte()!!)!!;
+					}
+					data.close()!!;
+				default:
+			}
+			file.seek(old)!!;
+		}
+		file.close()!!;
 	};
 	
 	return 0;

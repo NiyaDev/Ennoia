@@ -3,22 +3,24 @@
 
 
 keybinds:
-  [KEYBIND, ascend,    1073742049, 0],
-  [KEYBIND, descend,   1073742048, 0],
-  [KEYBIND, up,        119, 0],
-  [KEYBIND, down,      115, 0],
-  [KEYBIND, left,       97, 0],
-  [KEYBIND, right,     100, 0],
-  [KEYBIND, rot_left,  113, 0],
-  [KEYBIND, rot_right, 101, 0],
-  [KEYBIND, quit,       27, 0],
-  [KEYBIND, debug,     112, 0],
+  ascend:    [KEYBIND, 1073742049, 0]
+  descend:   [KEYBIND, 1073742048, 0]
+  up:        [KEYBIND,        119, 0]
+  down:      [KEYBIND,        115, 0]
+  left:      [KEYBIND,         97, 0]
+  right:     [KEYBIND,        100, 0]
+  rot_left:  [KEYBIND,        113, 0]
+  rot_right: [KEYBIND,        101, 0]
+  quit:      [KEYBIND,         27, 0]
+  debug:     [KEYBIND,        112, 0]
 
 
-options: [
-  [OPTION, screen_width,   INT, 1280],
-  [OPTION, screen_height,  INT,  720],
-  [OPTION, render_width,   INT,  640],
-  [OPTION, render_height,  INT,  360],
-  [OPTION, fps,           BYTE,   60],
-]
+options:
+  screen_width:  [OPTION,  INT, 1280]
+  screen_height: [OPTION,  INT,  720]
+  render_width:  [OPTION,  INT,  640]
+  render_height: [OPTION,  INT,  360]
+  fps:           [OPTION, BYTE,   60]
+
+001:
+  test: [STRING, test4]

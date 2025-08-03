@@ -157,3 +157,8 @@
 ==== [8/2/25]
 - Re-did most of the yaml functions.
 
+==== [8/3/25]
+- Finished re-doing YAML functions.
+- Finished updating Bulk packer to use a manifest. Still need to re-write readme.
+- Need to fix bulk tests.
+

@@ -403,6 +403,11 @@ fn usz get_entry_ptr(String filepath, String dataname) {
 fn bool TableEntry.equals_str(&self, String rhs) @operator(==) {
   return self.name == rhs;
 }
+<**>
+fn usz TableEntry.size(&self) {
+  io::printfn("%d",(self.name.len + 1) + (long.sizeof * 2) + (short.sizeof * 2));
+  return (self.name.len + 1) + (long.sizeof * 2) + (short.sizeof * 2);
+}
 
 
 // File reading
@@ -514,5 +519,12 @@ fn void File.write_double(&self, double val) {
   self.write_byte(dat[5])!!;
   self.write_byte(dat[6])!!;
   self.write_byte(dat[7])!!;
+}
+<**>
+fn void File.write_string(&self, String val) {
+  for (int i; i < val.len; i++) {
+    self.write_byte(val[i])!!;
+  }
+  self.write_byte('\0')!!;
 }
 

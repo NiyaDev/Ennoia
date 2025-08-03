@@ -276,15 +276,69 @@ fn Yaml parse(String data) {
 
     Tuple{String, TypedValue} v = lines[i].truncate_spaces().to_value();
 
-    if (v.second.as_void != null) {
+    if (v.second.type != NONE) {
       (*((Object*)(scopeStack[scopeStack.len()-1]))).set(v.first, v.second);
     } else {
-      (*((Object*)(scopeStack[scopeStack.len()-1]))).set(v.first, {});
-      scopeStack.push((*((Object*)(scopeStack[scopeStack.len()-1]))).get(v.first)!!.as_void);
+      (*((Object*)(scopeStack[scopeStack.len()-1]))).set(v.first, {.type = OBJECT, .as_object = {}});
+      scopeStack.push(&&(*((Object*)(scopeStack[scopeStack.len()-1]))).get_ref(v.first)!!.as_object);
     }
     prevIndent = indent;
   }
 
   return output;
+}
+
+<* Cleans up Yaml data *>
+fn void Yaml.clean(&self) {
+  self.@each(; String key, TypedValue val) {
+    val.clean();
+  };
+}
+<* Cleans up TypedValue data *>
+fn void TypedValue.clean(&self) {
+  switch (self.type) {
+    case STRING:
+      self.as_string.free(allocator::heap());
+    case OBJECT:
+      self.as_object.@each(; String key2, TypedValue val2) {
+        val2.clean();
+      };
+    case ARRAY:
+      for (int i; i < self.size(); i++) self.as_array[i].clean();
+    default: // Bool/Int/Double
+  }
+}
+
+<* Prints all data inside Yaml *>
+fn void Yaml.print(&self) {
+  io::printn("YAML:");
+  self.@each(; String key, TypedValue val) {
+    val.print(key, 1);
+  };
+}
+<* Prints all data inside Typedvalue *>
+fn void TypedValue.print(&self, String name, int tabs = 0) {
+  for (int i; i < tabs; i++) io::print("  ");
+  switch (self.type) {
+    case BOOL:   io::printfn("%s [%s]: %s", name, self.type, self.as_bool);
+    case INT:    io::printfn("%s [%s]: %d", name, self.type, self.as_int);
+    case DOUBLE: io::printfn("%s [%s]: %f", name, self.type, self.as_double);
+    case STRING: io::printfn("%s [%s]: %s", name, self.type, self.as_string);
+    case NONE:   io::printfn("%s [%s]",     name, self.type);
+    case OBJECT:
+      io::printfn("%s [%s]: %d {", name, self.type, self.size());
+      self.as_object.@each(; String key, TypedValue val) {
+        val.print(key, tabs+1);
+      };
+      for (int i; i < tabs; i++) io::print("  ");
+      io::printfn("}");
+    case ARRAY:
+      io::printfn("%s [%s]: %d [", name, self.type, self.size());
+      for (int i; i < self.as_array.len(); i++) {
+        self.as_array[i].print("", tabs+1);
+      };
+      for (int i; i < tabs; i++) io::print("  ");
+      io::printfn("]");
+  }
 }
 
