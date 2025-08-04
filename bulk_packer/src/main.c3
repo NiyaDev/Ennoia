@@ -50,18 +50,18 @@ fn int main(String[] args) {
 					t.comp = NONE;
 				case "OPTION":
 					switch (val.get_array(1).as_string) {
-						case "BYTE":   t.length = 1;
-						case "SHORT":  t.length = 2;
-						case "INT":    t.length = 4;
-						case "LONG":   t.length = 8;
-						case "FLOAT":  t.length = 4;
-						case "DOUBLE": t.length = 8;
-						case "STRING": t.length = val.get_array(2).as_string.len + 1;
+						case "BYTE":   t.length = 1 + 1;
+						case "SHORT":  t.length = 1 + 2;
+						case "INT":    t.length = 1 + 4;
+						case "LONG":   t.length = 1 + 8;
+						case "FLOAT":  t.length = 1 + 4;
+						case "DOUBLE": t.length = 1 + 8;
+						case "STRING": t.length = 1 + 1 + val.get_array(2).as_string.len + 1;
 					}
 					t.type = OPTION;
 					t.comp = NONE;
 				case "STRING":
-					t.length = val.get_array(1).as_string.len + 1;
+					t.length = val.get_array(1).as_string.len;
 					t.type = TEXT;
 					t.comp = NONE;
 				case "RAW":
@@ -113,12 +113,28 @@ fn int main(String[] args) {
 					file.write_short((short)val.get_array(2).as_int);
 				case OPTION:
 					switch (val.get_array(1).as_string) {
-						case "BYTE":   file.write_byte(  (char)val.get_array(2).as_int)!!;
-						case "SHORT":  file.write_short((short)val.get_array(2).as_int);
-						case "INT":    file.write_int(         val.get_array(2).as_int);
-						case "LONG":   file.write_long(  (long)val.get_array(2).as_int);
-						case "FLOAT":  file.write_float((float)val.get_array(2).as_double);
-						case "DOUBLE": file.write_double(      val.get_array(2).as_double);
+						case "BYTE":
+							file.write_byte(OptionType.CHAR.ordinal)!!;
+							file.write_byte(  (char)val.get_array(2).as_int)!!;
+						case "SHORT":
+							file.write_byte(OptionType.SHORT.ordinal)!!;
+							file.write_short((short)val.get_array(2).as_int);
+						case "INT":
+							file.write_byte(OptionType.INT.ordinal)!!;
+							file.write_int(         val.get_array(2).as_int);
+						case "LONG":
+							file.write_byte(OptionType.LONG.ordinal)!!;
+							file.write_long(  (long)val.get_array(2).as_int);
+						case "FLOAT":
+							file.write_byte(OptionType.FLOAT.ordinal)!!;
+							file.write_float((float)val.get_array(2).as_double);
+						case "DOUBLE":
+							file.write_byte(OptionType.DOUBLE.ordinal)!!;
+							file.write_double(      val.get_array(2).as_double);
+						case "STRING":
+							file.write_byte(OptionType.STRING.ordinal)!!;
+							file.write_byte((char)val.get_array(2).as_string.len)!!;
+							file.write_string(      val.get_array(2).as_string);
 					}
 				case TEXT:
 					file.write_string(val.get_array(1).as_string);

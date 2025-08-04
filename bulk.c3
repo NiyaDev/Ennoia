@@ -58,7 +58,7 @@ fn char[] load(String filepath, String dataname) {
 
   TableEntry tableEntry = get_table_entry(filepath, dataname);
   file.seek(tableEntry.pointer)!!;
-
+  
   // Read into array
   char[] data = mem::new_array(char, tableEntry.length);
   for (int i; i < tableEntry.length; i++) data[i] = file.read_byte()!!;
@@ -69,6 +69,8 @@ fn char[] load(String filepath, String dataname) {
 
   return data;
 }
+
+
 <* Shorthand for loading a texture from a bulk file
   @param filepath: "Path to bulk file"
   @require filepath != ""
@@ -140,6 +142,11 @@ fn Option load_option(String filepath, String dataname, bool send = true) {
       double sh;
       mem::copy(&sh, &data[1], 8);
       opt.data.as_double = sh;
+
+    case STRING:
+      String str = (String)mem::new_array(char,(usz)data[1]);
+      mem::copy(&str, &data[2], data[1]);
+      opt.data.as_string = str;
   }
 
   if (send) ennoia::options.set(dataname, opt);
@@ -199,32 +206,22 @@ fn HashMap{String, Texture} load_all_textures(String filepath, bool send = true)
   @require filepath != ""
  *>
 fn void load_all_keybinds(String filepath, bool send = true) {
-  String[] entries = get_entries(filepath);
+  HashMap{String, TableEntry} tbls = get_table(filepath);
 
-  for (int i; i < entries.len; i++) {
-    load_keybind(filepath, entries[i], send);
-  }
-
-  for (int i; i < entries.len; i++) {
-    entries[i].free(allocator::heap());
-  }
-  free(entries);
+  tbls.@each(; String key, TableEntry val) {
+    load_keybind(filepath, key, send);
+  };
 }
 <* Loads all options in file
   @param filepath: "File path of file to load"
   @require filepath != ""
  *>
 fn void load_all_options(String filepath, bool send = true) {
-  String[] entries = get_entries(filepath);
+  HashMap{String, TableEntry} tbls = get_table(filepath);
 
-  for (int i; i < entries.len; i++) {
-    load_option(filepath, entries[i], send);
-  }
-
-  for (int i; i < entries.len; i++) {
-    entries[i].free(allocator::heap());
-  }
-  free(entries);
+  tbls.@each(; String key, TableEntry val) {
+    load_option(filepath, key, send);
+  };
 }
 <* Loads all localizations in file
   @param filepath: "File path of file to load"
@@ -464,7 +461,7 @@ fn String File.read_string(&self) {
   }
 
   // Copy list to String
-  String output = (String)constr.to_array(allocator::heap());
+  String output = (String)constr.to_tarray();
   // Cleanup list
   constr.free();
 

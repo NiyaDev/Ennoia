@@ -21,6 +21,8 @@ union OptionData {
 
   float as_float;
   double as_double;
+
+  String as_string;
 }
 
 enum OptionType : char {
@@ -31,6 +33,8 @@ enum OptionType : char {
 
   FLOAT,
   DOUBLE,
+
+  STRING,
 }
 
 
@@ -160,6 +164,9 @@ fn void save_options() {
         length += 4;
       case DOUBLE:
         length += 8;
+
+      case STRING:
+        length += val.data.as_string.len;
     }
   };
 
@@ -181,6 +188,9 @@ fn void save_options() {
         file.write_float(val.data.as_float);
       case DOUBLE:
         file.write_double(val.data.as_double);
+
+      case STRING:
+        file.write_string(val.data.as_string);
     }
     file.close()!!;
   };

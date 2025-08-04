@@ -13,8 +13,6 @@
     - Meshes
     - Fonts
     - etc
-  - V3.0 of Bulk
-    - Expand data in table to have the type of data and encryption algo.
 - Meshes
   - Functions to edit specific vertex things and have it update the mesh internally
   - Blending

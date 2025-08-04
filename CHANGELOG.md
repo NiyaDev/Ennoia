@@ -162,3 +162,7 @@
 - Finished updating Bulk packer to use a manifest. Still need to re-write readme.
 - Need to fix bulk tests.
 
+==== [8/4/25]
+- Added String to valid option types.
+- Updated bulk functiuon to work with v3.
+
