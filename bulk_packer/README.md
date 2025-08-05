@@ -4,13 +4,11 @@
 ==== Use
 
 ``` 
-bulk [Bulk name] -? Entry,...
+bulk_packer [Manifest file]
 ```
 
-Format of entries:
--a [name] [file]:    Adds file
--t [name] ["input"]: Adds text
--r [name]:           Removes file from bulk
+It checks if there is an argument for a manifest file, otherwise it will attempt to load one at "resources/manifest.yaml".
+
 
 If inputted Bulk doesn't exist it'll create a new one.
 

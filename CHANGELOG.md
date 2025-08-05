@@ -166,3 +166,6 @@
 - Added String to valid option types.
 - Updated bulk functiuon to work with v3.
 
+==== [8/5/25]
+- Changed Bulk_packer README.
+
