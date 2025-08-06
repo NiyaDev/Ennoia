@@ -20,15 +20,18 @@ enum DataType : short {
   TEXT,
   KEYBIND,
   OPTION,
+  //LOCALIZATION,
   
   // OpenGL/SDL3
   TEXTURE,
+  FONT,
   SHADER,
 }
 enum CompType : short {
   NONE,
   DEFLATE,
 }
+alias BulkTable = HashMap{String, TableEntry};
 
 
 
@@ -77,13 +80,31 @@ fn char[] load(String filepath, String dataname) {
   @param dataname: "Name of data inside bulk file"
   @require dataname != ""
  *>
-fn Texture load_texture(String filepath, String dataname) {
+fn Texture load_texture(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
   defer free(data);
 
   Texture tex = texture::load_from_mem(data);
 
+  if (send) ennoia::textures.set(dataname, tex);
+
   return tex;
+}
+<* Shorthand for loading a font from a bulk file
+  @param filepath: "Path to bulk file"
+  @require filepath != ""
+  @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
+ *>
+fn Font load_font(String filepath, String dataname, bool send = true) {
+  char[] data = load(filepath, dataname);
+  defer free(data);
+
+  Font font = font::load_from_mem(data[2..], {(float)data[0], (float)data[1]});
+
+  if (send) ennoia::fonts.set(dataname, font);
+
+  return font;
 }
 <* Shorthand for loading a keybind from a bulk file
   @param filepath: "Path to bulk file"
@@ -186,30 +207,43 @@ fn Localization load_local(String filepath, String dataname, bool send = true) {
   return output;
 }
 
+<**>
+fn void load_all(String filepath) {
+  BulkTable tbls = get_table(filepath);
+
+  tbls.@each(; String key, TableEntry val) {
+    switch (val.type) {
+      case KEYBIND: load_keybind(filepath, key, true);
+      case OPTION:  load_option(filepath, key, true);
+      //case LOCALIZATION:
+      case TEXTURE: load_texture(filepath, key, true);
+      case FONT:    load_font(filepath, key, true);
+      //case SHADER:
+      default: io::printfn("[WARNING] - ENNOIA::BULK::LOAD_ALL [Attempted to use load all on a file that contains incompatible file types. %s]", val.type);
+    }
+  };
+}
+
 <* Loads all textures in file
   @param filepath: "File path of file to load"
   @require filepath != ""
  *>
-fn HashMap{String, Texture} load_all_textures(String filepath, bool send = true) {
-  String[] entries = get_entries(filepath);
+fn void load_all_textures(String filepath, bool send = true) {
+  BulkTable tbls = get_table(filepath);
 
-  HashMap{String, Texture} output;
-  
-  for (int i; i < entries.len; i++) {
-    output.set(entries[i], load_texture(filepath, entries[i]));
-  }
-
-  return output;
+  tbls.@each(; String key, TableEntry val) {
+    if (val.type == TEXTURE) load_texture(filepath, key, send);
+  };
 }
 <* Loads all keybinds in file
   @param filepath: "File path of file to load"
   @require filepath != ""
  *>
 fn void load_all_keybinds(String filepath, bool send = true) {
-  HashMap{String, TableEntry} tbls = get_table(filepath);
+  BulkTable tbls = get_table(filepath);
 
   tbls.@each(; String key, TableEntry val) {
-    load_keybind(filepath, key, send);
+    if (val.type == KEYBIND) load_keybind(filepath, key, send);
   };
 }
 <* Loads all options in file
@@ -217,10 +251,10 @@ fn void load_all_keybinds(String filepath, bool send = true) {
   @require filepath != ""
  *>
 fn void load_all_options(String filepath, bool send = true) {
-  HashMap{String, TableEntry} tbls = get_table(filepath);
+  BulkTable tbls = get_table(filepath);
 
   tbls.@each(; String key, TableEntry val) {
-    load_option(filepath, key, send);
+    if (val.type == OPTION) load_option(filepath, key, send);
   };
 }
 <* Loads all localizations in file
@@ -228,16 +262,11 @@ fn void load_all_options(String filepath, bool send = true) {
   @require filepath != ""
  *>
 fn void load_all_localization(String filepath, bool send = true) {
-  String[] entries = get_entries(filepath);
+  BulkTable tbls = get_table(filepath);
 
-  for (int i; i < entries.len; i++) {
-    load_local(filepath, entries[i], send);
-  }
-
-  for (int i; i < entries.len; i++) {
-    entries[i].free(allocator::heap());
-  }
-  free(entries);
+  tbls.@each(; String key, TableEntry val) {
+    
+  };
 }
 
 <* Gets a list of entries inside bulk
@@ -280,8 +309,8 @@ fn String[] get_entries(String filepath) {
   @param filepath: "Bulk file to get entries from"
   @require filepath != ""
  *>
-fn HashMap{String, TableEntry} get_table(String filepath) {
-  HashMap{String, TableEntry} output;
+fn BulkTable get_table(String filepath) {
+  BulkTable output;
   File? file = file::open(filepath, "rb");
   if (catch file) {
     io::printfn("[ERROR] - ENNOIA::BULK::GET_ENTRIES [Failed to open file %s]", filepath);
@@ -402,7 +431,6 @@ fn bool TableEntry.equals_str(&self, String rhs) @operator(==) {
 }
 <**>
 fn usz TableEntry.size(&self) {
-  io::printfn("%d",(self.name.len + 1) + (long.sizeof * 2) + (short.sizeof * 2));
   return (self.name.len + 1) + (long.sizeof * 2) + (short.sizeof * 2);
 }
 

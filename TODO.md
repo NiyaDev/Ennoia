@@ -12,6 +12,7 @@
   - Loading different file types
     - Meshes
     - Fonts
+    - Localization
     - etc
 - Meshes
   - Functions to edit specific vertex things and have it update the mesh internally
@@ -23,7 +24,6 @@
 
 === Low prio
 - UI
-- Localization
 - Rectangle overloads for mul/div and assignment for add/sub/mul/div
 
 === Future
@@ -31,8 +31,6 @@
   - vector.c3
   - matrix.c3
 - Confirm all matrix.c3 functions work
-- Confirm YAML module works fully
-- Improve YAML module
 - Copy over compatible tests from Pleroma
 - Loading fonts from bulk
 - Save all textures to ennoia hashmap.

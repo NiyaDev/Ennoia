@@ -111,7 +111,7 @@ fn bool pressed(String key) {
 fn bool down(String key) {
   Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
-    io::printfn("[WARNING] - ENNOIA::KEYBINDS::DOWN [Attempted to use keybinding that doesn't exist.]");
+    io::printfn("[WARNING] - ENNOIA::KEYBINDS::DOWN [Attempted to use keybinding that doesn't exist. %s]", key);
     return false;
   }
   for (int i; i < ennoia::keyqueue.len(); i++) {

@@ -169,3 +169,6 @@
 ==== [8/5/25]
 - Changed Bulk_packer README.
 
+==== [8/6/25]
+- Added Font loading.
+

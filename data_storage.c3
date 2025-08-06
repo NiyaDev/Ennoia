@@ -11,3 +11,8 @@ Options options;
 
 Localization  localization;
 
+
+// Graphics
+HashMap{String, Texture} textures;
+HashMap{String, Font}    fonts;
+
