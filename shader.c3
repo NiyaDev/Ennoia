@@ -139,13 +139,16 @@ fn Shader load(String vert, String frag) {
 fn Shader compile(char[] vert = {}, char[] frag = {}) {
   int success;
   uint program = gl::create_program();
+  io::printf("[");
+  for (int i; i < vert.len; i++) io::printf("%x,",vert[i]);
+  io::printn("]");
 
   // Vertex shader
   uint vertex_shader = gl::create_shader(gl::VERTEX_SHADER);
   if (vert.len > 0) {
     gl::shader_source(vertex_shader, 1, &&((char*)vert), null);
   } else {
-    gl::shader_source(vertex_shader, 1, &&((char*)DEFAULT_VERTEX_3D), null);
+    gl::shader_source(vertex_shader, 1, &&((char*)FB_VERTEX), null);
   }
   gl::compile_shader(vertex_shader);
   gl::get_shaderiv(vertex_shader, gl::COMPILE_STATUS, &success);
@@ -162,7 +165,7 @@ fn Shader compile(char[] vert = {}, char[] frag = {}) {
   if (frag.len > 0) {
     gl::shader_source(fragment_shader, 1, &&((char*)frag), null);
   } else {
-    gl::shader_source(fragment_shader, 1, &&((char*)DEFAULT_FRAGMENT_3D), null);
+    gl::shader_source(fragment_shader, 1, &&((char*)FB_FRAGMENT), null);
   }
   gl::compile_shader(fragment_shader);
   gl::get_shaderiv(fragment_shader, gl::COMPILE_STATUS, &success);

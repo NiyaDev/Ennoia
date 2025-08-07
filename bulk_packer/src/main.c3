@@ -72,6 +72,13 @@ fn int main(String[] args) {
 					t.length = file::get_size(val.get_array(1).as_string)!!;
 					t.type = RAW;
 					t.comp = NONE;
+				case "SHADER":
+					usz length = 16;
+					if (file::exists(val.get_array(1).as_string)) length += file::get_size(val.get_array(1).as_string)!!;
+					if (file::exists(val.get_array(2).as_string)) length += file::get_size(val.get_array(2).as_string)!!;
+					t.length = length;
+					t.type = SHADER;
+					t.comp = NONE;
 					// TODO Compression on raw files
 					//t.comp = val.get_array(2).as_int;
 			}
@@ -164,6 +171,39 @@ fn int main(String[] args) {
 						file.write_byte(data.read_byte()!!)!!;
 					}
 					data.close()!!;
+				case SHADER:
+					// Vertex Shader
+					if (val.get_array(1).as_string != "") {
+						File? vs = file::open(val.get_array(1).as_string, "rb");
+						if (catch vs) {
+							io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
+							return 1;
+						}
+						usz vsSize = file::get_size(val.get_array(1).as_string)!!;
+						file.write_long(vsSize);
+						for (int l; l < vsSize; l++) {
+							file.write_byte(vs.read_byte()!!)!!;
+						}
+						vs.close()!!;
+					} else {
+						file.write_long(0);
+					}
+					// Fragment Shader
+					if (val.get_array(2).as_string != "") {
+						File? fs = file::open(val.get_array(2).as_string, "rb");
+						if (catch fs) {
+							io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
+							return 1;
+						}
+						usz fsSize = file::get_size(val.get_array(2).as_string)!!;
+						file.write_long(fsSize);
+						for (int l; l < fsSize; l++) {
+							file.write_byte(fs.read_byte()!!)!!;
+						}
+						fs.close()!!;
+					} else {
+						file.write_long(0);
+					}
 				default:
 			}
 			file.seek(old)!!;

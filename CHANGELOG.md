@@ -172,3 +172,6 @@
 ==== [8/6/25]
 - Added Font loading.
 
+==== [8/7/25]
+- Started adding Shader saving and loding to bulks, but for some reason it's not working.
+

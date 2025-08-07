@@ -106,6 +106,26 @@ fn Font load_font(String filepath, String dataname, bool send = true) {
 
   return font;
 }
+<**>
+fn Shader load_shader(String filepath, String dataname, bool send = true) {
+  char[] data = load(filepath, dataname);
+  defer free(data);
+
+  //usz vsSize = *(long*)(data[0..8]);
+  //usz fsSize = *(long*)(char*)(data[vsSize+8..8]);
+  usz counter;
+  usz vsSize = (usz)data[counter++]        + ((usz)data[counter++] <<  8) +
+              ((usz)data[counter++] << 16) + ((usz)data[counter++] << 24) +
+              ((usz)data[counter++] << 32) + ((usz)data[counter++] << 40) +
+              ((usz)data[counter++] << 48) + ((usz)data[counter++] << 56);
+  usz fsSize = (usz)data[vsSize+counter++]        + ((usz)data[vsSize+counter++] <<  8) +
+              ((usz)data[vsSize+counter++] << 16) + ((usz)data[vsSize+counter++] << 24) +
+              ((usz)data[vsSize+counter++] << 32) + ((usz)data[vsSize+counter++] << 40) +
+              ((usz)data[vsSize+counter++] << 48) + ((usz)data[vsSize+counter++] << 56);
+  Shader shader = shader::compile((String)data[8:vsSize],(String)data[vsSize+16:fsSize]);
+
+  return shader;
+}
 <* Shorthand for loading a keybind from a bulk file
   @param filepath: "Path to bulk file"
   @require filepath != ""

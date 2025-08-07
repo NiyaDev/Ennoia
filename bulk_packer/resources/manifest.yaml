@@ -22,5 +22,9 @@ options:
   render_height: [OPTION,  INT,  360]
   fps:           [OPTION, BYTE,   60]
 
-001:
+000:
   test: [STRING, test4]
+
+001:
+  crt_shader: [SHADER, resources/shd_crt.vsh, resources/shd_crt.fsh]
+

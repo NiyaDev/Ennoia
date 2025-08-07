@@ -61,18 +61,14 @@ fn bool TypedValue.has_key(&self, String key) {
   return self.as_object.has_key(key);
 }
 
-<* Removes tabs and spaces at the beginning and end of the string
-  @require self != ""
- *>
+<* Removes tabs and spaces at the beginning and end of the string *>
 fn String String.truncate_spaces(self) {
   String output = self;
   while (output.starts_with(" "))  output = output.strip(" ");
   while (output.starts_with("\t")) output = output.strip("\t");
   return output.truncate_spaces_after();
 }
-<* Removes tabs and spaces at the end of the string
-  @require self != ""
- *>
+<* Removes tabs and spaces at the end of the string *>
 fn String String.truncate_spaces_after(self) {
   String output = self;
   while (output.ends_with(" "))    output = output.strip_end(" ");
@@ -135,9 +131,7 @@ fn bool String.is_value_pair(self) {
 fn String[] String.split_value(self) {
   return self.split(allocator::temp(), ":");
 }
-<* Splits string into an array
-  @require self != ""
- *>
+<* Splits string into an array *>
 fn String[] String.split_array(self) {
   String[] output = self.strip("[").strip_end("]").tsplit(",");
   for (int i; i < output.len; i++) {
