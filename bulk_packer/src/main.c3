@@ -79,6 +79,10 @@ fn int main(String[] args) {
 					t.length = length;
 					t.type = SHADER;
 					t.comp = NONE;
+				case "TEXTURE":
+					t.length = file::get_size(val.get_array(1).as_string)!!;
+					t.type = TEXTURE;
+					t.comp = NONE;
 					// TODO Compression on raw files
 					//t.comp = val.get_array(2).as_int;
 			}
@@ -204,6 +208,14 @@ fn int main(String[] args) {
 					} else {
 						file.write_long(0);
 					}
+				case TEXTURE:
+					File? data = file::open(val.get_array(1).as_string, "rb");
+					if (catch data) {
+						io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
+						return 1;
+					}
+					for (int l; l < table[i].length; l++) file.write_byte(data.read_byte()!!)!!;
+					data.close()!!;
 				default:
 			}
 			file.seek(old)!!;

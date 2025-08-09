@@ -173,5 +173,9 @@
 - Added Font loading.
 
 ==== [8/7/25]
-- Started adding Shader saving and loding to bulks, but for some reason it's not working.
+- Started adding Shader saving and loading to bulks, but for some reason it's not working.
+
+==== [8/8/25]
+- Fixed problem with Shader not loading from bulk.
+- Added Texture saving/loading from bulk.
 

@@ -25,6 +25,7 @@
 === Low prio
 - UI
 - Rectangle overloads for mul/div and assignment for add/sub/mul/div
+- If you tap shift while holding a direction it keeps going even after you let go
 
 === Future
 - Re-write files from Pleroma:

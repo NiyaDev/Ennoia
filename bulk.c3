@@ -49,8 +49,8 @@ fn char[] load(String filepath, String dataname) {
   }
 
   // Ensure correct version
-  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Major version]");
-  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Minor version]");
+  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Major version %s]",filepath);
+  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Minor version %s]",filepath);
 
   // Skip reserved
   file.read_byte()!!;
@@ -106,13 +106,16 @@ fn Font load_font(String filepath, String dataname, bool send = true) {
 
   return font;
 }
-<**>
+<* Shorthand for loading a font from a bulk file
+  @param filepath: "Path to bulk file"
+  @require filepath != ""
+  @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
+ *>
 fn Shader load_shader(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath, dataname);
   defer free(data);
 
-  //usz vsSize = *(long*)(data[0..8]);
-  //usz fsSize = *(long*)(char*)(data[vsSize+8..8]);
   usz counter;
   usz vsSize = (usz)data[counter++]        + ((usz)data[counter++] <<  8) +
               ((usz)data[counter++] << 16) + ((usz)data[counter++] << 24) +

@@ -76,7 +76,6 @@ fn void init(int width, int height, String title, float renderRes = 1) {
 
   // Keybinds
   bulk::load_all_keybinds("resources/keybinds");
-
   // Options
   bulk::load_all_options("resources/options");
 }

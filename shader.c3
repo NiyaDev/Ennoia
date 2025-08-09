@@ -139,9 +139,6 @@ fn Shader load(String vert, String frag) {
 fn Shader compile(char[] vert = {}, char[] frag = {}) {
   int success;
   uint program = gl::create_program();
-  io::printf("[");
-  for (int i; i < vert.len; i++) io::printf("%x,",vert[i]);
-  io::printn("]");
 
   // Vertex shader
   uint vertex_shader = gl::create_shader(gl::VERTEX_SHADER);
