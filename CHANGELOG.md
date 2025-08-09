@@ -179,3 +179,6 @@
 - Fixed problem with Shader not loading from bulk.
 - Added Texture saving/loading from bulk.
 
+==== [8/9/25]
+- Minor changes.
+
