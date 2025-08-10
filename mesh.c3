@@ -195,11 +195,11 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
   if (self.shader.id != 0) {
     self.shader.use();
   } else {
-    ennoia::default_shader_3d.use();
+    ennoia::defaultShader3d.use();
   }
 
-  ennoia::default_shader_3d.set_mat4x4("view", camera::get_matrix());
-  ennoia::default_shader_3d.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
+  ennoia::defaultShader3d.set_mat4x4("view", camera::get_matrix());
+  ennoia::defaultShader3d.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
   
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
@@ -210,16 +210,22 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
 	gl::bind_vertex_array(self.vao);
 	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
 }
+<* Draws Mesh in 2d space3
+  @param position: "Position in space to draw mesh. Default is {0,0,0}."
+  @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
+  @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
+  @param texture:  "Texture to draw on mesh, set to null by default"
+ *>
 fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) {
   if (self.shader.id != 0) {
     self.shader.use();
   } else {
-    ennoia::default_shader_2d.use();
+    ennoia::defaultShader2d.use();
   }
 
   //ennoia::default_shader_2d.set_mat4x4("model", matrix::IDENTITY.translate({position.x, position.y, 0}).rotate({0,0,rotation}).scale({scale.x, scale.y, 1}));
-  ennoia::default_shader_2d.set_vec2("position", position);
-  ennoia::default_shader_2d.set_vec2("scale", scale);
+  ennoia::defaultShader2d.set_vec2("position", position);
+  ennoia::defaultShader2d.set_vec2("scale", scale);
 
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);

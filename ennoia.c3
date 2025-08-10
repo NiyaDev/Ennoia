@@ -23,8 +23,8 @@ float renRes;
 
 float scrollwheel;
 
-Shader default_shader_3d;
-Shader default_shader_2d;
+Shader defaultShader3d;
+Shader defaultShader2d;
 
 
 <* Initializes Ennoia
@@ -61,12 +61,14 @@ fn void init(int width, int height, String title, float renderRes = 1) {
 
   // Enable depth testing
   gl::enable(gl::DEPTH_TEST);
+  gl::enable(gl::BLEND);
+  gl::blend_func(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
   // Create default shaders
-  default_shader_2d = shader::compile(shader::DEFAULT_VERTEX_2D, shader::DEFAULT_FRAGMENT_2D);
-  default_shader_2d.set_vec2("screensize", {(float)renWidth,(float)renHeight});
-  default_shader_3d = shader::compile(shader::DEFAULT_VERTEX_3D, shader::DEFAULT_FRAGMENT_3D);
-  default_shader_3d.set_mat4x4("projection", matrix::perspective(70 * math::PI / 180, (double)renWidth / (double)renHeight, 0.1, 100.0));
+  defaultShader2d = shader::compile(shader::DEFAULT_VERTEX_2D, shader::DEFAULT_FRAGMENT_2D);
+  defaultShader2d.set_vec2("screensize", {(float)renWidth,(float)renHeight});
+  defaultShader3d = shader::compile(shader::DEFAULT_VERTEX_3D, shader::DEFAULT_FRAGMENT_3D);
+  defaultShader3d.set_mat4x4("projection", matrix::perspective(70 * math::PI / 180, (double)renWidth / (double)renHeight, 0.1, 100.0));
 
   // Framebuffer
   render::init(renWidth, renHeight);
@@ -125,8 +127,8 @@ fn void end_drawing() {
 }
 <* Cleans up resources *>
 fn void clean() {
-  default_shader_2d.clean();
-  default_shader_3d.clean();
+  defaultShader2d.clean();
+  defaultShader3d.clean();
 
   render::clean();
 

@@ -110,6 +110,17 @@ fn Font load(String filename, Vector2 size) {
   output.rects.set('/', {x *  4, y * 3, x, y});
   output.rects.set('?', {x *  5, y * 3, x, y});
 
+  output.rects.set('0', {x *  6, y * 3, x, y});
+  output.rects.set('1', {x *  7, y * 3, x, y});
+  output.rects.set('2', {x *  8, y * 3, x, y});
+  output.rects.set('3', {x *  9, y * 3, x, y});
+  output.rects.set('4', {x * 10, y * 3, x, y});
+  output.rects.set('5', {x * 11, y * 3, x, y});
+  output.rects.set('6', {x * 12, y * 3, x, y});
+  output.rects.set('7', {x * 13, y * 3, x, y});
+  output.rects.set('8', {x * 14, y * 3, x, y});
+  output.rects.set('9', {x * 15, y * 3, x, y});
+
   return output;
 }
 <* Loads font from data *>
@@ -235,8 +246,8 @@ fn void Font.draw(&self, String text, Vector2 position = {0,0}, float scale = 1,
       continue;
     }
     Vector2 space;
-    if (char_x > 0) space.x = (((spacing + 2) * ((self.dim.x * scale) / 2)) * char_x-1);
-    if (char_y > 0) space.y = (((spacing + 2) * ((self.dim.y * scale) / 2)) * char_y-1);
+    if (char_x > 0) space.x = (((spacing + 2) * ((self.dim.x * scale) / 2)) * char_x);
+    if (char_y > 0) space.y = (((spacing + 2) * ((self.dim.y * scale) / 2)) * char_y);
     self.atlas.draw(
       dest:{
         position.x + (char_x * (self.dim.x * scale)) + space.x,

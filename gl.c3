@@ -94,6 +94,9 @@ const DEPTH24_STENCIL8 = 0x000088F0;
 const DEPTH_STENCIL_ATTACHMENT = 0x0000821A;
 const TEXTURE0 = 0x000084C0;
 const CULL_FACE = 0x00000B44;
+const BLEND = 0x00000BE2;
+const SRC_ALPHA	= 0x00000302;
+const ONE_MINUS_SRC_ALPHA = 0x00000303;
 
 
 extern fn void clear_color(float, float, float, float) @extern("glClearColor");
@@ -160,6 +163,7 @@ extern fn void gen_vertex_arrays(uint, uint*) @extern("glGenVertexArrays");
 extern fn void bind_vertex_array(uint) @extern("glBindVertexArray");
 extern fn void draw_arrays(int, uint, uint) @extern("glDrawArrays");
 extern fn void draw_elements(int, uint, int, void*) @extern("glDrawElements");
+extern fn void blend_func(uint sfactor, uint dfactor) @extern("glBlendFunc");
 
 
 extern fn void viewport(int, int, int, int) @extern("glViewport");
