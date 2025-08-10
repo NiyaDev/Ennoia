@@ -1,6 +1,7 @@
 
 module ennoia;
 import std::io;
+import std::collections;
 import std::math;
 import sdl3;
 

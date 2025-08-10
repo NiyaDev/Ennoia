@@ -186,5 +186,5 @@
 - Added numerals to font atlas.
 - Changed default shader variable names to fit new system.
 - Added blending for transparent textures.
-
+- Minor fixes.
 

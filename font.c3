@@ -221,6 +221,17 @@ fn Font load_from_mem(char[] data, Vector2 size) {
   output.rects.set('/', {x *  4, y * 3, x, y});
   output.rects.set('?', {x *  5, y * 3, x, y});
 
+  output.rects.set('0', {x *  6, y * 3, x, y});
+  output.rects.set('1', {x *  7, y * 3, x, y});
+  output.rects.set('2', {x *  8, y * 3, x, y});
+  output.rects.set('3', {x *  9, y * 3, x, y});
+  output.rects.set('4', {x * 10, y * 3, x, y});
+  output.rects.set('5', {x * 11, y * 3, x, y});
+  output.rects.set('6', {x * 12, y * 3, x, y});
+  output.rects.set('7', {x * 13, y * 3, x, y});
+  output.rects.set('8', {x * 14, y * 3, x, y});
+  output.rects.set('9', {x * 15, y * 3, x, y});
+
   return output;
 }
 

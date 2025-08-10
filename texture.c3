@@ -11,6 +11,7 @@ struct Texture {
   uint width, height;
   int mipmaps;
   int format;
+  bool transparency;
 }
 
 
@@ -18,12 +19,21 @@ struct Texture {
 fn Texture load(String filename) {
   Texture output;
 
+  // Load data from file
   stb::stbi_set_flip_vertically_on_load(true);
-
   uint channels;
   char* data = stb::stbi_load(filename.zstr_tcopy(), &output.width, &output.height, &channels, 0);
   assert(data != null, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to load image]");
 
+  // Check if transparent
+  for (int i = 3; i < (output.width * output.height) * 4; i += 4) {
+    if (data[i] != 255) {
+      output.transparency = true;
+      break;
+    }
+  }
+
+  // Gen OpenGL texture
   gl::gen_textures(1, &output.id);
   gl::bind_texture(gl::TEXTURE_2D, output.id);
 
@@ -34,6 +44,7 @@ fn Texture load(String filename) {
   gl::generate_mipmap(gl::TEXTURE_2D);
   assert(output.id != 0, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to bind texture]");
 
+  // Cleanup
   stb::stbi_image_free(data);
 
   return output;

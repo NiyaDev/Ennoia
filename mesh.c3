@@ -11,6 +11,7 @@ struct Mesh {
   uint vao, vbo;
 
   Shader shader;
+  Texture* texture;
 }
 
 struct Vertex {
@@ -97,7 +98,7 @@ fn Mesh new(Vertex[] vertices = {}) {
 // Mesh generation
 <* Generates a simple Triangle mesh *>
 fn Mesh gen_triangle() {
-  Mesh output = {mem::new_array(Vertex, BASIC_TRI.len), 0, 0, {}};
+  Mesh output = {mem::new_array(Vertex, BASIC_TRI.len), 0, 0, {}, null};
   mem::copy(output.vertices, BASIC_TRI, Vertex.sizeof * BASIC_TRI.len);
   output.upload();
 
@@ -105,7 +106,7 @@ fn Mesh gen_triangle() {
 }
 <* Generates a simple Quad mesh *>
 fn Mesh gen_quad() {
-  Mesh output = {mem::new_array(Vertex, BASIC_QUAD.len), 0, 0, {}};
+  Mesh output = {mem::new_array(Vertex, BASIC_QUAD.len), 0, 0, {}, null};
   mem::copy(output.vertices, BASIC_QUAD, Vertex.sizeof * BASIC_QUAD.len);
   output.upload();
 
@@ -113,7 +114,7 @@ fn Mesh gen_quad() {
 }
 <* Generates a simple Cube mesh *>
 fn Mesh gen_cube() {
-  Mesh output = {mem::new_array(Vertex, BASIC_CUBE.len), 0, 0, {}};
+  Mesh output = {mem::new_array(Vertex, BASIC_CUBE.len), 0, 0, {}, null};
   mem::copy(output.vertices, BASIC_CUBE, Vertex.sizeof * BASIC_CUBE.len);
   output.upload();
 
@@ -204,7 +205,11 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
   } else {
-    gl::bind_texture(gl::TEXTURE_2D, 0);
+    if (self.texture != null) {
+      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
+    } else {
+      gl::bind_texture(gl::TEXTURE_2D, 0);
+    }
   }
 
 	gl::bind_vertex_array(self.vao);
@@ -230,7 +235,11 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
   } else {
-    gl::bind_texture(gl::TEXTURE_2D, 0);
+    if (self.texture != null) {
+      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
+    } else {
+      gl::bind_texture(gl::TEXTURE_2D, 0);
+    }
   }
 
   gl::bind_vertex_array(self.vao);
