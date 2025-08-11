@@ -188,3 +188,7 @@
 - Added blending for transparent textures.
 - Minor fixes.
 
+==== [8/11/25]
+- Fixed Textures drawing position being hlaved seemingly.
+- Started on tiled Texture drawing.
+

@@ -13,6 +13,16 @@ struct Texture {
   int format;
   bool transparency;
 }
+struct TilingInfo {
+  Rectangle src;
+  int left, top, right, bottom;
+  TilingLayout layout;
+}
+enum TilingLayout {
+  THREE_THREE,
+  ONE_THREE,
+  THREE_ONE,
+}
 
 
 <* Loads image from file *>
@@ -96,12 +106,15 @@ fn void Texture.clean(&self) {
   gl::delete_textures(1, &self.id);
 }
 
-<* Draw texture to screen *>
+<* Draw texture to screen
+  @param dest: "Area of screen to draw texture"
+  @param src: "Area of the texture to draw"
+ *>
 fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}) {
   // Calculating size on screen
   Vector2 newSize = {dest.w, dest.h};
-  if (dest.w < -1) newSize.x = (float)self.width;
-  if (dest.h < -1) newSize.y = (float)self.height;
+  if (dest.w <= 0) newSize.x = (float)self.width;
+  if (dest.h <= 0) newSize.y = (float)self.height;
   Vector2 scale = {
     newSize.x / (float)ennoia::renWidth,
     newSize.y / (float)ennoia::renHeight,
@@ -109,8 +122,8 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
 
   // Change texcoords
   Rectangle newSrc = src;
-  if (src.w < 0) newSrc.w = (float)self.width;
-  if (src.h < 0) newSrc.h = (float)self.height;
+  if (src.w <= 0) newSrc.w = (float)self.width;
+  if (src.h <= 0) newSrc.h = (float)self.height;
   Vector2 topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
   Vector2 topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
   Vector2 botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
@@ -119,8 +132,8 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
 
   // Calculating position on screen
   Vector2 pos = {
-    dest.x + newSize.x - (float)ennoia::renWidth,
-    dest.y + newSize.y - (float)ennoia::renHeight,
+    -(float)ennoia::renWidth  + (dest.x * 2) + newSize.x,
+    -(float)ennoia::renHeight + (dest.y * 2) + newSize.y,
   };
 
   // Draw
@@ -128,5 +141,33 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
 
   // Reset TexCoords
   ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
+}
+<* Draw tiled texture to screen
+  @param dest: "Area of screen to draw texture"
+  @param src: "Area of the texture to draw"
+  @param layout: "Tiling layout"
+ *>
+fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout) {
+  switch (layout) {
+    case THREE_THREE:
+      //
+      float width  = ((src.w <= 0) ? (float)self.width  / 3 : (float)src.w / 3);
+      float height = ((src.h <= 0) ? (float)self.height / 3 : (float)src.h / 3);
+      float middleWidth  = ((dest.w <= 0) ? (float)self.width  / 3 : (float)dest.w / 3);
+      float middleHeight = ((dest.h <= 0) ? (float)self.height / 3 : (float)dest.h / 3);
+      self.draw({dest.x,           dest.y,            width, height}, {0,            0,   width, height});
+      self.draw({dest.x + width,   dest.y,            width, height}, {width,        0,   width, height});
+      self.draw({dest.x + width*2, dest.y,            width, height}, {width*2,      0,   width, height});
+
+      self.draw({dest.x,           dest.y + height,   width, height}, {0,       height,   width, height});
+      self.draw({dest.x + width,   dest.y + height,   width, height}, {width,   height,   width, height});
+      self.draw({dest.x + width*2, dest.y + height,   width, height}, {width*2, height,   width, height});
+
+      self.draw({dest.x,           dest.y + height*2, width, height}, {0,       height*2, width, height});
+      self.draw({dest.x + width,   dest.y + height*2, width, height}, {width,   height*2, width, height});
+      self.draw({dest.x + width*2, dest.y + height*2, width, height}, {width*2, height*2, width, height});
+    case ONE_THREE:
+    case THREE_ONE:
+  }
 }
 

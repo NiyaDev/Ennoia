@@ -6,6 +6,7 @@
   - There IS a leak in the test program. I need to find it.
   - If I wait too long the debt is going to be insane...
 - Move ~SDL3~ and OpenGL binds to seperate projects for simplicity
+- 2D rendering seems to be in reverse order.
 
 === Mid prio
 - Bulk
@@ -16,11 +17,9 @@
     - etc
 - Meshes
   - Functions to edit specific vertex things and have it update the mesh internally
-  - Blending
   - Culling
 - Textures
   - Draw tiled
-- Import YAML code
 
 === Low prio
 - UI
