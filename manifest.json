@@ -33,8 +33,8 @@
     },
     "linux-x64" : {
       "link-args" : [],
-      "dependencies" : [ "stb", "sdl3" ],
-      "linked-libraries" : [ "GL", "glfw", "SDL3" ]
+      "dependencies" : [ "stb", "sdl3", "assimp" ],
+      "linked-libraries" : [ "GL", "SDL3", "assimp" ]
     },
     "macos-aarch64" : {
       "link-args" : [],

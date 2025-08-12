@@ -63,6 +63,7 @@ fn void init(int width, int height, String title, float renderRes = 1) {
   // Enable depth testing
   gl::enable(gl::DEPTH_TEST);
   gl::enable(gl::BLEND);
+  //gl::enable(gl::CULL_FACE);
   gl::blend_func(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
   // Create default shaders

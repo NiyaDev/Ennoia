@@ -18,12 +18,9 @@
 - Meshes
   - Functions to edit specific vertex things and have it update the mesh internally
   - Culling
-- Textures
-  - Draw tiled
 
 === Low prio
 - UI
-- Rectangle overloads for mul/div and assignment for add/sub/mul/div
 - If you tap shift while holding a direction it keeps going even after you let go
 
 === Future
@@ -33,5 +30,4 @@
 - Confirm all matrix.c3 functions work
 - Copy over compatible tests from Pleroma
 - Loading fonts from bulk
-- Save all textures to ennoia hashmap.
 - Mesh generation: Plane, etc

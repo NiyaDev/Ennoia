@@ -192,3 +192,7 @@
 - Fixed Textures drawing position being hlaved seemingly.
 - Started on tiled Texture drawing.
 
+==== [8/12/25]
+- Finished tiled texture drawing.
+- Finished overloads for Rectangle math both with rectangles and with Vector2s.
+
