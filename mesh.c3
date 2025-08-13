@@ -87,6 +87,28 @@ const Vertex[] BASIC_CUBE = {
 };
 
 
+<**>
+fn Mesh[] load(String filename) {
+  List{Mesh} list;
+  
+  String data = (String)file::load_temp(filename)!!;
+  String[] lines = data.tsplit("\n");
+
+  for (int i; i < lines.len; i++) {
+    String[] line = lines[i].split(" ");
+    switch (line[0]) {
+      case "#": continue;
+      case "o":  // Object
+      case "v":  // Vertex
+      case "vn": // Normal
+      case "vt": // TextureCoord
+    }
+  }
+
+  Mesh[] output = list.to_array(allocator::heap());
+  list.free();
+  return output;
+}
 <* Creates a new Mesh using input vertices and indices
   @param vertices: "The array of vertices to set"
   @return "Mesh struct"

@@ -196,3 +196,6 @@
 - Finished tiled texture drawing.
 - Finished overloads for Rectangle math both with rectangles and with Vector2s.
 
+==== [8/13/25]
+- Started Mesh loading.
+
