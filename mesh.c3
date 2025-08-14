@@ -7,8 +7,9 @@ import ennoia;
 
 struct Mesh {
   Vertex[] vertices;
+  Indices[] indices;
 
-  uint vao, vbo;
+  uint vao, vbo, ebo;
 
   Shader shader;
   Texture* texture;
@@ -22,6 +23,8 @@ struct Vertex {
   //Vector4 tangents;
   //Vector2 texCoords2;
 }
+alias Indices = uint[3];
+
 const void* VERTEX_POSITION = null;
 const void* VERTEX_NORMAL   = (void*)(Vector3.sizeof);
 const void* VERTEX_TEXCOORD = (void*)((long)VERTEX_NORMAL * 2);
@@ -94,17 +97,88 @@ fn Mesh[] load(String filename) {
   String data = (String)file::load_temp(filename)!!;
   String[] lines = data.tsplit("\n");
 
+  int lastMember = -1;
+  usz lastVertexPos, lastVertexNor, lastVertexTex, lastIndices;
+  usz  maxVertexPos,  maxVertexNor,  maxVertexTex;
+  String materialName;
+  List{Vertex} vertices;
+  List{Indices} indices;
+
   for (int i; i < lines.len; i++) {
-    String[] line = lines[i].split(" ");
+    String[] line = lines[i].tsplit(" ");
     switch (line[0]) {
       case "#": continue;
+      case "mtllib": // Material
+        materialName = line[1];
       case "o":  // Object
+        // If this isn't the first object, save vertices
+        if (lastMember >= 0) {
+          Mesh* temp = list.get_ref(lastMember);
+          temp.vertices = vertices.to_array(allocator::heap());
+          vertices.free();
+          maxVertexPos += lastVertexPos;
+          maxVertexNor += lastVertexNor;
+          maxVertexTex += lastVertexTex;
+          lastVertexPos = 0;
+          lastVertexNor = 0;
+          lastVertexTex = 0;
+          temp.indices = indices.to_array(allocator::heap());
+          indices.free();
+          lastIndices = 0;
+        }
+        // Create new mesh
+        Mesh newMesh;
+        list.push(newMesh);
+        lastMember++;
       case "v":  // Vertex
+        if (vertices.len() <= lastVertexPos) vertices.push({});
+
+        float x = line[1].to_float()!!;
+        float y = line[2].to_float()!!;
+        float z = line[3].to_float()!!;
+        vertices[lastVertexPos].position = (Vector3){x,y,z};
+        lastVertexPos++;
       case "vn": // Normal
+        if (vertices.len() <= lastVertexNor) vertices.push({});
+
+        float x = line[1].to_float()!!;
+        float y = line[2].to_float()!!;
+        float z = line[3].to_float()!!;
+        vertices[lastVertexNor].normal = (Vector3){x,y,z};
+        lastVertexNor++;
       case "vt": // TextureCoord
+        if (vertices.len() <= lastVertexTex) vertices.push({});
+
+        float x = line[1].to_float()!!;
+        float y = line[2].to_float()!!;
+        vertices[lastVertexTex].texCoords = (Vector2){x,y};
+        lastVertexTex++;
+      case "f": // Indices
+        /*
+        for (int l = 1; l < line.len; l++) {
+          if (indices.len() <= lastIndices) indices.push({});
+          String[] anotherSplit = line[l].tsplit("/");
+          int x = anotherSplit[0].to_int()!! - (int)maxVertexPos;
+          int y = anotherSplit[1].to_int()!! - (int)maxVertexNor;
+          int z = anotherSplit[2].to_int()!! - (int)maxVertexTex;
+
+          indices[lastIndices] = {x,y,z};
+          lastIndices++;
+        }*/
+        if (indices.len() <= lastIndices) indices.push({});
+        String[] anotherSplit1 = line[1].tsplit("/");
+        String[] anotherSplit2 = line[2].tsplit("/");
+        String[] anotherSplit3 = line[3].tsplit("/");
+        int x = anotherSplit1[0].to_int()!! - (int)maxVertexPos - 1;
+        int y = anotherSplit2[0].to_int()!! - (int)maxVertexPos - 1;
+        int z = anotherSplit3[0].to_int()!! - (int)maxVertexPos - 1;
+
+        indices[lastIndices] = {x,y,z};
+        lastIndices++;
     }
   }
 
+  for (int i; i < list.len(); i++) list[i].upload();
   Mesh[] output = list.to_array(allocator::heap());
   list.free();
   return output;
@@ -120,7 +194,9 @@ fn Mesh new(Vertex[] vertices = {}) {
 // Mesh generation
 <* Generates a simple Triangle mesh *>
 fn Mesh gen_triangle() {
-  Mesh output = {mem::new_array(Vertex, BASIC_TRI.len), 0, 0, {}, null};
+  Mesh output;
+  output.vertices = mem::new_array(Vertex, BASIC_TRI.len);
+
   mem::copy(output.vertices, BASIC_TRI, Vertex.sizeof * BASIC_TRI.len);
   output.upload();
 
@@ -128,7 +204,9 @@ fn Mesh gen_triangle() {
 }
 <* Generates a simple Quad mesh *>
 fn Mesh gen_quad() {
-  Mesh output = {mem::new_array(Vertex, BASIC_QUAD.len), 0, 0, {}, null};
+  Mesh output;
+  output.vertices = mem::new_array(Vertex, BASIC_QUAD.len);
+
   mem::copy(output.vertices, BASIC_QUAD, Vertex.sizeof * BASIC_QUAD.len);
   output.upload();
 
@@ -136,7 +214,9 @@ fn Mesh gen_quad() {
 }
 <* Generates a simple Cube mesh *>
 fn Mesh gen_cube() {
-  Mesh output = {mem::new_array(Vertex, BASIC_CUBE.len), 0, 0, {}, null};
+  Mesh output;
+  output.vertices = mem::new_array(Vertex, BASIC_CUBE.len);
+
   mem::copy(output.vertices, BASIC_CUBE, Vertex.sizeof * BASIC_CUBE.len);
   output.upload();
 
@@ -169,6 +249,7 @@ fn Mesh generate_mesh_test(uint[][] data) {
 fn void Mesh.clean(&self) {
   self.delete();
   free(self.vertices);
+  free(self.indices);
   self.shader.clean();
 }
 
@@ -182,6 +263,12 @@ fn void Mesh.upload(&self) {
   gl::bind_buffer(gl::ARRAY_BUFFER, self.vbo);
   gl::buffer_data(gl::ARRAY_BUFFER, self.vertices.len * Vertex.sizeof, self.vertices, gl::STATIC_DRAW);
 
+  if (self.indices.len > 0) {
+    gl::gen_buffers(1, &self.ebo);
+    gl::bind_buffer(gl::ELEMENT_ARRAY_BUFFER, self.ebo);
+    gl::buffer_data(gl::ELEMENT_ARRAY_BUFFER, self.indices.len * Indices.sizeof, self.indices, gl::STATIC_DRAW);
+  }
+
   ennoia::set_vertex_attribute(0, 3, VERTEX_POSITION);
   ennoia::set_vertex_attribute(1, 3, VERTEX_NORMAL);
   ennoia::set_vertex_attribute(2, 2, VERTEX_TEXCOORD);
@@ -193,6 +280,7 @@ fn void Mesh.upload(&self) {
 fn void Mesh.delete(&self) {
   gl::delete_vertex_arrays(1, &self.vao);
   gl::delete_buffers(1, &self.vbo);
+  gl::delete_buffers(1, &self.ebo);
 }
 
 <* Changes the TexCoords of the mesh and re-uploads it
@@ -235,7 +323,12 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
   }
 
 	gl::bind_vertex_array(self.vao);
-	gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
+
+	if (self.ebo != 0) {
+	  gl::draw_elements(gl::TRIANGLES, self.indices.len * 3, gl::UNSIGNED_INT, null);
+	} else {
+	  gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
+	}
 }
 <* Draws Mesh in 2d space3
   @param position: "Position in space to draw mesh. Default is {0,0,0}."

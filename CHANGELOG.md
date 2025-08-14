@@ -199,3 +199,7 @@
 ==== [8/13/25]
 - Started Mesh loading.
 
+==== [8/14/25]
+- Meshes load completely.
+  - Textures are a little off.
+
