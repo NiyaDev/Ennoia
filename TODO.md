@@ -12,7 +12,7 @@
 - Bulk
   - Loading different file types
     - Meshes
-    - Fonts
+      - Able to load materials from the same bulk file
     - Localization
     - etc
 - Meshes

@@ -203,3 +203,8 @@
 - Meshes load completely.
   - Textures are a little off.
 
+==== [8/15/25]
+- Made mesh textures into an array.
+- Moved things to make mesh::load and mesh::load_from_file.
+- Made mesh::load and mesh::load_from_file return hashmaps instead of just an array.
+

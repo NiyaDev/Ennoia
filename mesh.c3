@@ -12,7 +12,7 @@ struct Mesh {
   uint vao, vbo, ebo;
 
   Shader shader;
-  Texture* texture;
+  Texture*[] textures;
 }
 
 struct Vertex {
@@ -90,14 +90,23 @@ const Vertex[] BASIC_CUBE = {
 };
 
 
-<**>
-fn Mesh[] load(String filename) {
-  List{Mesh} list;
-  
+<* Loads Mesh from .obj file
+  @param filename: "Name of .obj file to load"
+  @require filename != ""
+ *>
+fn HashMap{String,Mesh} load(String filename) {
   String data = (String)file::load_temp(filename)!!;
+  return load_from_mem(data);
+}
+<* Loads Mesh from data
+  @param data: "Data to make into mesh"
+  @require data.len > 0
+ *>
+fn HashMap{String, Mesh} load_from_mem(String data) {
+  HashMap{String, Mesh} list;
   String[] lines = data.tsplit("\n");
 
-  int lastMember = -1;
+  String lastMember = "";
   usz lastVertexPos, lastVertexNor, lastVertexTex, lastIndices;
   usz  maxVertexPos,  maxVertexNor,  maxVertexTex;
   String materialName;
@@ -108,12 +117,14 @@ fn Mesh[] load(String filename) {
     String[] line = lines[i].tsplit(" ");
     switch (line[0]) {
       case "#": continue;
-      case "mtllib": // Material
+      case "mtllib": // Material file
         materialName = line[1];
+      case "usemtl": // Material info
+        break;
       case "o":  // Object
         // If this isn't the first object, save vertices
-        if (lastMember >= 0) {
-          Mesh* temp = list.get_ref(lastMember);
+        if (list.len() > 0) {
+          Mesh* temp = list.get_ref(lastMember)!!;
           temp.vertices = vertices.to_array(allocator::heap());
           vertices.free();
           maxVertexPos += lastVertexPos;
@@ -125,13 +136,15 @@ fn Mesh[] load(String filename) {
           temp.indices = indices.to_array(allocator::heap());
           indices.free();
           lastIndices = 0;
+          temp.textures = mem::new_array(Texture*, 1);
+          temp.upload();
         }
         // Create new mesh
         Mesh newMesh;
-        list.push(newMesh);
-        lastMember++;
+        list.set(line[1],newMesh);
+        lastMember = line[1];
       case "v":  // Vertex
-        if (vertices.len() <= lastVertexPos) vertices.push({});
+        if (vertices.len() <= lastVertexPos) vertices.push({{},{},{0,1}});
 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
@@ -139,7 +152,7 @@ fn Mesh[] load(String filename) {
         vertices[lastVertexPos].position = (Vector3){x,y,z};
         lastVertexPos++;
       case "vn": // Normal
-        if (vertices.len() <= lastVertexNor) vertices.push({});
+        if (vertices.len() <= lastVertexNor) vertices.push({{},{},{0,1}});
 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
@@ -147,24 +160,13 @@ fn Mesh[] load(String filename) {
         vertices[lastVertexNor].normal = (Vector3){x,y,z};
         lastVertexNor++;
       case "vt": // TextureCoord
-        if (vertices.len() <= lastVertexTex) vertices.push({});
+        if (vertices.len() <= lastVertexTex) vertices.push({{},{},{0,1}});
 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
         vertices[lastVertexTex].texCoords = (Vector2){x,y};
         lastVertexTex++;
       case "f": // Indices
-        /*
-        for (int l = 1; l < line.len; l++) {
-          if (indices.len() <= lastIndices) indices.push({});
-          String[] anotherSplit = line[l].tsplit("/");
-          int x = anotherSplit[0].to_int()!! - (int)maxVertexPos;
-          int y = anotherSplit[1].to_int()!! - (int)maxVertexNor;
-          int z = anotherSplit[2].to_int()!! - (int)maxVertexTex;
-
-          indices[lastIndices] = {x,y,z};
-          lastIndices++;
-        }*/
         if (indices.len() <= lastIndices) indices.push({});
         String[] anotherSplit1 = line[1].tsplit("/");
         String[] anotherSplit2 = line[2].tsplit("/");
@@ -177,11 +179,15 @@ fn Mesh[] load(String filename) {
         lastIndices++;
     }
   }
+  Mesh* temp = list.get_ref(lastMember)!!;
+  temp.vertices = vertices.to_array(allocator::heap());
+  vertices.free();
+  temp.indices = indices.to_array(allocator::heap());
+  indices.free();
+  temp.textures = mem::new_array(Texture*, 1);
+  temp.upload();
 
-  for (int i; i < list.len(); i++) list[i].upload();
-  Mesh[] output = list.to_array(allocator::heap());
-  list.free();
-  return output;
+  return list;
 }
 <* Creates a new Mesh using input vertices and indices
   @param vertices: "The array of vertices to set"
@@ -196,6 +202,7 @@ fn Mesh new(Vertex[] vertices = {}) {
 fn Mesh gen_triangle() {
   Mesh output;
   output.vertices = mem::new_array(Vertex, BASIC_TRI.len);
+  output.textures = mem::new_array(Texture*, 1);
 
   mem::copy(output.vertices, BASIC_TRI, Vertex.sizeof * BASIC_TRI.len);
   output.upload();
@@ -206,6 +213,7 @@ fn Mesh gen_triangle() {
 fn Mesh gen_quad() {
   Mesh output;
   output.vertices = mem::new_array(Vertex, BASIC_QUAD.len);
+  output.textures = mem::new_array(Texture*, 1);
 
   mem::copy(output.vertices, BASIC_QUAD, Vertex.sizeof * BASIC_QUAD.len);
   output.upload();
@@ -216,6 +224,7 @@ fn Mesh gen_quad() {
 fn Mesh gen_cube() {
   Mesh output;
   output.vertices = mem::new_array(Vertex, BASIC_CUBE.len);
+  output.textures = mem::new_array(Texture*, 1);
 
   mem::copy(output.vertices, BASIC_CUBE, Vertex.sizeof * BASIC_CUBE.len);
   output.upload();
@@ -250,6 +259,7 @@ fn void Mesh.clean(&self) {
   self.delete();
   free(self.vertices);
   free(self.indices);
+  free(self.textures);
   self.shader.clean();
 }
 
@@ -315,8 +325,13 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
   } else {
-    if (self.texture != null) {
-      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
+    if (self.textures.len > 0) {
+      for (int i; i < self.textures.len; i++) {
+        if (self.textures[i] != null) {
+          gl::active_texture(gl::TEXTURE0 + i);
+          gl::bind_texture(gl::TEXTURE_2D, self.textures[i].id);
+        }
+      }
     } else {
       gl::bind_texture(gl::TEXTURE_2D, 0);
     }
@@ -350,8 +365,13 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
   } else {
-    if (self.texture != null) {
-      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
+    if (self.textures.len > 0) {
+      for (int i; i < self.textures.len; i++) {
+        if (self.textures[i] != null) {
+          gl::active_texture(gl::TEXTURE0 + i);
+          gl::bind_texture(gl::TEXTURE_2D, self.textures[i].id);
+        }
+      }
     } else {
       gl::bind_texture(gl::TEXTURE_2D, 0);
     }
