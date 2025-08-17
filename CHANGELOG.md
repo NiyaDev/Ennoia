@@ -1,63 +1,63 @@
 
-== v0.1.0
+## v0.1.0
 
-==== [6/30/25]
+#### [6/30/25]
 - Migrated over Vectors 2-4, Quaternion, and Matrixes from Pleroma.
 - Moved VAO, VBO, and EBO into Trio structure that isn't kept in mesh and made it so that the mesh is uploaded when drawing and deleted after.
 - Fixed: Flipped loaded texture.
 - Fixed: Not saving vertices and indices to mesh structure.
 
-==== [7/1/25]
+#### [7/1/25]
 - Migrated ennoia.c3 to gl.c3 and started on base Ennoia functions.
 - Started on camera.
 
-==== [7/2/25]
+#### [7/2/25]
 - Moved shader compilation to seperate function to allow both loading from file and raw data.
 - Re-added default shaders.
 - Changed how rendering models works. It doesn't fully work yet.
 
-==== [7/3/25]
+#### [7/3/25]
 - Meshes now render properly.
 - Camera now works properly.
 - Re-added framebuffer size callback and it now updates properly.
 - Fixed: Matrixes were using "row-major" instead of "column-major".
   - Need to look to see if I need to fix any matrix functions. look_at and perspective didn't, so possibly not.
 
-==== [7/4/25]
+#### [7/4/25]
 - Added wrappers to end drawing and clearing bg.
 - Added scrollwheel handling.
 - Changed camera to function off of target and distance to target instead of target-position.
   - Rotation is almost done, something went wrong and it crashes.
 - Minor functions added to vector3 and floats.
 
-==== [7/5/25]
+#### [7/5/25]
 - Finished camera rotation.
 - Experimenting with mesh generation.
 
-==== [7/6/26]
+#### [7/6/26]
 - Moved everything hap-hazardly from GLFW to SDL3. It draws, but i still need to properly handle input.
 
-==== [7/7/25]
+#### [7/7/25]
 - Added mutliple SDL3 constants.
 
-==== [7/8/25]
+#### [7/8/25]
 - Added keybinding system.
 - Re-added mousewheel controls.
 
-==== [7/9/25]
+#### [7/9/25]
 - Changed Vertexes from an array of floats to an actual structure.
 - Made a wrapper for vertex_attrib_pointer to simmplify code.
 - Removed "Trio" and replaced with a tuple.
 
-==== [7/10/25]
+#### [7/10/25]
 - Minor changes
 
-==== [7/11/25]
+#### [7/11/25]
 - Started on adding rendering to a texture
   - Something is wrong, but i don't know what yet...
 - Added int shader uniforms
 
-==== [7/12/25]
+#### [7/12/25]
 - Mesh:
   - Removed Matrix and draw_at
   - Added VAO/VBO, position, scale, and rotation to draw
@@ -65,83 +65,83 @@
 - Started changing how shader uniforms are changed and set.
 - Render texture quad is being rendered and a *different* texture can be drawn on it, but for some reason the render texture cant...
 
-==== [7/13/25]
+#### [7/13/25]
 - Finally fixed render texture. The problem was I was using glTextureParameteri instead of glTexParameteri. So stupid.
 - Added rendering at a lower or higher resolution than screen.
 - Added shader cleanup and rendertexture shader changing.
 - Changed over from using add_loc and set_loc to just using set_X where X is the data type.
 
-==== [7/14/25]
+#### [7/14/25]
 - Moved drawing functions from wrappers to ennoia, but might still move them to render.
 - Created render.c3 and moved rendertexture initialization over.
 
-==== [7/15/25]
+#### [7/15/25]
 - Created mesh generation functions.
 - Started working on texture drawing.
 
-==== [7/16/26]
+#### [7/16/26]
 - Renamed basic shaders and added 2d shader.
 - Added clean functions for Mesh, Render texture, texture, and ennoia in general.
 - Fully added drawing a texture to screen.
 
-==== [7/17/25]
+#### [7/17/25]
 - Minor changes
 
-==== [7/18/25]
+#### [7/18/25]
 - Started work on Bulk v2 and then restarted because I wanted to go in a different direction.
 
-==== [7/19/25]
+#### [7/19/25]
 - Minor md changes
 
-==== [7/20/25]
+#### [7/20/25]
 - Worked on adding more functionality to Bulk and started making bulk_packer to make bulk files
 
-==== [7/21/25]
+#### [7/21/25]
 - Continued on Bulk loading and almost finished the packer
 
-==== [7/22/25]
+#### [7/22/25]
 - Bulk:
   - Basic Bulk packer finished and able to add and remove entries from bulk files.
   - Functions for getting entry length or pointer.
   - Function for getting textures.
 - Function for loading texture from array (memory).
 
-==== [7/23/25]
+#### [7/23/25]
 - Added keybinds loading from bulk
 - Added saving Keybinds to file
 - Added Options system as well as saving and loading from bulk. Still needs to be tested.
 
-==== [7/24/25]
+#### [7/24/25]
 - Added Rectangles
 - Texture Draw
   - Moved Position + Size into a rectangle dest.
   - Added Rectangle src to draw a specific portion of the texture.
 
-==== [7/25/25]
+#### [7/25/25]
 - Font loading, both from file and data
 - Font drawing with scaling and spacing
 
-==== [7/26/25]
+#### [7/26/25]
 - Moved wrapper.c3 funtions to ennoia.c3
 - Added function to meshes to update texcoords
 
-==== [7/27/25]
+#### [7/27/25]
 - Renamed TODO and CHANGELOG.
 - Created bounds.c3 for bounding box checking.
 - Made tests for Bulk and fixed memory leaks in loading, read_entries, and get_entry_len/ptr.
 
-==== [7/28/25]
+#### [7/28/25]
 - Moved SDL3 bindings to their own project.
 
-==== [7/29/25]
+#### [7/29/25]
 - Minor
 
-==== [7/30/25]
+#### [7/30/25]
 - Added more error handling to bulk functions.
 - Tests for Camera.
 - Contracts for ennoia::init, and font funcs.
 
-==== [7/31/25]
+#### [7/31/25]
 - Finished simple box bounds checking.
 - Operator overloads for addition/subtraction for rectangles.
 - Grabbed YAML from Pleroma and slapped it in.
@@ -150,65 +150,65 @@
 - Added loading all textures in a bulk.
 - Moved localization, Keybinds, and options to storage fill in main ennoia module.
 
-==== [8/1/25]
+#### [8/1/25]
 - Started re-writing Bulk for v3.0, but need to redo YAML.
 - Started on re-doing YAML.
 
-==== [8/2/25]
+#### [8/2/25]
 - Re-did most of the yaml functions.
 
-==== [8/3/25]
+#### [8/3/25]
 - Finished re-doing YAML functions.
 - Finished updating Bulk packer to use a manifest. Still need to re-write readme.
 - Need to fix bulk tests.
 
-==== [8/4/25]
+#### [8/4/25]
 - Added String to valid option types.
 - Updated bulk functiuon to work with v3.
 
-==== [8/5/25]
+#### [8/5/25]
 - Changed Bulk_packer README.
 
-==== [8/6/25]
+#### [8/6/25]
 - Added Font loading.
 
-==== [8/7/25]
+#### [8/7/25]
 - Started adding Shader saving and loading to bulks, but for some reason it's not working.
 
-==== [8/8/25]
+#### [8/8/25]
 - Fixed problem with Shader not loading from bulk.
 - Added Texture saving/loading from bulk.
 
-==== [8/9/25]
+#### [8/9/25]
 - Minor changes.
 
-==== [8/10/25]
+#### [8/10/25]
 - Added numerals to font atlas.
 - Changed default shader variable names to fit new system.
 - Added blending for transparent textures.
 - Minor fixes.
 
-==== [8/11/25]
+#### [8/11/25]
 - Fixed Textures drawing position being hlaved seemingly.
 - Started on tiled Texture drawing.
 
-==== [8/12/25]
+#### [8/12/25]
 - Finished tiled texture drawing.
 - Finished overloads for Rectangle math both with rectangles and with Vector2s.
 
-==== [8/13/25]
+#### [8/13/25]
 - Started Mesh loading.
 
-==== [8/14/25]
+#### [8/14/25]
 - Meshes load completely.
   - Textures are a little off.
 
-==== [8/15/25]
+#### [8/15/25]
 - Made mesh textures into an array.
 - Moved things to make mesh::load and mesh::load_from_file.
 - Made mesh::load and mesh::load_from_file return hashmaps instead of just an array.
 
-==== [8/16/25]
+#### [8/16/25]
 - Gone through and Checked and wrote tests for all Vector2 functions and most Vector3 functions.
 - Changed Quaternion to it's own struct and started on its test functions.
 
