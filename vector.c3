@@ -11,197 +11,184 @@ struct Vector2 {
 	float x;
 	float y;
 }
-<* Equals *>
-fn bool Vector2.equals(self, Vector2 rhs) @operator(==) @export("vector2_equals") {
+
+<* == Overload *>
+fn bool Vector2.equals(self, Vector2 rhs) @operator(==) {
 	return (self.x == rhs.x && self.y == rhs.y);
 }
-<* Addition *>
-fn Vector2 Vector2.add(self, Vector2 rhs) @operator(+) @export("vector2_add") {
+<* + Overload *>
+fn Vector2 Vector2.add(self, Vector2 rhs) @operator(+) {
 	return {
 		self.x + rhs.x,
 		self.y + rhs.y,
 	};
 }
-<* Subtraction *>
-fn Vector2 Vector2.sub(self, Vector2 rhs) @operator(-) @export("vector2_sub") {
-	return {
-		self.x - rhs.x,
-		self.x - rhs.y,
-	};
-}
-<* Multiplication *>
-fn Vector2 Vector2.mul(self, Vector2 rhs) @operator(*) @export("vector2_mul") {
-	return {
-		self.x * rhs.x,
-		self.y * rhs.y,
-	};
-}
-<* Division *>
-fn Vector2 Vector2.div(self, Vector2 rhs) @operator(/) @export("vector2_div") {
-	return {
-		self.x / rhs.x,
-		self.y / rhs.y,
-	};
-}
-<* Add and assign *>
-fn void Vector2.add_assign(&self, Vector2 rhs) @operator(+=) @export("vector2_addassign") {
-	self.x += rhs.x;
-	self.y += rhs.y;
-}
-<* Subtract and assign *>
-fn void Vector2.sub_assign(&self, Vector2 rhs) @operator(-=) @export("vector2_subassign") {
-	self.x -= rhs.x;
-	self.y -= rhs.y;
-}
-<* Multiply and assign *>
-fn void Vector2.mul_assign(&self, Vector2 rhs) @operator(*=) @export("vector2_mulassign") {
-	self.x *= rhs.x;
-	self.y *= rhs.y;
-}
-<* Divide and assign *>
-fn void Vector2.div_assign(&self, Vector2 rhs) @operator(/=) @export("vector2_divassign") {
-	self.x /= rhs.x;
-	self.y /= rhs.y;
-}
-<* Add to with float *>
-fn Vector2 Vector2.pos_offset(&self, float rhs) @operator_s(+) @export("vector2_posoffset") {
+<* + Overload with float *>
+fn Vector2 Vector2.pos_offset(&self, float rhs) @operator_s(+) {
 	return {
 		self.x + rhs,
 		self.y + rhs,
 	};
 }
-<* Subtract from with float *>
-fn Vector2 Vector2.neg_offset(&self, float rhs) @operator_s(-) @export("vector2_negoffset") {
+<* - Overload *>
+fn Vector2 Vector2.sub(self, Vector2 rhs) @operator(-) {
+	return {
+		self.x - rhs.x,
+		self.x - rhs.y,
+	};
+}
+<* - Overload with float *>
+fn Vector2 Vector2.neg_offset(&self, float rhs) @operator_s(-) {
 	return {
 		self.x - rhs,
 		self.y - rhs,
 	};
 }
-<* Multiply by float *>
-fn Vector2 Vector2.scale(&self, float rhs) @operator_s(*) @export("vector2_scale") {
+<* * Overload *>
+fn Vector2 Vector2.mul(self, Vector2 rhs) @operator(*) {
+	return {
+		self.x * rhs.x,
+		self.y * rhs.y,
+	};
+}
+<* * Overload with float *>
+fn Vector2 Vector2.scale(&self, float rhs) @operator_s(*) {
 	return {
 		self.x * rhs,
 		self.y * rhs,
 	};
 }
-<* Divide by float *>
-fn Vector2 Vector2.inverse(&self, float rhs) @operator_s(/) @export("vector2_inverse") {
+<* / Overload *>
+fn Vector2 Vector2.div(self, Vector2 rhs) @operator(/) {
+	return {
+		self.x / rhs.x,
+		self.y / rhs.y,
+	};
+}
+<* / Overload with float *>
+fn Vector2 Vector2.inverse(&self, float rhs) @operator_s(/) {
 	return {
 		self.x / rhs,
 		self.y / rhs,
 	};
 }
+
+<* Converts v2 into v3 *>
+fn Vector3 Vector2.v3(self) {
+	return {self.x, self.y, 0};
+}
+<* Converts v2 into v4 *>
+fn Vector4 Vector2.v4(self) {
+	return {self.x, self.y, 0, 1};
+}
+<* Converts v2 into Quaternion *>
+fn Quaternion Vector2.q(self) {
+	return {self.x, self.y, 0, 0};
+}
+
 <* Calculate vector length *>
-fn float Vector2.length(self) @export("vector2_length") {
+fn float Vector2.length(self) {
 	return math::sqrt(self.x.pow(2) + self.y.pow(2));
 }
 <* Calculate vector square length *>
-fn float Vector2.length_sqr(self) @export("vector2_lengthsqr") {
+fn float Vector2.length_sqr(self) {
 	return self.x.pow(2) + self.y.pow(2);
 }
 <* Calculate the dot product of two vectors *>
-fn float Vector2.dot_product(self, Vector2 v2) @export("vector2_dotproduct") {
+fn float Vector2.dot_product(self, Vector2 v2) {
 	return (self.x * v2.x) + (self.y * v2.y);
 }
 <* Calculate distance between two vectors *>
-fn float Vector2.distance(self, Vector2 v2) @export("vector2_distance") {
+fn float Vector2.distance(self, Vector2 v2) {
 	return math::sqrt((self.x - v2.x).pow(2) + (self.y - v2.y).pow(2));
 }
 <* Calculate square distance between two vectors *>
-fn float Vector2.distance_sqr(self, Vector2 v2) @export("vector2_distancesqr") {
+fn float Vector2.distance_sqr(self, Vector2 v2){
 	return (self.x - v2.x).pow(2) + (self.y - v2.y).pow(2);
 }
-<* Calculate angle between two vectors *>
-fn float Vector2.angle(self, Vector2 v2) @export("vector2_angle") {
-	float dot = self.dot_product(v2);
-	float det = (self.x * v2.x) - (self.y * v2.y);
-
-	return math::atan2(dot,det);
+<* Calculate angle between two vectors in Radians *>
+fn float Vector2.angle_rad(self, Vector2 v2) {
+	Vector2 new = v2 - self;
+	return math::atan2(new.y, new.x);
 }
-<* Calculate angle defined by a line made by two vectors *>
-fn float Vector2.angle_line(self, Vector2 end) @export("vector2_angleline") {
-	return -math::atan2(end.y - self.y,end.x - self.x);
+<* Calculate angle between two vectors in Degrees *>
+fn float Vector2.angle_deg(self, Vector2 v2) {
+	Vector2 new = v2 - self;
+	return math::atan2(new.y, new.x) * (180 / math::PI);
 }
 <* Normalize provided vector *>
-fn Vector2 Vector2.normalize(self) @export("vector2_normalize") {
+fn Vector2 Vector2.normalize(self) {
 	float length = self.length();
 
 	if (length > 0.0) {
 		float ilength = 1.0 / length;
-		return {.x = self.x * ilength, .y = self.y * ilength};
+		return self * ilength;
 	}
 
 	return self;
 }
 <* Transform a Vector2 by a given Matrix *>
-fn Vector2 Vector2.transform(self, Matrix mat) @export("vector2_transform") {
-	float x = self.x;
-	float y = self.y;
-	float z = 0;
-
-	return {
-		.x = (mat.m0 * x) + (mat.m4 * y) + (mat.m8 * z) + mat.m12,
-		.y = (mat.m1 * x) + (mat.m5 * y) + (mat.m9 * z) + mat.m13,
-	};
+fn Vector2 Vector2.transform(self, Matrix mat) {
+	return (self.v4() * mat).v2();
 }
 <* Calculate linear interpolation between two vectors *>
-fn Vector2 Vector2.lerp(self, Vector2 v2, float amount) @export("vector2_lerp") {
-	return {
-		.x = self.x + (amount * (v2.x - self.x)),
-		.y = self.y + (amount * (v2.y - self.y)),
-	};
+fn Vector2 Vector2.lerp(self, Vector2 v2, float amount) {
+	return self + ((v2 - self) * amount);
 }
 <* Calculate reflected vector to normal *>
-fn Vector2 Vector2.reflect(self, Vector2 normal) @export("vector2_reflect") {
-	float dot = self.dot_product(normal);
-
-	return {
-		.x = self.x - (2 * normal.x) * dot,
-		.y = self.y - (2 * normal.y) * dot,
-	};
+fn Vector2 Vector2.reflect(self, Vector2 normal) {
+	return (self - (2*(self * normal)) * normal);
 }
-<* Rotate vecotr by angle *>
-fn Vector2 Vector2.rotate(self, float angle) @export("vector2_rotate") {
+<* Rotate vector by radians *>
+fn Vector2 Vector2.rotate_rad(self, float angle) {
 	float cosres = math::cos(angle);
 	float sinres = math::sin(angle);
 
 	return {
-		.x = (self.x * cosres) - (self.y * sinres),
-		.y = (self.x * sinres) + (self.y * cosres),
+		(self.x * cosres) - (self.y * sinres),
+		(self.x * sinres) + (self.y * cosres),
+	};
+}
+<* Rotate vector by degrees *>
+fn Vector2 Vector2.rotate_deg(self, float angle) {
+	float cosres = math::cos(angle / (180 / (float)math::PI));
+	float sinres = math::sin(angle / (180 / (float)math::PI));
+
+	return {
+		(self.x * cosres) - (self.y * sinres),
+		(self.x * sinres) + (self.y * cosres),
 	};
 }
 <* Move vector towards target *>
-fn Vector2 Vector2.move_towards(self, Vector2 target, float max_distance) @export("vector2_movetowards") {
-	float dx = target.x - self.x;
-	float dy = target.y - self.y;
-	float value = dx.pow(2) + dy.pow(2);
+fn Vector2 Vector2.move_towards(self, Vector2 target, float max_distance) {
+	Vector2 d = target - self;
+	float value = d.length_sqr();
 
 	if (value == 0 || (max_distance >= 0 && value <= max_distance.pow(2))) { return target; }
-	float dist = math::sqrt(value);
+	float dist = self.distance(target);
 
-	return {
-		.x = self.x + (dx / dist) * max_distance,
-		.y = self.y + (dy / dist) * max_distance,
-	};
+	return self + ((d / dist) * max_distance);
 }
 <* Invert given vector *>
-fn Vector2 Vector2.invert(self) @export("vector2_invert") {
+fn Vector2 Vector2.invert(self) {
 	return {
-		.x = 1 / self.x,
-		.y = 1 / self.y,
+		1 / self.x,
+		1 / self.y,
 	};
 }
-<* Clamp the components of the vector between min and max values specified byt the given vectors *>
-fn Vector2 Vector2.clamp(self, Vector2 min, Vector2 max) @export("vector2_clamp") {
+<* Clamp the components of the vector between min and max values specified by the given vectors
+	@require min.x < max.x && min.y < max.y
+ *>
+fn Vector2 Vector2.clamp(self, Vector2 min, Vector2 max) {
 	return {
-		.x = math::clamp(self.x, min.x, max.x),
-		.y = math::clamp(self.y, min.y, max.y),
+		math::clamp(self.x, min.x, max.x),
+		math::clamp(self.y, min.y, max.y),
 	};
 }
-<* Clamp the magnitude of the vector between two min ans max values
+<* Clamp the magnitude of the vector between two min and max values
   @require min < max
  *>
-fn Vector2 Vector2.clamp_mag(self, float min, float max) @export("vector2_mag") {
+fn Vector2 Vector2.clamp_mag(self, float min, float max) {
 	float length = self.length();
 
 	if (length > 0) {
@@ -214,16 +201,10 @@ fn Vector2 Vector2.clamp_mag(self, float min, float max) @export("vector2_mag") 
 			scale = max / length;
 		}
 
-		return {
-			.x = self.x * scale,
-			.y = self.y * scale,
-		};
+		return self * scale;
 	}
 
-	return {
-		.x = self.x,
-		.y = self.y,
-	};
+	return self;
 }
 
 
@@ -235,256 +216,208 @@ struct Vector3 {
 	float z;
 }
 
-<* Equals *>
-fn bool Vector3.equals(self, Vector3 rhs) @operator(==) @export("vector3_equals") {
+<* == Overload *>
+fn bool Vector3.equals(self, Vector3 rhs) @operator(==) {
 	return (self.x == rhs.x && self.y == rhs.y && self.z == rhs.z);
 }
-<* Addition *>
-fn Vector3 Vector3.add(self, Vector3 rhs) @operator(+) @export("vector3_add") {
+<* + Overload *>
+fn Vector3 Vector3.add(self, Vector3 rhs) @operator(+) {
 	return {
 		self.x + rhs.x,
 		self.y + rhs.y,
 		self.z + rhs.z,
 	};
 }
-<* Subtraction *>
-fn Vector3 Vector3.sub(self, Vector3 rhs) @operator(-) @export("vector3_sub") {
-	return {
-		self.x - rhs.x,
-		self.y - rhs.y,
-		self.z - rhs.z,
-	};
-}
-<* Multiplication *>
-fn Vector3 Vector3.mul(self, Vector3 rhs) @operator(*) @export("vector3_mul") {
-	return {
-		self.x * rhs.x,
-		self.y * rhs.y,
-		self.z * rhs.z,
-	};
-}
-<* Division *>
-fn Vector3 Vector3.div(self, Vector3 rhs) @operator(/) @export("vector3_div") {
-	return {
-		self.x / rhs.x,
-		self.y / rhs.y,
-		self.z / rhs.z,
-	};
-}
-<* Add and assign *>
-fn void Vector3.add_assign(&self, Vector3 rhs) @operator(+=) @export("vector3_addassign") {
-	self.x += rhs.x;
-	self.y += rhs.y;
-	self.z += rhs.z;
-}
-<* Subtract and assign *>
-fn void Vector3.sub_assign(&self, Vector3 rhs) @operator(-=) @export("vector3_subassign") {
-	self.x -= rhs.x;
-	self.y -= rhs.y;
-	self.z -= rhs.z;
-}
-<* Multiply and assign *>
-fn void Vector3.mul_assign(&self, Vector3 rhs) @operator(*=) @export("vector3_mulassign") {
-	self.x *= rhs.x;
-	self.y *= rhs.y;
-	self.z *= rhs.z;
-}
-<* Divide and assign *>
-fn void Vector3.div_assign(&self, Vector3 rhs) @operator(/=) @export("vector3_divassign") {
-	self.x /= rhs.x;
-	self.y /= rhs.y;
-	self.z /= rhs.z;
-}
-<* Add to with float *>
-fn Vector3 Vector3.pos_offset(self, float rhs) @operator_s(+) @export("vector3_posoffset") {
+<* + Overload with float *>
+fn Vector3 Vector3.pos_offset(self, float rhs) @operator_s(+) {
 	return {
 		self.x + rhs,
 		self.y + rhs,
 		self.z + rhs,
 	};
 }
-<* Subtract from with float *>
-fn Vector3 Vector3.neg_offset(self, float rhs) @operator_s(-) @export("vector3_negoffset") {
+<* - Overload *>
+fn Vector3 Vector3.sub(self, Vector3 rhs) @operator(-) {
+	return {
+		self.x - rhs.x,
+		self.y - rhs.y,
+		self.z - rhs.z,
+	};
+}
+<* - Overload with float *>
+fn Vector3 Vector3.neg_offset(self, float rhs) @operator_s(-) {
 	return {
 		self.x - rhs,
 		self.y - rhs,
 		self.z - rhs,
 	};
 }
-<* Multiply by float *>
-fn Vector3 Vector3.scale(self, float rhs) @operator_s(*) @export("vector3_scale") {
+<* * Overload *>
+fn Vector3 Vector3.mul(self, Vector3 rhs) @operator(*) {
+	return {
+		self.x * rhs.x,
+		self.y * rhs.y,
+		self.z * rhs.z,
+	};
+}
+<* * Overload with float *>
+fn Vector3 Vector3.scale(self, float rhs) @operator_s(*) {
 	return {
 		self.x * rhs,
 		self.y * rhs,
 		self.z * rhs,
 	};
 }
-<* Divide by float *>
-fn Vector3 Vector3.inverse(self, float rhs) @operator_s(/) @export("vector3_inverse") {
+<* / Overload *>
+fn Vector3 Vector3.div(self, Vector3 rhs) @operator(/) {
+	return {
+		self.x / rhs.x,
+		self.y / rhs.y,
+		self.z / rhs.z,
+	};
+}
+<* / Overload with float *>
+fn Vector3 Vector3.inverse(self, float rhs) @operator_s(/) {
 	return {
 		self.x / rhs,
 		self.y / rhs,
 		self.z / rhs,
 	};
 }
+
+<* Converts v3 into v2 *>
+fn Vector2 Vector3.v2(self) {
+	return {self.x, self.y};
+}
+<* Converts v3 into v4 *>
+fn Vector4 Vector3.v4(self) {
+	return {self.x, self.y, self.z, 1};
+}
+<* Converts v3 into Quaternion *>
+fn Quaternion Vector3.q(self) {
+	return {self.x, self.y, self.z, 0};
+}
 <* Convert Vector3 to allocated float array *>
-fn float[] Vector3.to_array(self) @export("vector3_toarray") {
-	float[] output = mem::new_array(float, 3);
-	output[0] = self.x;
-	output[1] = self.y;
-	output[2] = self.z;
-	return output;
+fn float[3] Vector3.to_array(self) {
+	return {self.x, self.y, self.z};
 }
 <* Convert Vector3 to int array *>
-fn int[3] Vector3.to_int_array(self) @export("vector3.tointarray") {
+fn int[3] Vector3.to_int_array(self) {
 	return {(int)self.x, (int)self.y, (int)self.z};
 }
+
 <* Calculate two vectors cross product *>
-fn Vector3 Vector3.cross_product(self, Vector3 v2) @export("vector3_crossproduct") {
+fn Vector3 Vector3.cross_product(self, Vector3 v2) {
 	return {
-		.x = self.y * v2.z - self.z * v2.y,
-		.y = self.z * v2.x - self.x * v2.z,
-		.z = self.x * v2.y - self.y * v2.x,
+		self.y * v2.z - self.z * v2.y,
+		self.z * v2.x - self.x * v2.z,
+		self.x * v2.y - self.y * v2.x,
 	};
 }
-<* Calculate one vector perpendicular vector *>
-fn Vector3 Vector3.perpendicular(self) @export("vector3_perpendicular") {
+<* Calculate a vector perpendicular to input *>
+fn Vector3 Vector3.perpendicular(self) {
 	float min = math::abs(self.x);
-	Vector3 cardinal_axis = {.x = 1, .y = 0, .z = 0};
+	Vector3 cardinal_axis = {1, 0, 0};
 
 	if (math::abs(self.y) < min) {
 		min = math::abs(self.y);
-		cardinal_axis = {.x = 0, .y = 1, .z = 0};
+		cardinal_axis = {0, 1, 0};
 	}
 	if (math::abs(self.z) < min) {
-		cardinal_axis = {.x = 0, .y = 1, .z = 0};
+		cardinal_axis = {0, 1, 0};
 	}
 
 	return self.cross_product(cardinal_axis);
 }
 <* Calculate vector length *>
-fn float Vector3.length(self) @export("vector3_length") {
+fn float Vector3.length(self) {
 	return math::sqrt(self.x.pow(2) + self.y.pow(2) + self.z.pow(2));
 }
 <* Calculate vector square length *>
-fn float Vector3.length_sqr(self) @export("vector3_lengthsqr") {
+fn float Vector3.length_sqr(self) {
 	return self.x.pow(2) + self.y.pow(2) + self.z.pow(2);
 }
 <* Calculate two vectors dot product *>
-fn float Vector3.dot_product(self, Vector3 v2) @export("vector3_dotproduct") {
+fn float Vector3.dot_product(self, Vector3 v2) {
 	return self.x * v2.x + self.y * v2.y + self.z * v2.z;
 }
 <* Calculate distance between two vectors *>
-fn float Vector3.distance(self, Vector3 v2) @export("vector3_distance") {
-	Vector3 sub = {
-		v2.x - self.x,
-		v2.y - self.y,
-		v2.z - self.z,
-	};
-	return sub.length();
+fn float Vector3.distance(self, Vector3 v2) {
+	return (v2 - self).length();
 }
 <* Calculate square distance between two vectors *>
-fn float Vector3.distance_sqr(self, Vector3 v2) @export("vector3_distancesqr") {
-	Vector3 sub = {
-		v2.x - self.x,
-		v2.y - self.y,
-		v2.z - self.z,
-	};
-	return sub.length_sqr();
+fn float Vector3.distance_sqr(self, Vector3 v2) {
+	return (v2 - self).length_sqr();
 }
-<* Calculate angle between two vectors *>
-fn float Vector3.angle(self, Vector3 v2) @export("vector3_angle") {
+<* Calculate angle between two vectors in radians *>
+fn float Vector3.angle_rad(self, Vector3 v2) {
 	Vector3 cross = self.cross_product(v2);
 	float len = cross.length();
 	float dot = self.dot_product(v2);
 
-	return math::atan2(len, dot);
+  return math::atan2(len, dot);
+}
+<* Calculate angle between two vectors in degrees *>
+fn float Vector3.angle_deg(self, Vector3 v2) {
+	Vector3 cross = self.cross_product(v2);
+	float len = cross.length();
+	float dot = self.dot_product(v2);
+
+	return math::atan2(len, dot) * (180 / math::PI);
 }
 <* Normalize provided vector *>
-fn Vector3 Vector3.normalize(self) @export("vector3_normalize") {
-	float len = self.length();
-	if (len != 0) {
-		float ilen = self.length();
+fn Vector3 Vector3.normalize(self) {
+	float length = self.length();
 
-		return {
-			.x = self.x * ilen,
-			.y = self.y * ilen,
-			.z = self.z * ilen,
-		};
-	} else { return self; }
+	if (length > 0.0) {
+		float ilength = 1.0 / length;
+		return self * ilength;
+	}
+
+	return self;
 }
 <* Calculate the projection of the vector v1 on to v2 *>
-fn Vector3 Vector3.project(self, Vector3 v2) @export("vector3_project") {
+fn Vector3 Vector3.project(self, Vector3 v2) {
 	float v1dv2 = self.x*v2.x + self.y*v2.y + self.z*v2.z;
 	float v2dv2 = v2.length_sqr();
 
 	float mag = v1dv2 / v2dv2;
 
-	return {
-		.x = v2.x * mag,
-		.y = v2.y * mag,
-		.z = v2.z * mag,
-	};
+	return v2 * mag;
 }
 <* Calculate the rejection of the vector v1 on to v2 *>
-fn Vector3 Vector3.reject(self, Vector3 v2) @export("vector3_reject") {
+fn Vector3 Vector3.reject(self, Vector3 v2) {
 	float v1dv2 = self.x*v2.x + self.y*v2.y + self.z*v2.z;
 	float v2dv2 = v2.length_sqr();
 
 	float mag = v1dv2 / v2dv2;
 
-	return {
-		self.x - (v2.x * mag),
-		self.y - (v2.y * mag),
-		self.z - (v2.z * mag),
-	};
+	return self - (v2 * mag);
 }
 <* Orthonormalize provided vectors. Makes vectors normalized and orthogonal to each other. Gram-Schmidt function implementation *>
-fn void Vector3.orthinormalize(&self, Vector3* v2) @export("vector3_ortinormalize") {
+fn void Vector3.orthonormalize(&self, Vector3* v2) {
 	float len;
 	float ilen;
 
-	//* Normalize self
-	len = self.length();
-	if (len == 0) len = 1;
-	ilen = 1 / len;
-	self.x *= ilen;
-	self.y *= ilen;
-	self.z *= ilen;
-
-	//* Cross product
+	*self = self.normalize();
 	Vector3 vn1 = self.cross_product(*v2);
 
-	//* Normalize
-	len = vn1.length();
-	if (len == 0) len = 1;
-	ilen = 1.0 / len;
-	vn1.x *= ilen;
-	vn1.y *= ilen;
-	vn1.z *= ilen;
-
-	//* Cross product
+	vn1 = vn1.normalize();
 	Vector3 vn2 = vn1.cross_product(*self);
 
-	v2.x = vn2.x;
-	v2.y = vn2.y;
-	v2.z = vn2.z;
+	*v2 = vn2;
 }
 <* Transforms a Vector3 by a given Matrix *>
-fn Vector3 Vector3.transform(self, Matrix mat) @export("vector3_transform") {
-	return {
-		mat.m0 * self.x + mat.m4 * self.y + mat.m8  * self.z + mat.m12,
-		mat.m1 * self.x + mat.m5 * self.y + mat.m9  * self.z + mat.m13,
-		mat.m2 * self.x + mat.m6 * self.y + mat.m10 * self.z + mat.m14,
-	};
+fn Vector3 Vector3.transform(self, Matrix mat) {
+	return (self.v4() * mat).v3();
 }
 <* Transform a vector by quaternion rotation *>
-fn Vector3 Vector3.rotate_quaternion(self, Quaternion q) @export("vector3_rotatequaternion") {
-	return {
-		.x = self.x * (double)(q.x.pow(2) + q.w.pow(2) - q.y.pow(2) - q.z.pow(2)) + self.y * (2.0 * q.x * q.y - 2.0 * q.w * q.z) + self.z * (2.0 * q.x * q.z + 2.0 * q.w * q.y),
-		.y = self.x * (2.0 * q.w * q.z + 2.0 * q.x * q.y) + self.y * (double)(q.w.pow(2) - q.x.pow(2) + q.y.pow(2) - q.z.pow(2)) + self.z * (-2.0 * q.w * q.x + 2.0 * q.y * q.z),
-		.z = self.x * (-2.0 * q.w * q.y + 2.0 * q.x * q.z) + self.y * (2.0 * q.w * q.x + 2.0 * q.y * q.z) + self.z * (double)(q.w.pow(2) - q.x.pow(2) - q.y.pow(2) + q.z.pow(2)),
-	};
+fn Vector3 Vector3.rotate_quaternion(self, Quaternion q) {
+	Quaternion normed = q.normalize();
+	Quaternion new = self.q();
+	Quaternion normedNeg = {-normed.x, -normed.y, -normed.z, normed.w};
+
+	return (normed * new * normedNeg).v3();
 }
 <* Returns point rotated at input distance from self
 	@param dist
@@ -845,6 +778,15 @@ fn Vector4 Vector4.mul(self, Vector4 rhs) @operator(*) @export("vector4_mul") {
 		self.w * rhs.w,
 	};
 }
+<* * Overload with Matrix *>
+fn Vector4 Vector4.mul_mat(self, Matrix rhs) @operator_s(*) {
+	return {
+		(rhs.m0  * self.x) + (rhs.m1  * self.y) + (rhs.m2  * self.z) + (rhs.m3  * self.w),
+		(rhs.m4  * self.x) + (rhs.m5  * self.y) + (rhs.m6  * self.z) + (rhs.m7  * self.w),
+		(rhs.m8  * self.x) + (rhs.m9  * self.y) + (rhs.m10 * self.z) + (rhs.m11 * self.w),
+		(rhs.m12 * self.x) + (rhs.m13 * self.y) + (rhs.m14 * self.z) + (rhs.m15 * self.w),
+	};
+}
 <* Division *>
 fn Vector4 Vector4.div(self, Vector4 rhs) @operator(/) @export("vector4_div") {
 	return {
@@ -918,6 +860,20 @@ fn Vector4 Vector4.inverse(self, float rhs) @operator_s(/) @export("vector4_inve
 		self.w / rhs,
 	};
 }
+
+<* Converts v4 into v2 *>
+fn Vector2 Vector4.v2(&self) {
+	return {self.x, self.y};
+}
+<* Converts v4 into v3 *>
+fn Vector3 Vector4.v3(&self) {
+	return {self.x, self.y, self.z};
+}
+<* Converts v4 into Quaternion *>
+fn Quaternion Vector4.q(self) {
+	return {self.x, self.y, self.z, self.w};
+}
+
 <* Calculate vector length *>
 fn float Vector4.length(self) @export("vector4_length") {
 	return math::sqrt(self.x.pow(2) + self.y.pow(2) + self.z.pow(2) + self.w.pow(2));
@@ -1025,7 +981,9 @@ fn Color Vector4.to_color(self) @export("vector4_tocolor") {
 const float EPSILON = 1.1920929E-7;
 
 <* Quaternion *>
-alias Quaternion = Vector4;
+struct Quaternion {
+	float x, y, z, w;
+}
 
 <* Axis and Angle tuple *>
 struct AxisAngle {
@@ -1033,6 +991,65 @@ struct AxisAngle {
 	float angle;
 }
 
+<* == Overload *>
+fn bool Quaternion.equals(self, Quaternion rhs) @operator(==) {
+	return (self.x == rhs.x) && (self.y == rhs.y) && (self.z == rhs.z) && (self.w == rhs.w);
+}
+<* * Overload *>
+fn Quaternion Quaternion.mul(self, Quaternion rhs) @operator(*) {
+	return {
+		(self.w * rhs.x) + (self.x * rhs.w) + (self.y * rhs.z) - (self.z * rhs.y),
+		(self.w * rhs.y) - (self.x * rhs.z) + (self.y * rhs.w) + (self.z * rhs.x),
+		(self.w * rhs.z) + (self.x * rhs.y) - (self.y * rhs.x) + (self.z * rhs.w),
+		(self.w * rhs.w) - (self.x * rhs.x) - (self.y * rhs.y) - (self.z * rhs.z),
+	};
+}
+<* * Overload with float *>
+fn Quaternion Quaternion.mul_f(self, float rhs) @operator_s(*) {
+	return {
+		self.x * rhs,
+		self.y * rhs,
+		self.z * rhs,
+		self.w * rhs,
+	};
+}
+
+<* Converts quaternion into v2 *>
+fn Vector2 Quaternion.v2(self) {
+	return {self.x, self.y};
+}
+<* Converts quaternion into v2 *>
+fn Vector3 Quaternion.v3(self) {
+	return {self.x, self.y, self.z};
+}
+<* Converts quaternion into v4 *>
+fn Vector4 Quaternion.v4(self) {
+	return {self.x, self.y, self.z, self.w};
+}
+
+<* Calculate vector length *>
+fn float Quaternion.length(self) {
+	return math::sqrt(self.x.pow(2) + self.y.pow(2) + self.z.pow(2) + self.w.pow(2));
+}
+<* Calculate vector length squared *>
+fn float Quaternion.length_sqr(self) {
+	return self.x.pow(2) + self.y.pow(2) + self.z.pow(2) + self.w.pow(2);
+}
+<* Calculate two vectors dot product *>
+fn float Quaternion.dot_product(self, Quaternion v2) {
+	return self.x * v2.x + self.y * v2.y + self.z * v2.z + self.w * v2.w;
+}
+<* Normalize provided vector *>
+fn Quaternion Quaternion.normalize(self) {
+	float length = self.length();
+
+	if (length > 0.0) {
+		float ilength = 1.0 / length;
+		return self * ilength;
+	}
+
+	return self;
+}
 <* Calculate slerp-optimized interpolation between two quaternions *>
 fn Quaternion Quaternion.n_lerp(self, Quaternion target, float amount) @export("quaternion_nlerp") {
 	Quaternion result = {

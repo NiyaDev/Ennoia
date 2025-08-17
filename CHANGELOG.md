@@ -208,3 +208,7 @@
 - Moved things to make mesh::load and mesh::load_from_file.
 - Made mesh::load and mesh::load_from_file return hashmaps instead of just an array.
 
+==== [8/16/25]
+- Gone through and Checked and wrote tests for all Vector2 functions and most Vector3 functions.
+- Changed Quaternion to it's own struct and started on its test functions.
+
