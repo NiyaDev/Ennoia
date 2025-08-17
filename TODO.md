@@ -25,7 +25,6 @@
 
 ### Future
 - Re-write files from Pleroma:
-  - vector.c3 -Started
   - matrix.c3
 - Confirm all matrix.c3 functions work
 - Copy over compatible tests from Pleroma

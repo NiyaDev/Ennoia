@@ -424,11 +424,11 @@ fn Vector3 Vector3.rotate_quaternion(self, Quaternion q) {
 	@param rot
 	@return "Point"
  *>
-fn Vector3 Vector3.rotate(self, Vector3 dist, float rot) @export("vector3_rotate") {
+fn Vector3 Vector3.rotate(self, Vector3 dist, float rot) {
 	Vector3 position;
 
-	position.x = dist.x * (float)math::cos(rot / 57.3) - dist.z * (float)math::sin(rot / 57.3);
-	position.z = dist.x * (float)math::sin(rot / 57.3) + dist.z * (float)math::cos(rot / 57.3);
+	position.x = dist.x * math::cos(rot / (180/(float)math::PI)) - dist.z * math::sin(rot / (180/(float)math::PI));
+	position.z = dist.x * math::sin(rot / (180/(float)math::PI)) + dist.z * math::cos(rot / (180/(float)math::PI));
 
 	position.x += self.x;
 	position.y  = self.y + dist.y;
@@ -437,115 +437,67 @@ fn Vector3 Vector3.rotate(self, Vector3 dist, float rot) @export("vector3_rotate
 	return position;
 }
 <* Rotates a vector around an axis Using Euler-Rodrigues Formula *>
-fn Vector3 Vector3.rotate_axis(self, Vector3 axis, float angle) @export("vector3_rotateaxis") {
-	//* normalize
-	float len = axis.length();
-	if (len == 0) len = 1;
-	float ilen = 1 / len;
-	Vector3 new_axis = {
-		.x = axis.x * ilen,
-		.y = axis.y * ilen,
-		.z = axis.z * ilen,
-	};
-	float new_angle = angle / 2;
-	float a = math::sin(new_angle);
-	float b = new_axis.x * a;
-	float c = new_axis.y * a;
-	float d = new_axis.z * a;
+fn Vector3 Vector3.rotate_axis(self, Vector3 axis, float angle) {
+	Vector3 newAxis = axis.normalize();
+
+	float a = math::sin(angle / 2);
+	newAxis *= a;
 	a = math::cos(angle);
-	Vector3 w = {.x = b, .y = c, .z = d };
 
 	//* Cross product
-	Vector3 wv = w.cross_product(self);
-	Vector3 wwv = w.cross_product(wv);
+	Vector3 wv  = newAxis.cross_product(self);
+	Vector3 wwv = newAxis.cross_product(wv);
 
 	//* Scale
 	a *= 2;
-	wv = {
-		.x = wv.x * a,
-		.y = wv.y * a,
-		.z = wv.z * a,
-	};
-	wv = {
-		.x = wv.x * 2,
-		.y = wv.y * 2,
-		.z = wv.z * 2,
-	};
+	wv *= a;
+	wv *= 2;
 
-	return {
-		.x = self.x + wv.x + wwv.x,
-		.y = self.y + wv.y + wwv.y,
-		.z = self.z + wv.z + wwv.z,
-	};
+	return self + wv + wwv;
 }
 <* Move Vector towards target *>
-fn Vector3 Vector3.move_towards(self, Vector3 target, float max_distance) @export("vector3_movetowards") {
-	float dx = target.x - self.x;
-	float dy = target.y - self.y;
-	float dz = target.z - self.z;
-	float value = dx.pow(2) + dy.pow(2) + dz.pow(2);
+fn Vector3 Vector3.move_towards(self, Vector3 target, float max_distance) {
+	Vector3 d = target - self;
+	float value = d.length_sqr();
 
 	if (value == 0.0 || (max_distance >= 0.0 && value <= max_distance.pow(2))) { return {}; }
 
 	float dist = math::sqrt(value);
 
-	return {
-		.x = self.x + dx / dist * max_distance,
-		.y = self.y + dy / dist * max_distance,
-		.z = self.z + dz / dist * max_distance,
-	};
+	return self + d / dist * max_distance;
 }
 <* Calculate linear interpolation between two vectors *>
-fn Vector3 Vector3.lerp(self, Vector3 target, float amount) @export("vector3_lerp") {
-	return {
-		.x = self.x + amount * (target.x - self.x),
-		.y = self.y + amount * (target.y - self.y),
-		.z = self.z + amount * (target.z - self.z),
-	};
+fn Vector3 Vector3.lerp(self, Vector3 target, float amount) {
+	return self + amount * (target - self);
 }
 <* Calculate reflected vector to normal *>
-fn Vector3 Vector3.reflect(self, Vector3 normal) @export("vector3_reflect") {
+fn Vector3 Vector3.reflect(self, Vector3 normal) {
 	float dot = self.dot_product(normal);
 
-	return {
-		.x = self.x - (2.0 * normal.x) * dot,
-		.y = self.y - (2.0 * normal.y) * dot,
-		.z = self.z - (2.0 * normal.z) * dot,
-	};
+	return self - (2 * normal) * dot;
 }
 <* Get min value for each pair of components *>
-fn Vector3 Vector3.min(self, Vector3 v2) @export("vector3_min") {
+fn Vector3 Vector3.min(self, Vector3 v2) {
 	return {
-		.x = math::min(self.x, v2.x),
-		.y = math::min(self.y, v2.y),
-		.z = math::min(self.z, v2.z),
+		math::min(self.x, v2.x),
+		math::min(self.y, v2.y),
+		math::min(self.z, v2.z),
 	};
 }
 <* Get max value for each pair of components *>
-fn Vector3 Vector3.max(self, Vector3 v2) @export("vector3_max") {
+fn Vector3 Vector3.max(self, Vector3 v2) {
 	return {
-		.x = math::max(self.x, v2.x),
-		.y = math::max(self.y, v2.y),
-		.z = math::max(self.z, v2.z),
+		math::max(self.x, v2.x),
+		math::max(self.y, v2.y),
+		math::max(self.z, v2.z),
 	};
 }
 <* Compute barycenter coordinates (u, v, w) for point p with respect to triangle (a, b, c) *>
-fn Vector3 Vector3.barycenter(self, Vector3 a, Vector3 b, Vector3 c) @export("vector3_barycenter") {
-	Vector3 v0 = {
-		.x = b.x - a.x,
-		.y = b.y - a.y,
-		.z = b.z - a.z,
-	};
-	Vector3 v1 = {
-		.x = c.x - a.x,
-		.y = c.y - a.y,
-		.z = c.z - a.z,
-	};
-	Vector3 v2 = {
-		.x = self.x - a.x,
-		.y = self.y - a.y,
-		.z = self.z - a.z,
-	};
+fn Vector3 Vector3.barycenter(self, Vector3 a, Vector3 b, Vector3 c) {
+	Vector3 v0 = b - a;
+	Vector3 v1 = c - a;
+	Vector3 v2 = self - a;
+
 	float d00 = v0.dot_product(v0);
 	float d01 = v0.dot_product(v1);
 	float d11 = v1.dot_product(v1);
@@ -558,34 +510,34 @@ fn Vector3 Vector3.barycenter(self, Vector3 a, Vector3 b, Vector3 c) @export("ve
 	float y = (d11 * d20 - d01 * d21) / denom;
 
 	return {
-		.x = 1.0 - (double)(z + y),
-		.y = y,
-		.z = z,
+		1.0 - (double)(z + y),
+		y,
+		z,
 	};
 }
 <* Projects a Vector3 from screen space into object space *>
-fn Vector3 Vector3.unproject(self, Matrix projection, Matrix view) @export("vector3_unproject") {
-	//* Calculate unprojected matrix (multiply view matrix by projection matrix) and invert it
+fn Vector3 Vector3.unproject(self, Matrix projection, Matrix view) {
+	// Calculate unprojected matrix (multiply view matrix by projection matrix) and invert it
 	Matrix mat_view_proj = {
-		.m0  = view.m0  * projection.m0 + view.m1  * projection.m4 + view.m2  * projection.m8  + view.m3  * projection.m12,
-		.m1  = view.m0  * projection.m1 + view.m1  * projection.m5 + view.m2  * projection.m9  + view.m3  * projection.m13,
-		.m2  = view.m0  * projection.m2 + view.m1  * projection.m6 + view.m2  * projection.m10 + view.m3  * projection.m14,
-		.m3  = view.m0  * projection.m3 + view.m1  * projection.m7 + view.m2  * projection.m11 + view.m3  * projection.m15,
-		.m4  = view.m4  * projection.m0 + view.m5  * projection.m4 + view.m6  * projection.m8  + view.m7  * projection.m12,
-		.m5  = view.m4  * projection.m1 + view.m5  * projection.m5 + view.m6  * projection.m9  + view.m7  * projection.m13,
-		.m6  = view.m4  * projection.m2 + view.m5  * projection.m6 + view.m6  * projection.m10 + view.m7  * projection.m14,
-		.m7  = view.m4  * projection.m3 + view.m5  * projection.m7 + view.m6  * projection.m11 + view.m7  * projection.m15,
-		.m8  = view.m8  * projection.m0 + view.m9  * projection.m4 + view.m10 * projection.m8  + view.m11 * projection.m12,
-		.m9  = view.m8  * projection.m1 + view.m9  * projection.m5 + view.m10 * projection.m9  + view.m11 * projection.m13,
-		.m10 = view.m8  * projection.m2 + view.m9  * projection.m6 + view.m10 * projection.m10 + view.m11 * projection.m14,
-		.m11 = view.m8  * projection.m3 + view.m9  * projection.m7 + view.m10 * projection.m11 + view.m11 * projection.m15,
-		.m12 = view.m12 * projection.m0 + view.m13 * projection.m4 + view.m14 * projection.m8  + view.m15 * projection.m12,
-		.m13 = view.m12 * projection.m1 + view.m13 * projection.m5 + view.m14 * projection.m9  + view.m15 * projection.m13,
-		.m14 = view.m12 * projection.m2 + view.m13 * projection.m6 + view.m14 * projection.m10 + view.m15 * projection.m14,
-		.m15 = view.m12 * projection.m3 + view.m13 * projection.m7 + view.m14 * projection.m11 + view.m15 * projection.m1,
+		view.m0  * projection.m0 + view.m1  * projection.m4 + view.m2  * projection.m8  + view.m3  * projection.m12,
+		view.m0  * projection.m1 + view.m1  * projection.m5 + view.m2  * projection.m9  + view.m3  * projection.m13,
+		view.m0  * projection.m2 + view.m1  * projection.m6 + view.m2  * projection.m10 + view.m3  * projection.m14,
+		view.m0  * projection.m3 + view.m1  * projection.m7 + view.m2  * projection.m11 + view.m3  * projection.m15,
+		view.m4  * projection.m0 + view.m5  * projection.m4 + view.m6  * projection.m8  + view.m7  * projection.m12,
+		view.m4  * projection.m1 + view.m5  * projection.m5 + view.m6  * projection.m9  + view.m7  * projection.m13,
+		view.m4  * projection.m2 + view.m5  * projection.m6 + view.m6  * projection.m10 + view.m7  * projection.m14,
+		view.m4  * projection.m3 + view.m5  * projection.m7 + view.m6  * projection.m11 + view.m7  * projection.m15,
+		view.m8  * projection.m0 + view.m9  * projection.m4 + view.m10 * projection.m8  + view.m11 * projection.m12,
+		view.m8  * projection.m1 + view.m9  * projection.m5 + view.m10 * projection.m9  + view.m11 * projection.m13,
+		view.m8  * projection.m2 + view.m9  * projection.m6 + view.m10 * projection.m10 + view.m11 * projection.m14,
+		view.m8  * projection.m3 + view.m9  * projection.m7 + view.m10 * projection.m11 + view.m11 * projection.m15,
+		view.m12 * projection.m0 + view.m13 * projection.m4 + view.m14 * projection.m8  + view.m15 * projection.m12,
+		view.m12 * projection.m1 + view.m13 * projection.m5 + view.m14 * projection.m9  + view.m15 * projection.m13,
+		view.m12 * projection.m2 + view.m13 * projection.m6 + view.m14 * projection.m10 + view.m15 * projection.m14,
+		view.m12 * projection.m3 + view.m13 * projection.m7 + view.m14 * projection.m11 + view.m15 * projection.m1,
 	};
 
-	//* Calculate inverted matrix -> MatrixInvert(matViewProj)
+	// Calculate inverted matrix -> MatrixInvert(matViewProj)
 	float b00 = mat_view_proj.m0  * mat_view_proj.m5  - mat_view_proj.m1  * mat_view_proj.m4;
 	float b01 = mat_view_proj.m0  * mat_view_proj.m6  - mat_view_proj.m2  * mat_view_proj.m4;
 	float b02 = mat_view_proj.m0  * mat_view_proj.m7  - mat_view_proj.m3  * mat_view_proj.m4;
@@ -599,55 +551,55 @@ fn Vector3 Vector3.unproject(self, Matrix projection, Matrix view) @export("vect
 	float b10 = mat_view_proj.m9  * mat_view_proj.m15 - mat_view_proj.m11 * mat_view_proj.m13;
 	float b11 = mat_view_proj.m10 * mat_view_proj.m15 - mat_view_proj.m11 * mat_view_proj.m14;
 
-	//* Calculate the invert determinant (inlined to avoid double-caching)
+	// Calculate the invert determinant (inlined to avoid double-caching)
 	float inv_det = 1 / ((b00 * b11) - (b01 * b10) + (b02 * b09) + (b03 * b08) - (b04 * b07) + (b05 * b06));
 
 	Matrix mat_view_proj_inv = {
-		.m0  = (( mat_view_proj.m5  * b11) - (mat_view_proj.m6  * b10) + (mat_view_proj.m7  * b09)) * inv_det,
-		.m1  = ((-mat_view_proj.m1  * b11) - (mat_view_proj.m2  * b10) + (mat_view_proj.m3  * b09)) * inv_det,
-		.m2  = (( mat_view_proj.m13 * b05) - (mat_view_proj.m14 * b04) + (mat_view_proj.m15 * b03)) * inv_det,
-		.m3  = ((-mat_view_proj.m9  * b05) + (mat_view_proj.m10 * b04) - (mat_view_proj.m11 * b03)) * inv_det,
-		.m4  = ((-mat_view_proj.m4  * b11) + (mat_view_proj.m6  * b08) - (mat_view_proj.m7  * b07)) * inv_det,
-		.m5  = (( mat_view_proj.m0  * b11) - (mat_view_proj.m2  * b08) + (mat_view_proj.m3  * b07)) * inv_det,
-		.m6  = ((-mat_view_proj.m12 * b05) + (mat_view_proj.m14 * b02) - (mat_view_proj.m15 * b01)) * inv_det,
-		.m7  = (( mat_view_proj.m8  * b05) - (mat_view_proj.m10 * b02) + (mat_view_proj.m11 * b01)) * inv_det,
-		.m8  = (( mat_view_proj.m4  * b10) - (mat_view_proj.m5  * b08) + (mat_view_proj.m7  * b06)) * inv_det,
-		.m9  = ((-mat_view_proj.m0  * b10) + (mat_view_proj.m1  * b08) - (mat_view_proj.m3  * b06)) * inv_det,
-		.m10 = (( mat_view_proj.m12 * b04) - (mat_view_proj.m13 * b02) + (mat_view_proj.m15 * b00)) * inv_det,
-		.m11 = ((-mat_view_proj.m8  * b04) + (mat_view_proj.m9  * b02) - (mat_view_proj.m11 * b00)) * inv_det,
-		.m12 = ((-mat_view_proj.m4  * b09) + (mat_view_proj.m5  * b07) - (mat_view_proj.m6  * b06)) * inv_det,
-		.m13 = (( mat_view_proj.m0  * b09) - (mat_view_proj.m1  * b07) + (mat_view_proj.m2  * b06)) * inv_det,
-		.m14 = ((-mat_view_proj.m12 * b03) + (mat_view_proj.m13 * b01) - (mat_view_proj.m14 * b00)) * inv_det,
-		.m15 = (( mat_view_proj.m8  * b03) - (mat_view_proj.m9  * b01) + (mat_view_proj.m10 * b00)) * inv_det,
+		(( mat_view_proj.m5  * b11) - (mat_view_proj.m6  * b10) + (mat_view_proj.m7  * b09)) * inv_det,
+		((-mat_view_proj.m1  * b11) - (mat_view_proj.m2  * b10) + (mat_view_proj.m3  * b09)) * inv_det,
+		(( mat_view_proj.m13 * b05) - (mat_view_proj.m14 * b04) + (mat_view_proj.m15 * b03)) * inv_det,
+		((-mat_view_proj.m9  * b05) + (mat_view_proj.m10 * b04) - (mat_view_proj.m11 * b03)) * inv_det,
+		((-mat_view_proj.m4  * b11) + (mat_view_proj.m6  * b08) - (mat_view_proj.m7  * b07)) * inv_det,
+		(( mat_view_proj.m0  * b11) - (mat_view_proj.m2  * b08) + (mat_view_proj.m3  * b07)) * inv_det,
+		((-mat_view_proj.m12 * b05) + (mat_view_proj.m14 * b02) - (mat_view_proj.m15 * b01)) * inv_det,
+		(( mat_view_proj.m8  * b05) - (mat_view_proj.m10 * b02) + (mat_view_proj.m11 * b01)) * inv_det,
+		(( mat_view_proj.m4  * b10) - (mat_view_proj.m5  * b08) + (mat_view_proj.m7  * b06)) * inv_det,
+		((-mat_view_proj.m0  * b10) + (mat_view_proj.m1  * b08) - (mat_view_proj.m3  * b06)) * inv_det,
+		(( mat_view_proj.m12 * b04) - (mat_view_proj.m13 * b02) + (mat_view_proj.m15 * b00)) * inv_det,
+		((-mat_view_proj.m8  * b04) + (mat_view_proj.m9  * b02) - (mat_view_proj.m11 * b00)) * inv_det,
+		((-mat_view_proj.m4  * b09) + (mat_view_proj.m5  * b07) - (mat_view_proj.m6  * b06)) * inv_det,
+		(( mat_view_proj.m0  * b09) - (mat_view_proj.m1  * b07) + (mat_view_proj.m2  * b06)) * inv_det,
+		((-mat_view_proj.m12 * b03) + (mat_view_proj.m13 * b01) - (mat_view_proj.m14 * b00)) * inv_det,
+		(( mat_view_proj.m8  * b03) - (mat_view_proj.m9  * b01) + (mat_view_proj.m10 * b00)) * inv_det,
 	};
 
-	//* Create quaternion from source point
-	Quaternion quat = { .x = self.x, .y = self.y, .z = self.z, .w = 1 };
+	// Create quaternion from source point
+	Quaternion quat = {self.x, self.y, self.z, 1};
 
-	//* Multiply quat point by unprojected matrix
+	// Multiply quat point by unprojected matrix
 	Vector4 q_tranformed = mat_view_proj_inv.quaternion_transform(quat);
 
-	//* Normalized world points in vectors
-	return {
-		.x = q_tranformed.x / q_tranformed.w,
-		.y = q_tranformed.y / q_tranformed.w,
-		.z = q_tranformed.z / q_tranformed.w,
-	};
+	// Normalized world points in vectors
+	return (q_tranformed / q_tranformed.w).v3();
 }
 <* Invert the given vector *>
-fn Vector3 Vector3.invert(self) @export("vector3_invert") {
-	return {.x = 1 / self.x, .y = 1 / self.y, .z = 1 / self.z };
+fn Vector3 Vector3.invert(self) {
+	return {
+		1 / self.x,
+		1 / self.y,
+		1 / self.z,
+	};
 }
 <* Clamp the components of the vector between min and max values specified by the given vectors *>
-fn Vector3 Vector3.clamp(self, Vector3 min, Vector3 max) @export("vector3_clamp") {
+fn Vector3 Vector3.clamp(self, Vector3 min, Vector3 max) {
 	return {
-		.x = math::min(max.x, math::max(min.x, self.x)),
-		.y = math::min(max.y, math::max(min.y, self.y)),
-		.z = math::min(max.z, math::max(min.z, self.z)),
+		math::min(max.x, math::max(min.x, self.x)),
+		math::min(max.y, math::max(min.y, self.y)),
+		math::min(max.z, math::max(min.z, self.z)),
 	};
 }
 <* Clamp the magnitude of the vector between two values *>
-fn Vector3 Vector3.clamp_value(self, float min, float max) @export("vector3_clampvalue") {
+fn Vector3 Vector3.clamp_mag(self, float min, float max) {
 	Vector3 result = self;
 
 	float len = self.length_sqr();
@@ -659,22 +611,14 @@ fn Vector3 Vector3.clamp_value(self, float min, float max) @export("vector3_clam
 		else if (len > max) { scale = max / len; }
 		else { scale = 1; };
 
-		result = {
-			.x = self.x * scale,
-			.y = self.y * scale,
-			.z = self.z * scale,
-		};
+		result = self * scale;
 	}
 
-	return {
-		.x = result.x,
-		.y = result.y,
-		.z = result.z,
-	};
+	return result;
 }
 <* Compute the direction of a refracted ray *>
-fn Vector3 Vector3.refract(Vector3 v, Vector3 n, float r) @export("vector3_refract") {
-	Vector3 result = {};
+fn Vector3 Vector3.refract(Vector3 v, Vector3 n, float r) {
+	Vector3 result;
 
 	float dot = v.dot_product(n);
 	float d = 1 - r.pow(2) * (1 - dot.pow(2));
@@ -683,22 +627,17 @@ fn Vector3 Vector3.refract(Vector3 v, Vector3 n, float r) @export("vector3_refra
 		d = math::sqrt(d);
 
 		result = {
-			.x = r * v.x - (r * dot + d) * n.x,
-			.y = r * v.y - (r * dot + d) * n.y,
-			.z = r * v.z - (r * dot + d) * n.z,
+			r * v.x - (r * dot + d) * n.x,
+			r * v.y - (r * dot + d) * n.y,
+			r * v.z - (r * dot + d) * n.z,
 		};
 	}
 
 	return result;
 }
 <* Converts input HSV into  it's equivalent color *>
-fn Color Vector3.to_color(self) @export("vector3_tocolor") {
-	Color result = {
-		.r = 0,
-		.g = 0,
-		.b = 0,
-		.a = 255,
-	};
+fn Color Vector3.to_color(self) {
+	Color result = {0,0,0,255};
 
 	//* Red channel
 	float k = (5 + self.x / 60) % 6;
@@ -747,12 +686,12 @@ fn void Vector3.print(self) @export("vector3_print") {
 struct Vector4 {
 	float x, y, z, w;
 }
-<* Equals *>
-fn bool Vector4.equals(self, Vector4 rhs) @operator(==) @export("vector4_equals") {
+<* == Overload *>
+fn bool Vector4.equals(self, Vector4 rhs) @operator(==) {
 	return (self.x == rhs.x && self.y == rhs.y && self.z == rhs.z && self.w == rhs.w);
 }
-<* Addition *>
-fn Vector4 Vector4.add(self, Vector4 rhs) @operator(+) @export("vector4_add") {
+<* + Overload *>
+fn Vector4 Vector4.add(self, Vector4 rhs) @operator(+) {
 	return {
 		self.x + rhs.x,
 		self.y + rhs.y,
@@ -760,8 +699,17 @@ fn Vector4 Vector4.add(self, Vector4 rhs) @operator(+) @export("vector4_add") {
 		self.w + rhs.w,
 	};
 }
-<* Subtraction *>
-fn Vector4 Vector4.sub(self, Vector4 rhs) @operator(-) @export("vector4_sub") {
+<*  Overload with float *>
+fn Vector4 Vector4.pos_offset(self, float rhs) @operator_s(+) {
+	return {
+		self.x + rhs,
+		self.y + rhs,
+		self.z + rhs,
+		self.w + rhs,
+	};
+}
+<* - Overload *>
+fn Vector4 Vector4.sub(self, Vector4 rhs) @operator(-) {
 	return {
 		self.x - rhs.x,
 		self.y - rhs.y,
@@ -769,13 +717,31 @@ fn Vector4 Vector4.sub(self, Vector4 rhs) @operator(-) @export("vector4_sub") {
 		self.w - rhs.w,
 	};
 }
-<* Multiplication *>
-fn Vector4 Vector4.mul(self, Vector4 rhs) @operator(*) @export("vector4_mul") {
+<*  Overload with float *>
+fn Vector4 Vector4.neg_offset(self, float rhs) @operator_s(-) {
+	return {
+		self.x - rhs,
+		self.y - rhs,
+		self.z - rhs,
+		self.w - rhs,
+	};
+}
+<* * Overload *>
+fn Vector4 Vector4.mul(self, Vector4 rhs) @operator(*) {
 	return {
 		self.x * rhs.x,
 		self.y * rhs.y,
 		self.z * rhs.z,
 		self.w * rhs.w,
+	};
+}
+<*  Overload with float *>
+fn Vector4 Vector4.scale(self, float rhs) @operator_s(*) {
+	return {
+		self.x * rhs,
+		self.y * rhs,
+		self.z * rhs,
+		self.w * rhs,
 	};
 }
 <* * Overload with Matrix *>
@@ -787,8 +753,8 @@ fn Vector4 Vector4.mul_mat(self, Matrix rhs) @operator_s(*) {
 		(rhs.m12 * self.x) + (rhs.m13 * self.y) + (rhs.m14 * self.z) + (rhs.m15 * self.w),
 	};
 }
-<* Division *>
-fn Vector4 Vector4.div(self, Vector4 rhs) @operator(/) @export("vector4_div") {
+<* / Overload *>
+fn Vector4 Vector4.div(self, Vector4 rhs) @operator(/) {
 	return {
 		self.x / rhs.x,
 		self.y / rhs.y,
@@ -796,63 +762,8 @@ fn Vector4 Vector4.div(self, Vector4 rhs) @operator(/) @export("vector4_div") {
 		self.w / rhs.w,
 	};
 }
-<* Add and assign *>
-fn void Vector4.add_assign(&self, Vector4 rhs) @operator(+=) @export("vector4_addassign") {
-	self.x += rhs.x;
-	self.y += rhs.y;
-	self.z += rhs.z;
-	self.w += rhs.w;
-}
-<* Subtract and assign *>
-fn void Vector4.sub_assign(&self, Vector4 rhs) @operator(-=) @export("vector4_subassign") {
-	self.x -= rhs.x;
-	self.y -= rhs.y;
-	self.z -= rhs.z;
-	self.w -= rhs.w;
-}
-<* Multiply and assign *>
-fn void Vector4.mul_assign(&self, Vector4 rhs) @operator(*=) @export("vector4_mulassign") {
-	self.x *= rhs.x;
-	self.y *= rhs.y;
-	self.z *= rhs.z;
-	self.w *= rhs.w;
-}
-<* Divide and assign *>
-fn void Vector4.div_assign(&self, Vector4 rhs) @operator(/=) @export("vector4_divassign") {
-	self.x /= rhs.x;
-	self.y /= rhs.y;
-	self.z /= rhs.z;
-	self.w /= rhs.w;
-}
-<* Add to with float *>
-fn Vector4 Vector4.pos_offset(self, float rhs) @operator_s(+) @export("vector4_posoffset") {
-	return {
-		self.x + rhs,
-		self.y + rhs,
-		self.z + rhs,
-		self.w + rhs,
-	};
-}
-<* Subtract from with float *>
-fn Vector4 Vector4.neg_offset(self, float rhs) @operator_s(-) @export("vector4_negoffset") {
-	return {
-		self.x - rhs,
-		self.y - rhs,
-		self.z - rhs,
-		self.w - rhs,
-	};
-}
-<* Multiply by float *>
-fn Vector4 Vector4.scale(self, float rhs) @operator_s(*) @export("vector4_scale") {
-	return {
-		self.x * rhs,
-		self.y * rhs,
-		self.z * rhs,
-		self.w * rhs,
-	};
-}
-<* Divide by float *>
-fn Vector4 Vector4.inverse(self, float rhs) @operator_s(/) @export("vector4_inverse") {
+<* / Overload with float *>
+fn Vector4 Vector4.inverse(self, float rhs) @operator_s(/) {
 	return {
 		self.x / rhs,
 		self.y / rhs,
@@ -875,71 +786,65 @@ fn Quaternion Vector4.q(self) {
 }
 
 <* Calculate vector length *>
-fn float Vector4.length(self) @export("vector4_length") {
+fn float Vector4.length(self) {
 	return math::sqrt(self.x.pow(2) + self.y.pow(2) + self.z.pow(2) + self.w.pow(2));
 }
 <* Calculate vector square length *>
-fn float Vector4.length_sqr(self) @export("vector4_lengthsqr") {
+fn float Vector4.length_sqr(self) {
 	return self.x.pow(2) + self.y.pow(2) + self.z.pow(2) + self.w.pow(2);
 }
 <* Calculate two vectors dot product *>
-fn float Vector4.dot_product(self, Vector4 v2) @export("vector4_dotproduct") {
+fn float Vector4.dot_product(self, Vector4 v2) {
 	return self.x * v2.x + self.y * v2.y + self.z * v2.z + self.w * v2.w;
 }
 <* Calculate distance between two vectors *>
-fn float Vector4.distance(self, Vector4 v2) @export("vector4_distance") {
+fn float Vector4.distance(self, Vector4 v2) {
 	return math::sqrt((self.x - v2.x).pow(2) + (self.y - v2.y).pow(2) + (self.z - v2.z).pow(2) + (self.w - v2.w).pow(2));
 }
 <* Calculate square distance between two vectors *>
-fn float Vector4.distance_sqr(self, Vector4 v2) @export("vector4_distancesqr") {
+fn float Vector4.distance_sqr(self, Vector4 v2) {
 	return (self.x - v2.x).pow(2) + (self.y - v2.y).pow(2) + (self.z - v2.z).pow(2) + (self.w - v2.w).pow(2);
 }
 <* Normalize provided vector *>
-fn Vector4 Vector4.normalize(self) @export("vector4_normalize") {
-	Vector4 result = {};
-
+fn Vector4 Vector4.normalize(self) {
 	float len = self.length();
+
 	if (len > 0) {
 		float ilen = 1 / len;
-		result = {
-			.x = self.x * ilen,
-			.y = self.y * ilen,
-			.z = self.z * ilen,
-			.w = self.w * ilen,
-		};
+		return self * ilen;
 	}
 
-	return result;
+	return self;
 }
 <* Get min value for each pair of components *>
-fn Vector4 Vector4.min(self, Vector4 v2) @export("vector4_min") {
+fn Vector4 Vector4.min(self, Vector4 v2) {
 	return {
-		.x = math::min(self.x, v2.x),
-		.y = math::min(self.y, v2.y),
-		.z = math::min(self.z, v2.z),
-		.w = math::min(self.w, v2.w),
+		math::min(self.x, v2.x),
+		math::min(self.y, v2.y),
+		math::min(self.z, v2.z),
+		math::min(self.w, v2.w),
 	};
 }
 <* Get max value for each pair of components *>
-fn Vector4 Vector4.max(self, Vector4 v2) @export("vector4_max") {
+fn Vector4 Vector4.max(self, Vector4 v2) {
 	return {
-		.x = math::max(self.x, v2.x),
-		.y = math::max(self.y, v2.y),
-		.z = math::max(self.z, v2.z),
-		.w = math::max(self.w, v2.w),
+		math::max(self.x, v2.x),
+		math::max(self.y, v2.y),
+		math::max(self.z, v2.z),
+		math::max(self.w, v2.w),
 	};
 }
 <* Calculate linear interpolation between two vectors *>
-fn Vector4 Vector4.lerp(self, Vector4 target, float amount) @export("vector4_lerp") {
+fn Vector4 Vector4.lerp(self, Vector4 target, float amount) {
 	return {
-		.x = self.x + amount * (target.x - self.x),
-		.y = self.y + amount * (target.y - self.y),
-		.z = self.z + amount * (target.z - self.z),
-		.w = self.w + amount * (target.w - self.w),
+		self.x + amount * (target.x - self.x),
+		self.y + amount * (target.y - self.y),
+		self.z + amount * (target.z - self.z),
+		self.w + amount * (target.w - self.w),
 	};
 }
 <* Move Vector towards target *>
-fn Vector4 Vector4.move_towards(self, Vector4 target, float max_distance) @export("vector4_movetowards") {
+fn Vector4 Vector4.move_towards(self, Vector4 target, float max_distance) {
 	float dx = target.x - self.x;
 	float dy = target.y - self.y;
 	float dz = target.z - self.z;
@@ -951,23 +856,23 @@ fn Vector4 Vector4.move_towards(self, Vector4 target, float max_distance) @expor
 	float dist = math::sqrt(value);
 
 	return {
-		.x = self.x + dx / dist * max_distance,
-		.y = self.y + dy / dist * max_distance,
-		.z = self.z + dz / dist * max_distance,
-		.w = self.w + dw / dist * max_distance,
+		self.x + dx / dist * max_distance,
+		self.y + dy / dist * max_distance,
+		self.z + dz / dist * max_distance,
+		self.w + dw / dist * max_distance,
 	};
 }
 <* Invert the given vector *>
-fn Vector4 Vector4.invert(self) @export("vector4_invert") {
+fn Vector4 Vector4.invert(self) {
 	return {
-		.x = 1 / self.x,
-		.y = 1 / self.y,
-		.z = 1 / self.z,
-		.w = 1 / self.w,
+		1 / self.x,
+		1 / self.y,
+		1 / self.z,
+		1 / self.w,
 	};
 }
 <* Converts normaized Vector4 into a color. *>
-fn Color Vector4.to_color(self) @export("vector4_tocolor") {
+fn Color Vector4.to_color(self) {
 	return {
 		.r = (char)(self.x * 255),
 		.g = (char)(self.y * 255),

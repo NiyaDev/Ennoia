@@ -212,3 +212,8 @@
 - Gone through and Checked and wrote tests for all Vector2 functions and most Vector3 functions.
 - Changed Quaternion to it's own struct and started on its test functions.
 
+#### [8/17/25]
+- Finished Vector3 and Vector4 tests and checks.
+- Found out the "Memory leak" is seemingly coming from shaders setting uniform values.
+  - The c3 test system  doesn't recognize it as a leak and I don't know how to fix it.
+

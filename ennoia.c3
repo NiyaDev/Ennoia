@@ -35,15 +35,15 @@ Shader defaultShader2d;
   @require height > 1
   @param title:  "Title of window"
   @require title != ""
-  @param renderRes: "The value to multiple the screen resolution by to get render resolution"
-  @require renderRes > 0.0
+  @param scale: "The value to multiple the screen resolution by to get render resolution"
+  @require scale > 0.0
  *>
-fn void init(int width, int height, String title, float renderRes = 1) {
+fn void init(int width = 1280, int height = 720, String title = "ENNOIA", float scale = 1) {
   scrWidth  = width;
   scrHeight = height;
-  renWidth  = (int)((float)width  * renderRes);
-  renHeight = (int)((float)height * renderRes);
-  renRes = renderRes;
+  renWidth  = (int)((float)width  * scale);
+  renHeight = (int)((float)height * scale);
+  renRes = scale;
   
   // Initialize SDL3
 	assert(sdl3::init(sdl3::INIT_VIDEO | sdl3::INIT_AUDIO), "[ERROR] - ENNOIA::INIT::INIT [Failed to initialize SDL3 (%s)]", sdl3::get_error());
@@ -131,6 +131,8 @@ fn void end_drawing() {
 fn void clean() {
   defaultShader2d.clean();
   defaultShader3d.clean();
+
+  textureMesh.clean();
 
   render::clean();
 

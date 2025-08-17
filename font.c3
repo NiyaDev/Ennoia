@@ -234,6 +234,11 @@ fn Font load_from_mem(char[] data, Vector2 size) {
 
   return output;
 }
+<* Cleans up font data *>
+fn void Font.clean(&self) {
+  self.atlas.clean();
+  self.rects.free();
+}
 
 <* Draws font to screen
   @param text: "Text to draw in font"
@@ -257,8 +262,8 @@ fn void Font.draw(&self, String text, Vector2 position = {0,0}, float scale = 1,
       continue;
     }
     Vector2 space;
-    if (char_x > 0) space.x = (((spacing + 2) * ((self.dim.x * scale) / 2)) * char_x);
-    if (char_y > 0) space.y = (((spacing + 2) * ((self.dim.y * scale) / 2)) * char_y);
+    if (char_x > 0) space.x = ((spacing * ((self.dim.x * scale) / 2)) * char_x);
+    if (char_y > 0) space.y = ((spacing * ((self.dim.y * scale) / 2)) * char_y);
     self.atlas.draw(
       dest:{
         position.x + (char_x * (self.dim.x * scale)) + space.x,
