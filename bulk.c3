@@ -26,6 +26,8 @@ enum DataType : short {
   TEXTURE,
   FONT,
   SHADER,
+  MODEL,
+  MATERIAL,
 }
 enum CompType : short {
   NONE,
@@ -105,6 +107,63 @@ fn Font load_font(String filepath, String dataname, bool send = true) {
   if (send) ennoia::fonts.set(dataname, font);
 
   return font;
+}
+<* Shorthand for loading a font from a bulk file
+  @param filepath: "Path to bulk file"
+  @require filepath != ""
+  @param dataname: "Name of data inside bulk file"
+  @require dataname != ""
+ *>
+fn Model load_model(String filepath, String dataname, bool send = true, bool getMaterial = true) {
+  Model output;
+
+  char[] data = load(filepath,dataname);
+  defer free(data);
+  char[] mtl;
+
+  if (getMaterial) {
+    // Get material name and load file
+    String[] split = ((String)data).tsplit("\n");
+    for (int i; i < split.len; i++) {
+      String[] splitTwo = split[i].tsplit(" ");
+      if (splitTwo[0] == "mtllib") {
+        String[] nameSplit = splitTwo[1].tsplit(".");
+        mtl = bulk::load(filepath,nameSplit[0]);
+        break;
+      }
+    }
+
+    // Load mesh
+    output = mesh::load_from_mem((String)data);
+
+    // Iterate through material file to find material and load data
+    output.@each(; String key, Mesh val) {
+      bool myMat = false;
+      String[] mtlSplit = ((String)mtl).tsplit("\n");
+      for (int i; i < mtlSplit.len; i++) {
+        String[] line = mtlSplit[i].tsplit(" ");
+        switch (line[0]) {
+          case "newmtl": // Material definition
+            if (line[1] == val.materialName) {
+              myMat = true;
+            } else { myMat = false; }
+          case "map_Kd": // Texture name
+            if (myMat) {
+              String[] nameSplit = line[1].tsplit(".");
+              Mesh* temp = output.get_ref(key)!!;
+              temp.texture = mem::new(Texture);
+              *temp.texture = bulk::load_texture(filepath, nameSplit[0]);
+            }
+        }
+      }
+    };
+    free(mtl);
+  } else {
+    output = mesh::load_from_mem((String)data);
+  }
+
+  return output;
+
 }
 <* Shorthand for loading a font from a bulk file
   @param filepath: "Path to bulk file"

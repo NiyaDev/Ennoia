@@ -83,6 +83,14 @@ fn int main(String[] args) {
 					t.length = file::get_size(val.get_array(1).as_string)!!;
 					t.type = TEXTURE;
 					t.comp = NONE;
+				case "MODEL":
+					t.length = file::get_size(val.get_array(1).as_string)!!;
+					t.type = MODEL;
+					t.comp = NONE;
+				case "MATERIAL":
+					t.length = file::get_size(val.get_array(1).as_string)!!;
+					t.type = MATERIAL;
+					t.comp = NONE;
 					// TODO Compression on raw files
 					//t.comp = val.get_array(2).as_int;
 			}
@@ -215,6 +223,26 @@ fn int main(String[] args) {
 						return 1;
 					}
 					for (int l; l < table[i].length; l++) file.write_byte(data.read_byte()!!)!!;
+					data.close()!!;
+				case MODEL:
+					File? data = file::open(val.get_array(1).as_string, "rb");
+					if (catch data) {
+						io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
+						return 1;
+					}
+					for (int l; l < table[i].length; l++) {
+						file.write_byte(data.read_byte()!!)!!;
+					}
+					data.close()!!;
+				case MATERIAL:
+					File? data = file::open(val.get_array(1).as_string, "rb");
+					if (catch data) {
+						io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
+						return 1;
+					}
+					for (int l; l < table[i].length; l++) {
+						file.write_byte(data.read_byte()!!)!!;
+					}
 					data.close()!!;
 				default:
 			}

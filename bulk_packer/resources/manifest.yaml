@@ -30,3 +30,11 @@ options:
   mask:       [TEXTURE,  resources/mask.png]
   slot:       [TEXTURE,  resources/slot.png]
 
+002:
+  puffmin:    [MODEL,    resources/Puffmin/Puffmin.obj]
+  Puffmin:    [MATERIAL, resources/Puffmin/Puffmin.mtl]
+  KinColor_1: [TEXTURE,  resources/Puffmin/KinColor_1.png]
+  KinEye_1:   [TEXTURE,  resources/Puffmin/KinEye_1.png]
+  kinModel_0: [TEXTURE,  resources/Puffmin/kinModel_0.png]
+  kinModel_1: [TEXTURE,  resources/Puffmin/kinModel_1.png]
+

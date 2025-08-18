@@ -11,8 +11,6 @@
 ### Mid prio
 - Bulk
   - Loading different file types
-    - Meshes
-      - Able to load materials from the same bulk file
     - Localization
     - etc
 - Meshes

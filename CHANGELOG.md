@@ -217,3 +217,10 @@
 - Found out the "Memory leak" is seemingly coming from shaders setting uniform values.
   - The c3 test system  doesn't recognize it as a leak and I don't know how to fix it.
 
+#### [8/18/25]
+- Reverted Meshes having texture arrays. For now atleast...
+- Added loading material from file with meshes.
+- Changed HashMap{String,Mesh} into an aliased version just called Model and added cleanup and drawing functions.
+- Added loading Meshes and Materials from bulk.
+- Fixed memory leak. Apparently glGetUniformLocation allocates the name every time it's called. So I added back the location map.
+

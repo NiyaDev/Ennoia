@@ -12,8 +12,10 @@ struct Mesh {
   uint vao, vbo, ebo;
 
   Shader shader;
-  Texture*[] textures;
+  String materialName;
+  Texture* texture;
 }
+alias Model = HashMap{String, Mesh};
 
 struct Vertex {
   Vector3 position;
@@ -94,9 +96,55 @@ const Vertex[] BASIC_CUBE = {
   @param filename: "Name of .obj file to load"
   @require filename != ""
  *>
-fn HashMap{String,Mesh} load(String filename) {
+fn Model load(String filename, bool getMaterial = true) {
+  Model output;
   String data = (String)file::load_temp(filename)!!;
-  return load_from_mem(data);
+  String[] mtl;
+
+  // Create base directory path
+  String[] pathSplit = filename.tsplit("/");
+  String dir = filename.trim(pathSplit[pathSplit.len-1]);
+
+  if (getMaterial) {
+    // Get material name and load file
+    String[] split = data.tsplit("\n");
+    for (int i; i < split.len; i++) {
+      String[] splitTwo = split[i].tsplit(" ");
+      if (splitTwo[0] == "mtllib") {
+        String path = string::tformat("%s%s",dir,splitTwo[1]);
+        mtl = ((String)file::load_temp(path)!!).tsplit("\n");
+        break;
+      }
+    }
+    
+    // Load Mesh
+    output = load_from_mem(data);
+
+    // Iterate through material file to find material and load data
+    output.@each(; String key, Mesh val) {
+      bool myMat = false;
+      for (int i; i < mtl.len; i++) {
+        String[] line = mtl[i].tsplit(" ");
+        switch (line[0]) {
+          case "newmtl": // Material definition
+            if (line[1] == val.materialName) {
+              myMat = true;
+            } else { myMat = false; }
+          case "map_Kd": // Texture name
+            if (myMat) {
+              String texturePath = string::tformat("%s%s", dir, line[1]);
+              Mesh* temp = output.get_ref(key)!!;
+              temp.texture = mem::new(Texture);
+              *temp.texture = texture::load(texturePath);
+            }
+        }
+      }
+    };
+  } else {
+    output = load_from_mem(data);
+  }
+
+  return output;
 }
 <* Loads Mesh from data
   @param data: "Data to make into mesh"
@@ -118,9 +166,10 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
     switch (line[0]) {
       case "#": continue;
       case "mtllib": // Material file
-        materialName = line[1];
-      case "usemtl": // Material info
         break;
+      case "usemtl": // Material info
+        Mesh* temp = list.get_ref(lastMember)!!;
+        temp.materialName = line[1];
       case "o":  // Object
         // If this isn't the first object, save vertices
         if (list.len() > 0) {
@@ -136,7 +185,7 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
           temp.indices = indices.to_array(allocator::heap());
           indices.free();
           lastIndices = 0;
-          temp.textures = mem::new_array(Texture*, 1);
+          //temp.textures = mem::new_array(Texture*, 1);
           temp.upload();
         }
         // Create new mesh
@@ -184,7 +233,6 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
   vertices.free();
   temp.indices = indices.to_array(allocator::heap());
   indices.free();
-  temp.textures = mem::new_array(Texture*, 1);
   temp.upload();
 
   return list;
@@ -202,7 +250,6 @@ fn Mesh new(Vertex[] vertices = {}) {
 fn Mesh gen_triangle() {
   Mesh output;
   output.vertices = mem::new_array(Vertex, BASIC_TRI.len);
-  output.textures = mem::new_array(Texture*, 1);
 
   mem::copy(output.vertices, BASIC_TRI, Vertex.sizeof * BASIC_TRI.len);
   output.upload();
@@ -213,7 +260,6 @@ fn Mesh gen_triangle() {
 fn Mesh gen_quad() {
   Mesh output;
   output.vertices = mem::new_array(Vertex, BASIC_QUAD.len);
-  output.textures = mem::new_array(Texture*, 1);
 
   mem::copy(output.vertices, BASIC_QUAD, Vertex.sizeof * BASIC_QUAD.len);
   output.upload();
@@ -224,7 +270,6 @@ fn Mesh gen_quad() {
 fn Mesh gen_cube() {
   Mesh output;
   output.vertices = mem::new_array(Vertex, BASIC_CUBE.len);
-  output.textures = mem::new_array(Texture*, 1);
 
   mem::copy(output.vertices, BASIC_CUBE, Vertex.sizeof * BASIC_CUBE.len);
   output.upload();
@@ -254,13 +299,26 @@ fn Mesh generate_mesh_test(uint[][] data) {
 
   return output;
 }
-<* Cleans up data *>
+<* Cleans up mesh data *>
 fn void Mesh.clean(&self) {
   self.delete();
   free(self.vertices);
   free(self.indices);
-  free(self.textures);
+  
+  if (self.texture != null) {
+    self.texture.clean();
+    free(self.texture);
+  }
+  
   self.shader.clean();
+}
+<* Cleans up model data *>
+fn void Model.clean(&self) {
+  self.@each(; String key, Mesh val) {
+    Mesh* temp = self.get_ref(key)!!;
+    temp.clean();
+  };
+  self.free();
 }
 
 <* Uploads mesh data to GPU *>
@@ -325,13 +383,9 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
   } else {
-    if (self.textures.len > 0) {
-      for (int i; i < self.textures.len; i++) {
-        if (self.textures[i] != null) {
-          gl::active_texture(gl::TEXTURE0 + i);
-          gl::bind_texture(gl::TEXTURE_2D, self.textures[i].id);
-        }
-      }
+    if (self.texture != null) {
+      gl::active_texture(gl::TEXTURE0);
+      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
     } else {
       gl::bind_texture(gl::TEXTURE_2D, 0);
     }
@@ -358,20 +412,15 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
     ennoia::defaultShader2d.use();
   }
 
-  //ennoia::default_shader_2d.set_mat4x4("model", matrix::IDENTITY.translate({position.x, position.y, 0}).rotate({0,0,rotation}).scale({scale.x, scale.y, 1}));
   ennoia::defaultShader2d.set_vec2("position", position);
   ennoia::defaultShader2d.set_vec2("scale", scale);
 
   if (texture != null) {
     gl::bind_texture(gl::TEXTURE_2D, texture.id);
   } else {
-    if (self.textures.len > 0) {
-      for (int i; i < self.textures.len; i++) {
-        if (self.textures[i] != null) {
-          gl::active_texture(gl::TEXTURE0 + i);
-          gl::bind_texture(gl::TEXTURE_2D, self.textures[i].id);
-        }
-      }
+    if (self.texture != null) {
+      gl::active_texture(gl::TEXTURE0);
+      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
     } else {
       gl::bind_texture(gl::TEXTURE_2D, 0);
     }
@@ -379,6 +428,17 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
 
   gl::bind_vertex_array(self.vao);
   gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
+}
+
+<* Draws Mesh
+  @param position: "Position in space to draw mesh. Default is {0,0,0}."
+  @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
+  @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
+ *>
+fn void Model.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}) {
+  self.@each(; String key, Mesh val) {
+    val.draw(position, scale, rotation);
+  };
 }
 
 <* Prints info on vertex *>
