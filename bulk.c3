@@ -20,7 +20,7 @@ enum DataType : short {
   TEXT,
   KEYBIND,
   OPTION,
-  //LOCALIZATION,
+  LOCALIZATION,
   
   // OpenGL/SDL3
   TEXTURE,
@@ -263,23 +263,26 @@ fn Option load_option(String filepath, String dataname, bool send = true) {
   @require dataname != ""
   @param send: "If true, it adds it to the keybinds global registry"
  *>
-fn Localization load_local(String filepath, String dataname, bool send = true) {
+fn Localization load_localization(String filepath, String dataname, bool send = true) {
   char[] data = load(filepath,dataname);
   defer free(data);
   Yaml y = yaml::parse((String)data);
+  y.print();
 
   Localization output;
 
   y.@each(; String key, TypedValue val) {
+    //io::printfn("%s",key);
     Local local;
-    assert(val.type == OBJECT, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
+    //assert(val.type == OBJECT, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
     
+    local.set(key, val.as_string);
     //yaml::Object o = *((yaml::Object*)val.value);
-    yaml::Object o = val.as_object;
-    o.@each(; String key_inner, TypedValue val_inner) {
-      assert(val_inner.type == STRING, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
-      local.set(key, val_inner.as_string);
-    };
+    //yaml::Object o = val.as_object;
+    //o.@each(; String key_inner, TypedValue val_inner) {
+    //  assert(val_inner.type == STRING, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
+    //  local.set(key, val_inner.as_string);
+    //};
 
     output.set(key, local);
   };

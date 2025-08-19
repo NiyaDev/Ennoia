@@ -21,3 +21,8 @@ fn void Localization.add_assign(&self, Localization* rhs) @operator(+=) {
   rhs.free();
 }
 
+<**>
+fn String get(String key) {
+  return ennoia::localization.get(key)!!.get(ennoia::language)!!;
+}
+

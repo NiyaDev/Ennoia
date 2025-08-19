@@ -224,3 +224,6 @@
 - Added loading Meshes and Materials from bulk.
 - Fixed memory leak. Apparently glGetUniformLocation allocates the name every time it's called. So I added back the location map.
 
+#### [8/19/25]
+- Started working on localization
+

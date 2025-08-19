@@ -10,6 +10,7 @@ List{KeyData} keyqueue;
 Options options;
 
 Localization  localization;
+String language;
 
 
 // Graphics
