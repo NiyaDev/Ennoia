@@ -14,8 +14,8 @@ struct Matrix {
 }
 
 
-<* Equals *>
-fn bool Matrix.equals(self, Matrix rhs) @operator(==) @export("matrix_equals") {
+<* == Overload *>
+fn bool Matrix.equals(self, Matrix rhs) @operator(==) {
 	return (
 		self.m0  == rhs.m0 &&
 	  self.m1  == rhs.m1 &&
@@ -35,8 +35,8 @@ fn bool Matrix.equals(self, Matrix rhs) @operator(==) @export("matrix_equals") {
 	  self.m15 == rhs.m15
 	);
 }
-<* Addition *>
-fn Matrix Matrix.add(self, Matrix rhs) @operator(+) @export("matrix_add") {
+<* + Overload *>
+fn Matrix Matrix.add(self, Matrix rhs) @operator(+) {
 	return {
 		self.m0  + rhs.m0,
 	  self.m1  + rhs.m1,
@@ -56,8 +56,8 @@ fn Matrix Matrix.add(self, Matrix rhs) @operator(+) @export("matrix_add") {
 	  self.m15 + rhs.m15,
 	};
 }
-<* Subtraction *>
-fn Matrix Matrix.sub(self, Matrix rhs) @operator(-) @export("matrix_sub") {
+<* - Overload *>
+fn Matrix Matrix.sub(self, Matrix rhs) @operator(-) {
 	return {
 		self.m0  - rhs.m0,
 	  self.m1  - rhs.m1,
@@ -77,8 +77,8 @@ fn Matrix Matrix.sub(self, Matrix rhs) @operator(-) @export("matrix_sub") {
 	  self.m15 - rhs.m15,
 	};
 }
-<* Multiplication *>
-fn Matrix Matrix.mul(self, Matrix rhs) @operator(*) @export("matrix_mul") {
+<* * Overload *>
+fn Matrix Matrix.mul(self, Matrix rhs) @operator(*) {
 	return {
 		self.m0  * rhs.m0 + self.m1  * rhs.m4 + self.m2  * rhs.m8  + self.m3  * rhs.m12,
 		self.m0  * rhs.m1 + self.m1  * rhs.m5 + self.m2  * rhs.m9  + self.m3  * rhs.m13,
@@ -98,6 +98,7 @@ fn Matrix Matrix.mul(self, Matrix rhs) @operator(*) @export("matrix_mul") {
 		self.m12 * rhs.m3 + self.m13 * rhs.m7 + self.m14 * rhs.m11 + self.m15 * rhs.m15,
 	};
 }
+
 <* Compute matrix determinant *>
 fn float Matrix.determinant(self) @export("matrix_determinant") {
 	return self.m12 * self.m9 * self.m6*self.m3 - self.m8 * self.m13 * self.m6 * self.m3 - self.m12 * self.m5 * self.m10 * self.m3 + self.m4 * self.m13 * self.m10 * self.m3 +

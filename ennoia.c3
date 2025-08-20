@@ -97,6 +97,14 @@ fn bool window_should_close() {
     if (event.type == sdl3::KEYUP)      keybinds::add_queue(event.key);
     if (event.type == sdl3::MOUSEWHEEL) scrollwheel = event.wheel.y;
   }
+
+  // Default exit button
+  if (keybinds.has_key("quit")) {
+    if (keybinds::pressed("quit")) {
+      ennoia::forceClose = true;
+    }
+  }
+
   return forceClose;
 }
 

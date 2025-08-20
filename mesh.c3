@@ -351,6 +351,30 @@ fn void Mesh.delete(&self) {
   gl::delete_buffers(1, &self.ebo);
 }
 
+<* Changes the positions of the mesh and re-uploads it
+  @param newPos: "Array of new positions"
+  @require newPos.len == self.vertices.len
+ *>
+fn void Mesh.update_positions(&self, Vector3[] newPos) {
+  for (int i; i < newPos.len; i++) {
+    self.vertices[i].position = newPos[i];
+  }
+
+  self.delete();
+  self.upload();
+}
+<* Changes the normals of the mesh and re-uploads it
+  @param newNorms: "Array of new normals"
+  @require newNorms.len == self.vertices.len
+ *>
+fn void Mesh.update_normals(&self, Vector3[] newNorms) {
+  for (int i; i < newNorms.len; i++) {
+    self.vertices[i].normal = newNorms[i];
+  }
+
+  self.delete();
+  self.upload();
+}
 <* Changes the TexCoords of the mesh and re-uploads it
   @param newCoords: "Array of new texCoords"
   @require newCoords.len == self.vertices.len

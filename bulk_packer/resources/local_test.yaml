@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 
-test_local_1: Absolute Fugandulu
-test_local_2: I don't believe your\nfucking shit
+test_local_1:
+  english: Absolute Fugandulu
+test_local_2:
+  english: I don't believe your\nfucking shit
 

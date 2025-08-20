@@ -10,7 +10,7 @@ List{KeyData} keyqueue;
 Options options;
 
 Localization  localization;
-String language;
+String language = "english";
 
 
 // Graphics

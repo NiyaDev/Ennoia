@@ -227,3 +227,8 @@
 #### [8/19/25]
 - Started working on localization
 
+#### [8/20/25]
+- Loading localization from bulk is done.
+- Minor changes to Matrices.
+- Started on UI.
+
