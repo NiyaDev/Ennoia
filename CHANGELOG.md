@@ -232,3 +232,9 @@
 - Minor changes to Matrices.
 - Started on UI.
 
+#### [8/21/25]
+- Continued on UI work.
+- Started slight re-work of Bulk Packer.
+- Added default font and texture.
+- When drawing fonts '\n' will be read the same as a newline.
+

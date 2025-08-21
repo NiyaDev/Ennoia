@@ -245,13 +245,23 @@ fn void Font.clean(&self) {
   @require text != ""
   @param position: "Position on screen to draw"
   @param scale: "Multiplier to size of font"
-  @require scale > 0.0
+  @require scale.x > 0.0
+  @require scale.y > 0.0
   @param spacing: "Space inbetween chaarcters"
  *>
-fn void Font.draw(&self, String text, Vector2 position = {0,0}, float scale = 1, float spacing = 0) {
+fn void Font.draw(&self, String text, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0) {
   float char_x = 0;
   float char_y = 0;
   for (int i; i < text.len; i++) {
+    if (text[i] == '\\') {
+      switch (text[i+1]) {
+        case 'n':
+          i++;
+          char_x = 0;
+          char_y++;
+          continue;
+      }
+    }
     if (text[i] == '\n') {
       char_x = 0;
       char_y++;
@@ -262,14 +272,14 @@ fn void Font.draw(&self, String text, Vector2 position = {0,0}, float scale = 1,
       continue;
     }
     Vector2 space;
-    if (char_x > 0) space.x = ((spacing * ((self.dim.x * scale) / 2)) * char_x);
-    if (char_y > 0) space.y = ((spacing * ((self.dim.y * scale) / 2)) * char_y);
+    if (char_x > 0) space.x = ((spacing * ((self.dim.x * scale.x) / 2)) * char_x);
+    if (char_y > 0) space.y = ((spacing * ((self.dim.y * scale.y) / 2)) * char_y);
     self.atlas.draw(
       dest:{
-        position.x + (char_x * (self.dim.x * scale)) + space.x,
-        position.y + (char_y * (self.dim.y * scale)) + space.y,
-        self.dim.x * scale,
-        self.dim.y * scale,
+        position.x + (char_x * (self.dim.x * scale.x)) + space.x,
+        position.y + (char_y * (self.dim.y * scale.y)) + space.y,
+        self.dim.x * scale.x,
+        self.dim.y * scale.y,
       },
       src:self.rects[text[i]]!!,
     );

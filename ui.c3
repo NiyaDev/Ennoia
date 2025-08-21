@@ -21,3 +21,9 @@ enum ElementType {
   WINDOW,
 }
 
+
+<* Draws text to screen *>
+fn void label(String text, Font font = ennoia::defaultFont, Vector2 position = {0,0,0}, Vector2 scale = {0,0,0}) {
+  font.draw(text, position, scale);
+}
+

@@ -22,6 +22,10 @@ options:
   render_height: [OPTION,  INT,  360]
   fps:           [OPTION, BYTE,   60]
 
+default:
+  font: [FONT, 24,24, resources/font_2.png]
+  texture: [TEXTURE, resources/def_tex.png]
+  
 000:
   test: [STRING, test4]
 

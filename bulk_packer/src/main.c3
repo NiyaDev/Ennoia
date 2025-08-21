@@ -20,22 +20,34 @@ struct Entry {
 fn int main(String[] args) {
 
 	// Check for manifest
+	io::print("... Searching for manifest");
 	if (!file::exists("resources/manifest.yaml") && (args.len == 1 && file::exists(args[1]))) {
-		io::printfn("[ERROR] - BULK_PACKER::MAIN [Manifest file doesn't exist and none is specified]");
+		io::printn("\r[\e[1;31mX\e[0m]"); //Failed
+		io::printfn(" - Manifest file doesn't exist and none is specified");
 		return 1;
 	}
+	io::printfn("\r[\e[1;32mX\e[0m]"); //Succeeded
 
 	// Load YAML file
+	io::print("... Loading manifest");
 	Yaml y;
 	if (args.len > 1 && file::exists(args[1])) {
 		y = yaml::parse_file(args[1]);
 	} else if (file::exists("resources/manifest.yaml")) {
 		y = yaml::parse_file("resources/manifest.yaml");
 	}
-
+	if (y.len() == 0) {
+		io::printn("\r[\e[1;31mX\e[0m]"); //Failed
+		io::printfn(" - Failed to load manifest");
+	} else {
+	  io::printfn("\r[\e[1;32mX\e[0m]"); //Succeeded
+	}
+	
+	io::printn("... Loading entries:");	
 	y.@each(; String newFile, TypedValue yObj) {
 		List{TableEntry} table;
 		usz total = 6;
+		usz count = 0;
 
 		// Create list of all entries
 		yObj.as_object.@each(; String key, TypedValue val) {
@@ -80,7 +92,9 @@ fn int main(String[] args) {
 					t.type = SHADER;
 					t.comp = NONE;
 				case "TEXTURE":
-					t.length = file::get_size(val.get_array(1).as_string)!!;
+					usz? length = file::get_size(val.get_array(1).as_string);
+					if (catch length) io::printfn("[ERROR] - Failed to open texture file [%s]", val.get_array(1).as_string);
+					t.length = length!!;
 					t.type = TEXTURE;
 					t.comp = NONE;
 				case "MODEL":
@@ -99,6 +113,7 @@ fn int main(String[] args) {
 					//t.comp = val.get_array(2).as_int;
 			}
 			table.push(t);
+			count++;
 		};
 
 		// Set position of every pointer
@@ -183,7 +198,7 @@ fn int main(String[] args) {
 					}
 					file.write_byte((char)val.get_array(1).as_int)!!;
 					file.write_byte((char)val.get_array(2).as_int)!!;
-					for (int l; l < table[i].length; l++) {
+					for (int l; l < table[i].length - 2; l++) {
 						file.write_byte(data.read_byte()!!)!!;
 					}
 					data.close()!!;

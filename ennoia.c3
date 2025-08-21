@@ -13,6 +13,8 @@ SDL_Event event;
 
 Color bgColor = color::PURPLE;
 Mesh textureMesh;
+Texture defaultTexture;
+Font defaultFont;
 
 double deltaTime;
 double lastFrame;
@@ -75,8 +77,10 @@ fn void init(int width = 1280, int height = 720, String title = "ENNOIA", float 
   // Framebuffer
   render::init(renWidth, renHeight);
 
-  // Texture mesh
+  // Load defaults
   textureMesh = mesh::gen_quad();
+  defaultFont = bulk::load_font("resources/default","font");
+  defaultTexture = bulk::load_texture("resources/default","texture");
 
   // Keybinds
   bulk::load_all_keybinds("resources/keybinds");
