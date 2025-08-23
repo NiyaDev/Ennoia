@@ -238,3 +238,6 @@
 - Added default font and texture.
 - When drawing fonts '\n' will be read the same as a newline.
 
+#### [8/22/25]
+- Minor work.
+
