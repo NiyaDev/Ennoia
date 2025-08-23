@@ -30,6 +30,15 @@ fn Rectangle Rectangle.add_v2(self, Vector2 rhs) @operator_s(+) {
     self.h,
   };
 }
+<* + Overload with vector4 *>
+fn Rectangle Rectangle.add_v4(self, Vector4 rhs) @operator_s(+) {
+  return {
+    self.x + rhs.x,
+    self.y + rhs.y,
+    self.w - rhs.z,
+    self.h - rhs.w,
+  };
+}
 <* - Overload *>
 fn Rectangle Rectangle.sub(self, Rectangle rhs) @operator(-) {
   return {
@@ -62,8 +71,8 @@ fn Rectangle Rectangle.mul_v2(self, Vector2 rhs) @operator_s(*) {
   return {
     self.x * rhs.x,
     self.y * rhs.y,
-    self.w,
-    self.h,
+    self.w * rhs.x,
+    self.h * rhs.y,
   };
 }
 <* / Overload *>

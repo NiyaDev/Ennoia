@@ -13,11 +13,6 @@ struct Texture {
   int format;
   bool transparency;
 }
-struct TilingInfo {
-  Rectangle src;
-  int left, top, right, bottom;
-  TilingLayout layout;
-}
 enum TilingLayout {
   THREE_THREE,
   ONE_THREE,
@@ -147,7 +142,7 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
   @param src: "Area of the texture to draw"
   @param layout: "Tiling layout"
  *>
-fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout) {
+fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE) {
   switch (layout) {
     case THREE_THREE:
       // Calculate sizes
