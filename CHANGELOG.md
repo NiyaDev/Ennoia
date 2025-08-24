@@ -244,3 +244,10 @@
 #### [8/23/25]
 - Started button, but need to figure out 2d drawing being weird.
 
+#### [8/24/25]
+- Fixed textures rendering in reverse order without transparency.
+- Completely re-did tiled texture drawing.
+- Added functions for getting mouse buttons down or up and mouse position.
+- Basic Button functionality done.
+- Re-did event structure to better handle mouse inputs. Still needs work, though.
+

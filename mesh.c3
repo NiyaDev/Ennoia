@@ -450,8 +450,10 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
     }
   }
 
+  gl::disable(gl::DEPTH_TEST);
   gl::bind_vertex_array(self.vao);
   gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
+  gl::enable(gl::DEPTH_TEST);
 }
 
 <* Draws Mesh

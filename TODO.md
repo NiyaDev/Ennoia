@@ -5,17 +5,20 @@
 - Write tests
   - If I wait too long the debt is going to be insane...
 - Move ~SDL3~ and OpenGL binds to seperate projects for simplicity
-- 2D rendering seems to be in reverse order.
 
 ### Mid prio
 - UI
   - When drawing text apply color codes and things like "\n"
+  - Button
+    - Clicking changes color
 - Change shaders and mesh to allow color input
 - Bulk
   - Loading different file types
     - etc
 - Meshes
-  - Culling
+  - Culling?
+- Mouse buttons
+  - U
 
 ### Low prio
 - If you tap shift while holding a direction it keeps going even after you let go

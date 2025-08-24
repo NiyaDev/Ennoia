@@ -24,6 +24,9 @@ int scrWidth, scrHeight;
 int renWidth, renHeight;
 float renRes;
 
+Vector2 mousePosition;
+bool[5] mouseButtons;
+bool[5] mouseButtonsHeld;
 float scrollwheel;
 
 Shader defaultShader3d;
@@ -95,11 +98,24 @@ fn bool window_should_close() {
 
   keybinds::update();
   while (sdl3::poll_event(&event)) {
-    if (event.type == sdl3::QUIT) return true;
-    // Input
-    if (event.type == sdl3::KEYDOWN)    keybinds::add_queue(event.key);
-    if (event.type == sdl3::KEYUP)      keybinds::add_queue(event.key);
-    if (event.type == sdl3::MOUSEWHEEL) scrollwheel = event.wheel.y;
+    switch (event.type) {
+      case sdl3::QUIT: return true;
+
+      case sdl3::KEYDOWN:
+      case sdl3::KEYUP:
+        keybinds::add_queue(event.key);
+
+      case sdl3::MOUSEMOTION:
+        mousePosition = {event.motion.x, event.motion.y};
+      case sdl3::MOUSEBUTTONDOWN:
+        mouseButtons[event.button.button-1] = true;
+      case sdl3::MOUSEBUTTONUP:
+        mouseButtons[event.button.button-1] = false;
+        mouseButtonsHeld[event.button.button-1] = false;
+      case sdl3::MOUSEWHEEL:
+        scrollwheel = event.wheel.y;
+      default: io::printfn("Unhandled event [%d]",event.type);
+    }
   }
 
   // Default exit button

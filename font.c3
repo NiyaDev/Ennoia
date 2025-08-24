@@ -272,12 +272,12 @@ fn void Font.draw(&self, String text, Vector2 position = {0,0}, Vector2 scale = 
       continue;
     }
     Vector2 space;
-    if (char_x > 0) space.x = ((spacing * ((self.dim.x * scale.x) / 2)) * char_x);
-    if (char_y > 0) space.y = ((spacing * ((self.dim.y * scale.y) / 2)) * char_y);
+    if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
+    if (char_y > 0) space.y = ((spacing * scale.y) * char_y);
     self.atlas.draw(
       dest:{
-        position.x + (char_x * (self.dim.x * scale.x)) + space.x,
-        position.y + (char_y * (self.dim.y * scale.y)) + space.y,
+        position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
+        position.y + (char_y * (self.dim.y * scale.y) / 1) + space.y,
         self.dim.x * scale.x,
         self.dim.y * scale.y,
       },

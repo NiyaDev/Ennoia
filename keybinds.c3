@@ -51,6 +51,9 @@ fn void update() {
       i--;
     }
   }
+  for (int i; i < ennoia::mouseButtons.len; i++) {
+    if (ennoia::mouseButtons[i]) ennoia::mouseButtonsHeld[i] = true;
+  }
 }
 <* Returns the position of the input key in the queue or -1 if it's not there.
   @param data: "The keyboard event data to check for in queue"
@@ -137,5 +140,18 @@ fn bool up(String key) {
         ennoia::keyqueue[i].down == false) return true;
   }
   return false;
+}
+
+<* Returns whether the input mouse button is currently pressed *>
+fn bool mouse_pressed(uint button) {
+  return (ennoia::mouseButtons[button-1] && !ennoia::mouseButtonsHeld[button-1]);
+}
+<* Returns whether the input mouse button is currently down *>
+fn bool mouse_down(uint button) {
+  return (ennoia::mouseButtons[button-1] && ennoia::mouseButtonsHeld[button-1]);
+}
+<* Returns whether the input mouse button is currently up *>
+fn bool mouse_up(uint button) {
+  return (!ennoia::mouseButtons[button-1] && !ennoia::mouseButtonsHeld[button-1]);
 }
 

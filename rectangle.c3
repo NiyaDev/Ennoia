@@ -94,3 +94,8 @@ fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) {
   };
 }
 
+<* Returns whether Vector2 is within rectangle *>
+fn bool Rectangle.within(&self, Vector2 rhs) {
+  return ((rhs.x >= self.x && rhs.x <= self.x + self.w) && (rhs.y >= self.y && rhs.y <= self.y + self.h));
+}
+
