@@ -105,7 +105,7 @@ fn void Texture.clean(&self) {
   @param dest: "Area of screen to draw texture"
   @param src: "Area of the texture to draw"
  *>
-fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}) {
+fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color color = color::WHITE) {
   // Calculating size on screen
   Vector2 newSize = {dest.w, dest.h};
   if (dest.w <= 0) newSize.x = (float)self.width;
@@ -131,18 +131,28 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
     -(float)ennoia::renHeight + (dest.y * 2) + newSize.y,
   };
 
+  // Color
+  Vector4 col = {
+    ((float)color.r) / 255,
+    ((float)color.g) / 255,
+    ((float)color.b) / 255,
+    ((float)color.a) / 255,
+  };
+  ennoia::textureMesh.update_color({col,col,col,col,col,col});
+
   // Draw
   ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
 
   // Reset TexCoords
   ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
+  ennoia::textureMesh.update_color({{0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}});
 }
 <* Draw tiled texture to screen
   @param dest: "Area of screen to draw texture"
   @param src: "Area of the texture to draw"
   @param layout: "Tiling layout"
  *>
-fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE) {
+fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE, Color color = color::WHITE) {
   switch (layout) {
     case THREE_THREE:
       // Calculate sizes
@@ -152,53 +162,53 @@ fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = 
       float middleHeight = ((dest.h <= 0) ? (float)self.height - (height * 2) : (float)dest.h - (height * 2));
 
       // Top row
-      self.draw({dest.x, dest.y, width, height}, {0, 0, width, height});
+      self.draw({dest.x, dest.y, width, height}, {0, 0, width, height}, color);
       for (int i; i <= (usz)(middleWidth / width); i++) {
-        self.draw({dest.x + (((float)i+1) * width), dest.y, width, height}, {width, 0, width, height});
+        self.draw({dest.x + (((float)i+1) * width), dest.y, width, height}, {width, 0, width, height}, color);
       }
-      self.draw({dest.x + middleWidth + width, dest.y, width, height}, {width*2, 0, width, height});
+      self.draw({dest.x + middleWidth + width, dest.y, width, height}, {width*2, 0, width, height}, color);
       
       // Middle row
       for (int y; y <= (usz)(middleHeight / height); y++) {
-        self.draw({dest.x, dest.y + (((float)y+1) * height), width, height}, {0, height, width, height});
+        self.draw({dest.x, dest.y + (((float)y+1) * height), width, height}, {0, height, width, height}, color);
         for (int i; i <= (usz)(middleWidth / width); i++) {
-          self.draw({dest.x + (((float)i+1) * width), dest.y + (((float)y+1) * height), width, height}, {width, height, width, height});
+          self.draw({dest.x + (((float)i+1) * width), dest.y + (((float)y+1) * height), width, height}, {width, height, width, height}, color);
         }
-        self.draw({dest.x + middleWidth + width, dest.y + (((float)y+1) * height), width, height}, {width*2, height, width, height});
+        self.draw({dest.x + middleWidth + width, dest.y + (((float)y+1) * height), width, height}, {width*2, height, width, height}, color);
       }
 
       // Draw bottom row
-      self.draw({dest.x, dest.y + middleHeight + height, width, height}, {0, height*2, width, height});
+      self.draw({dest.x, dest.y + middleHeight + height, width, height}, {0, height*2, width, height}, color);
       for (int i; i <= (usz)(middleWidth / width); i++) {
-        self.draw({dest.x + (((float)i+1) * width), dest.y + middleHeight + height, width, height}, {width, height*2, width, height});
+        self.draw({dest.x + (((float)i+1) * width), dest.y + middleHeight + height, width, height}, {width, height*2, width, height}, color);
       }
-      self.draw({dest.x + middleWidth + width, dest.y + middleHeight + height, width, height}, {width*2, height*2, width, height});
+      self.draw({dest.x + middleWidth + width, dest.y + middleHeight + height, width, height}, {width*2, height*2, width, height}, color);
     case ONE_THREE:
       float dstWidth     = ((dest.w <= 0) ? (float)self.width      : (float)dest.w);
       float dstHeight    = ((dest.h <= 0) ? (float)self.height     : (float)dest.h);
       float dstHeightPer = dstWidth / 3;
       float srcWidth     = ((src.w  <= 0) ? (float)self.width      : (float)src.w);
-      float srcHeight    = ((src.h <= 0)  ? (float)self.height / 3 : (float)src.h / 3);
+      float srcHeight    = ((src.h  <= 0) ? (float)self.height / 3 : (float)src.h / 3);
       float middleCount  = (dstHeight - (dstHeightPer * 2)) / dstHeightPer;
 
-      self.draw({dest.x, dest.y, dstWidth, dstHeightPer}, {0, 0, srcWidth, srcHeight});
+      self.draw({dest.x, dest.y, dstWidth, dstHeightPer}, {0, 0, srcWidth, srcHeight}, color);
       for (int y; y <= middleCount; y++) {
-        self.draw({dest.x, dest.y + (((float)y+1) * dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight, srcWidth, srcHeight});
+        self.draw({dest.x, dest.y + (((float)y+1) * dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight, srcWidth, srcHeight}, color);
       }
-      self.draw({dest.x, dest.y + (dstHeight - dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight*2, srcWidth, srcHeight});
+      self.draw({dest.x, dest.y + (dstHeight - dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight*2, srcWidth, srcHeight}, color);
     case THREE_ONE:
       float dstWidth    = ((dest.w <= 0) ? (float)self.width      : (float)dest.w);
       float dstHeight   = ((dest.h <= 0) ? (float)self.height     : (float)dest.h);
       float dstWidthPer = dstHeight / 3;
       float srcWidth    = ((src.w  <= 0) ? (float)self.width  / 3 : (float)src.w  / 3);
-      float srcHeight   = ((src.h <= 0)  ? (float)self.height     : (float)src.h);
+      float srcHeight   = ((src.h  <= 0) ? (float)self.height     : (float)src.h);
       float middleCount = (dstWidth - (dstWidthPer * 2)) / dstWidthPer;
 
-      self.draw({dest.x, dest.y, dstWidthPer, dstHeight}, {0, 0, srcWidth, srcHeight});
-      for (int i; i < middleCount; i++) {
-        self.draw({dest.x + (((float)i+1) * dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth, 0, srcWidth, srcHeight});
+      self.draw({dest.x, dest.y, dstWidthPer, dstHeight}, {0, 0, srcWidth, srcHeight}, color);
+      for (int i; i < middleCount.round(); i++) {
+        self.draw({dest.x + (((float)i+1) * dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth, 0, srcWidth, srcHeight}, color);
       }
-      self.draw({dest.x + (dstWidth - dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth*2, 0, srcWidth, srcHeight});
+      self.draw({dest.x + (dstWidth - dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth*2, 0, srcWidth, srcHeight}, color);
   }
 }
 

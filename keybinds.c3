@@ -52,7 +52,17 @@ fn void update() {
     }
   }
   for (int i; i < ennoia::mouseButtons.len; i++) {
-    if (ennoia::mouseButtons[i]) ennoia::mouseButtonsHeld[i] = true;
+    switch (true) {
+      case !ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] && !ennoia::mouseButtonsUp[i]:
+        ennoia::mouseButtons[i] = true;
+      case  ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] && !ennoia::mouseButtonsUp[i]:
+        ennoia::mouseButtonsHeld[i] = true;
+      case  ennoia::mouseButtons[i]                                 &&  ennoia::mouseButtonsUp[i]:
+        ennoia::mouseButtons[i] = false;
+        ennoia::mouseButtonsHeld[i] = false;
+      case !ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] &&  ennoia::mouseButtonsUp[i]:
+        ennoia::mouseButtonsUp[i] = false;
+    }
   }
 }
 <* Returns the position of the input key in the queue or -1 if it's not there.
@@ -152,6 +162,6 @@ fn bool mouse_down(uint button) {
 }
 <* Returns whether the input mouse button is currently up *>
 fn bool mouse_up(uint button) {
-  return (!ennoia::mouseButtons[button-1] && !ennoia::mouseButtonsHeld[button-1]);
+  return (!ennoia::mouseButtons[button-1] && ennoia::mouseButtonsUp[button-1]);
 }
 

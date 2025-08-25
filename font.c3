@@ -249,7 +249,7 @@ fn void Font.clean(&self) {
   @require scale.y > 0.0
   @param spacing: "Space inbetween chaarcters"
  *>
-fn void Font.draw(&self, String text, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0) {
+fn void Font.draw(&self, String text, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) {
   float char_x = 0;
   float char_y = 0;
   for (int i; i < text.len; i++) {
@@ -282,6 +282,7 @@ fn void Font.draw(&self, String text, Vector2 position = {0,0}, Vector2 scale = 
         self.dim.y * scale.y,
       },
       src:self.rects[text[i]]!!,
+      color:color,
     );
     char_x++;
   }

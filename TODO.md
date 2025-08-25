@@ -11,14 +11,11 @@
   - When drawing text apply color codes and things like "\n"
   - Button
     - Clicking changes color
-- Change shaders and mesh to allow color input
 - Bulk
   - Loading different file types
     - etc
 - Meshes
   - Culling?
-- Mouse buttons
-  - U
 
 ### Low prio
 - If you tap shift while holding a direction it keeps going even after you let go

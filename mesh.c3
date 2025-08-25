@@ -21,7 +21,7 @@ struct Vertex {
   Vector3 position;
   Vector3 normal;
   Vector2 texCoords;
-  //Color   colors;
+  Vector4 color;
   //Vector4 tangents;
   //Vector2 texCoords2;
 }
@@ -30,65 +30,65 @@ alias Indices = uint[3];
 const void* VERTEX_POSITION = null;
 const void* VERTEX_NORMAL   = (void*)(Vector3.sizeof);
 const void* VERTEX_TEXCOORD = (void*)((long)VERTEX_NORMAL * 2);
-const void* VERTEX_COLORS   = (void*)(Color.sizeof);
+const void* VERTEX_COLOR    = (void*)((long)VERTEX_TEXCOORD + Vector2.sizeof);
 
 const Vertex[] BASIC_TRI = {
-  {{ 0.0,  0.5, 0.0}, {0,0,1}, {1,1}},
-  {{-0.5, -0.5, 0.0}, {0,0,1}, {1,0}},
-  {{ 0.5, -0.5, 0.0}, {0,0,1}, {0,1}},
+  {{ 0.0,  0.5, 0.0}, {0,0,1}, {1,1}, {0,0,0,1}},
+  {{-0.5, -0.5, 0.0}, {0,0,1}, {1,0}, {0,0,0,1}},
+  {{ 0.5, -0.5, 0.0}, {0,0,1}, {0,1}, {0,0,0,1}},
 };
 const Vertex[] BASIC_QUAD = {
-  {{-1, 1, 0}, {}, {0,1}},
-  {{-1,-1, 0}, {}, {0,0}},
-  {{ 1,-1, 0}, {}, {1,0}},
+  {{-1, 1, 0}, {}, {0,1}, {0,0,0,0}},
+  {{-1,-1, 0}, {}, {0,0}, {0,0,0,0}},
+  {{ 1,-1, 0}, {}, {1,0}, {0,0,0,0}},
 
-  {{-1, 1, 0}, {}, {0,1}},
-  {{ 1,-1, 0}, {}, {1,0}},
-  {{ 1, 1, 0}, {}, {1,1}},
+  {{-1, 1, 0}, {}, {0,1}, {0,0,0,0}},
+  {{ 1,-1, 0}, {}, {1,0}, {0,0,0,0}},
+  {{ 1, 1, 0}, {}, {1,1}, {0,0,0,0}},
 };
 const Vertex[] BASIC_CUBE = {
   // Back
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,0}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{1,0}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
-  {{-0.5,  0.5, -0.5},{0,0,1},{0,1}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,0}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,0},{0,0,0,1}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{-0.5,  0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,0},{0,0,0,1}},
   // Front
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1}},
-  {{-0.5,  0.5,  0.5},{0,0,1},{0,1}},
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{-0.5,  0.5,  0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
   // Left
-  {{-0.5,  0.5,  0.5},{0,0,1},{1,0}},
-  {{-0.5,  0.5, -0.5},{0,0,1},{1,1}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
-  {{-0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  {{-0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{-0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
+  {{-0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
   // Right
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{0,0}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
   // Bottom
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{1,1}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0}},
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{ 0.5, -0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
+  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
   // Top
-  {{-0.5,  0.5, -0.5},{0,0,1},{0,1}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0}},
-  {{-0.5,  0.5,  0.5},{0,0,1},{0,0}},
-  {{-0.5,  0.5, -0.5},{0,0,1},{0,1}},
+  {{-0.5,  0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
+  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
+  {{-0.5,  0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
+  {{-0.5,  0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
 };
 
 
@@ -193,7 +193,7 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
         list.set(line[1],newMesh);
         lastMember = line[1];
       case "v":  // Vertex
-        if (vertices.len() <= lastVertexPos) vertices.push({{},{},{0,1}});
+        if (vertices.len() <= lastVertexPos) vertices.push({{},{},{0,1},{0,0,0,1}});
 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
@@ -201,7 +201,7 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
         vertices[lastVertexPos].position = (Vector3){x,y,z};
         lastVertexPos++;
       case "vn": // Normal
-        if (vertices.len() <= lastVertexNor) vertices.push({{},{},{0,1}});
+        if (vertices.len() <= lastVertexNor) vertices.push({{},{},{0,1},{0,0,0,1}});
 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
@@ -209,7 +209,7 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
         vertices[lastVertexNor].normal = (Vector3){x,y,z};
         lastVertexNor++;
       case "vt": // TextureCoord
-        if (vertices.len() <= lastVertexTex) vertices.push({{},{},{0,1}});
+        if (vertices.len() <= lastVertexTex) vertices.push({{},{},{0,1},{0,0,0,1}});
 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
@@ -284,12 +284,12 @@ fn Mesh generate_mesh_test(uint[][] data) {
   for (int z; z < data.len; z++) {
     for (int x; x < data[z].len; x++) {
       if (data[z][x] == 1) {
-        vert_list.push({{(float)x  ,0,(float)z  }, {0,1,0}, {0,0}});
-        vert_list.push({{(float)x+1,0,(float)z  }, {0,1,0}, {0,0}});
-        vert_list.push({{(float)x  ,0,(float)z+1}, {0,1,0}, {0,0}});
-        vert_list.push({{(float)x+1,0,(float)z  }, {0,1,0}, {0,0}});
-        vert_list.push({{(float)x  ,0,(float)z+1}, {0,1,0}, {0,0}});
-        vert_list.push({{(float)x+1,0,(float)z+1}, {0,1,0}, {0,0}});
+        vert_list.push({{(float)x  ,0,(float)z  }, {0,1,0}, {0,0}, {0,0,0,1}});
+        vert_list.push({{(float)x+1,0,(float)z  }, {0,1,0}, {0,0}, {0,0,0,1}});
+        vert_list.push({{(float)x  ,0,(float)z+1}, {0,1,0}, {0,0}, {0,0,0,1}});
+        vert_list.push({{(float)x+1,0,(float)z  }, {0,1,0}, {0,0}, {0,0,0,1}});
+        vert_list.push({{(float)x  ,0,(float)z+1}, {0,1,0}, {0,0}, {0,0,0,1}});
+        vert_list.push({{(float)x+1,0,(float)z+1}, {0,1,0}, {0,0}, {0,0,0,1}});
       }
     }
   }
@@ -340,6 +340,7 @@ fn void Mesh.upload(&self) {
   ennoia::set_vertex_attribute(0, 3, VERTEX_POSITION);
   ennoia::set_vertex_attribute(1, 3, VERTEX_NORMAL);
   ennoia::set_vertex_attribute(2, 2, VERTEX_TEXCOORD);
+  ennoia::set_vertex_attribute(3, 4, VERTEX_COLOR);
 
   gl::bind_buffer(gl::ARRAY_BUFFER, 0);
   gl::bind_vertex_array(0);
@@ -382,6 +383,18 @@ fn void Mesh.update_normals(&self, Vector3[] newNorms) {
 fn void Mesh.update_texcoords(&self, Vector2[] newCoords) {
   for (int i; i < newCoords.len; i++) {
     self.vertices[i].texCoords = newCoords[i];
+  }
+
+  self.delete();
+  self.upload();
+}
+<* Changes the TexCoords of the mesh and re-uploads it
+  @param newColor: "Array of new texCoords"
+  @require newColor.len == self.vertices.len
+ *>
+fn void Mesh.update_color(&self, Vector4[] newColor) {
+  for (int i; i < newColor.len; i++) {
+    self.vertices[i].color = newColor[i];
   }
 
   self.delete();

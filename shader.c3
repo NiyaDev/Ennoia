@@ -80,8 +80,10 @@ const char[] DEFAULT_FRAGMENT_3D =
 const char[] DEFAULT_VERTEX_2D = 
   "#version 330 core\n"
   "layout (location = 0) in vec3 aPos;\n"
-  "layout (location = 2) in vec2 aTexCoord;\n\n"
-  "out vec2 TexCoord;\n\n"
+  "layout (location = 2) in vec2 aTexCoord;\n"
+  "layout (location = 3) in vec4 aColor;\n\n"
+  "out vec2 TexCoord;\n"
+  "out vec4 Color;\n\n"
   "uniform vec2 screensize;\n"
   "uniform vec2 position;\n"
   "uniform vec2 scale;\n"
@@ -90,14 +92,17 @@ const char[] DEFAULT_VERTEX_2D =
   "  vec4 pixel_pos = (vec4(position.x, -position.y, 0.0f, 0.0f) / vec4(screensize, 1.0f, 1.0f));\n"
   "  gl_Position = scaled + pixel_pos;\n"
   "  TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
+  "  Color = aColor;"
   "}\n";
 const char[] DEFAULT_FRAGMENT_2D = 
   "#version 330 core\n"
   "out vec4 FragColor;\n\n"
-  "in vec2 TexCoord;\n\n"
+  "in vec2 TexCoord;\n"
+  "in vec4 Color;\n\n"
   "uniform sampler2D texture1;\n\n"
   "void main() {\n"
-  "  FragColor = texture(texture1, TexCoord);\n"
+  //"  FragColor = mix(texture(texture1, TexCoord), Color, 0.5);\n"
+  "  FragColor = texture(texture1, TexCoord) * Color;\n"
   "}\n";
 
 const char[] FB_VERTEX =

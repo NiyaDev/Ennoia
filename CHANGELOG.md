@@ -251,3 +251,8 @@
 - Basic Button functionality done.
 - Re-did event structure to better handle mouse inputs. Still needs work, though.
 
+#### [8/25/25]
+- More fixes to mouse input handler.
+- Meshes now have colors inbuilt and textures can be tinted colors.
+- Almost finished buttons, but need to fix mouse input.
+

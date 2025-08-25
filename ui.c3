@@ -1,5 +1,6 @@
 
 module ennoia::ui;
+import std::io;
 import ennoia;
 
 
@@ -35,8 +36,9 @@ fn void label(
     Vector2 position = {0,0,0},
     Vector2 scale = {1,1},
     float spacing = 0,
+    Color color = color::WHITE,
 ) {
-  font.draw(text, position, scale, spacing);
+  font.draw(text, position, scale, spacing, color);
 }
 <* Draws button to screen *>
 fn bool button(
@@ -48,6 +50,7 @@ fn bool button(
     TextAlignment textAlignment = CENTER,
     Vector2 scale = {1,1},
     float spacing = 0,
+    Color color = color::WHITE,
 ) {
   // Check for bounds size
   Rectangle tileBounds = {
@@ -57,8 +60,18 @@ fn bool button(
     ((bounds.w <= 0) ? (font.dim.y + spacing) * ((float)text.count("\n") + 1) + (textPadding.y + textPadding.w) : bounds.h),
   };
 
+  // change color when hovered or clicked down
+  Color col = color;
+  if (tileBounds.within(ennoia::mousePosition)) {
+    if (keybinds::mouse_down(1)) {
+      col *= color::LIGHTGRAY;
+    } else {
+      col *= color::DARKGRAY;
+    }
+  }
+  
   // Draw background texture
-  texture.draw_tiled(dest:tileBounds*scale, layout:THREE_THREE);
+  texture.draw_tiled(dest:tileBounds*scale, layout:THREE_ONE, color:col);
 
   // Calculate text position
   Vector2 textPosition;
@@ -81,9 +94,8 @@ fn bool button(
   }
 
   // Draw text
-  font.draw(text, textPosition, scale, spacing);
+  font.draw(text, textPosition, scale, spacing, color);
 
-  // change color when clicked down
   // Activate when let go on
-  return tileBounds.within(ennoia::mousePosition) && keybinds::mouse_up(1);
+  return (tileBounds.within(ennoia::mousePosition) && keybinds::mouse_up(1));
 }

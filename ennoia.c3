@@ -27,6 +27,7 @@ float renRes;
 Vector2 mousePosition;
 bool[5] mouseButtons;
 bool[5] mouseButtonsHeld;
+bool[5] mouseButtonsUp;
 float scrollwheel;
 
 Shader defaultShader3d;
@@ -110,8 +111,7 @@ fn bool window_should_close() {
       case sdl3::MOUSEBUTTONDOWN:
         mouseButtons[event.button.button-1] = true;
       case sdl3::MOUSEBUTTONUP:
-        mouseButtons[event.button.button-1] = false;
-        mouseButtonsHeld[event.button.button-1] = false;
+        mouseButtonsUp[event.button.button-1] = true;
       case sdl3::MOUSEWHEEL:
         scrollwheel = event.wheel.y;
       default: io::printfn("Unhandled event [%d]",event.type);

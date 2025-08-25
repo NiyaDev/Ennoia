@@ -38,6 +38,7 @@ struct Color {
   char r, g, b, a;
 }
 
+
 <* Apply alpha to color
   @param alpha: "Value to change alpha to"
   @require alpha <= 1, alpha >= 0 : "Alpha not within proper range of 0 -> 1"
@@ -86,7 +87,7 @@ fn Vector3 Color.hsv(self) @export("color_hsv") {
 	};
 }
 <* Multiplies color by input *>
-fn Color Color.tint(self, Color tint) @export("color_tint") {
+fn Color Color.tint(self, Color tint) @operator(*) {
 	Color result = self;
 
 	float cr = (float)tint.r / 255;
