@@ -64,9 +64,9 @@ fn bool button(
   Color col = color;
   if (tileBounds.within(ennoia::mousePosition)) {
     if (keybinds::mouse_down(1)) {
-      col *= color::LIGHTGRAY;
-    } else {
       col *= color::DARKGRAY;
+    } else {
+      col *= color::LIGHTGRAY;
     }
   }
   

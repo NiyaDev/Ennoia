@@ -256,3 +256,7 @@
 - Meshes now have colors inbuilt and textures can be tinted colors.
 - Almost finished buttons, but need to fix mouse input.
 
+#### [8/26/25]
+- Fixed Mouse controls and Button interaction.
+- Added ability to change screen resolution and borderless/ fullscreen and it also changes the render resolution.
+

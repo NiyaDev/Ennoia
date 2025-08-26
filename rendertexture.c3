@@ -49,6 +49,8 @@ fn void set_shader(Shader newShader) {
   renderQuad.shader = newShader;
 }
 <* Returns current rendershader *>
-fn Shader get_shader() {
-  return renderQuad.shader;
+fn Shader save_shader() {
+  Shader sh = renderQuad.shader;
+  renderQuad.shader = {};
+  return sh;
 }

@@ -53,8 +53,8 @@ fn void update() {
   }
   for (int i; i < ennoia::mouseButtons.len; i++) {
     switch (true) {
-      case !ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] && !ennoia::mouseButtonsUp[i]:
-        ennoia::mouseButtons[i] = true;
+      //case !ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] && !ennoia::mouseButtonsUp[i]:
+        //ennoia::mouseButtons[i] = true;
       case  ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] && !ennoia::mouseButtonsUp[i]:
         ennoia::mouseButtonsHeld[i] = true;
       case  ennoia::mouseButtons[i]                                 &&  ennoia::mouseButtonsUp[i]:
