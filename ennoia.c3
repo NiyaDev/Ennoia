@@ -37,20 +37,29 @@ Shader defaultShader2d;
 
 <* Initializes Ennoia
   @param width:  "Initial width of screen"
-  @require width > 1
   @param height: "Initial height of screen"
-  @require height > 1
   @param title:  "Title of window"
   @require title != ""
   @param scale: "The value to multiple the screen resolution by to get render resolution"
-  @require scale > 0.0
  *>
-fn void init(int width = 1280, int height = 720, String title = "ENNOIA", float scale = 1) {
-  scrWidth  = width;
-  scrHeight = height;
-  renWidth  = (int)((float)width  * scale);
-  renHeight = (int)((float)height * scale);
-  renRes = scale;
+fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) {
+  // Options
+  bulk::load_all_options("resources/options");
+
+  // If grab resolution from options if they exist, but override with input
+  if (options::contains("screen_width"))  scrWidth  = options::get_int("screen_width");
+  if (options::contains("screen_height")) scrHeight = options::get_int("screen_height");
+  ((width  > 0) ? scrWidth  = width  : 0);
+  ((height > 0) ? scrHeight = height : 0);
+  ((scrWidth  <= 0) ? scrWidth  = 1280 : 0);
+  ((scrHeight <= 0) ? scrHeight =  720 : 0);
+
+  // Calculate render resolution
+  if (options::contains("render_scale")) renRes = options::get_float("render_scale");
+  ((scale  >  0) ? renRes = scale : 0);
+  ((renRes <= 0) ? renRes = 1     : 0);
+  renWidth  = (int)((float)scrWidth  * renRes);
+  renHeight = (int)((float)scrHeight * renRes);
   
   // Initialize SDL3
 	assert(sdl3::init(sdl3::INIT_VIDEO | sdl3::INIT_AUDIO), "[ERROR] - ENNOIA::INIT::INIT [Failed to initialize SDL3 (%s)]", sdl3::get_error());
@@ -89,8 +98,6 @@ fn void init(int width = 1280, int height = 720, String title = "ENNOIA", float 
 
   // Keybinds
   bulk::load_all_keybinds("resources/keybinds");
-  // Options
-  bulk::load_all_options("resources/options");
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() {
@@ -225,6 +232,14 @@ fn void set_fullscreen(bool fullcreen = true) {
 
   set_size(w, h);
 }
+<* Sets the field of view of the current main camera *>
+fn void set_field_of_view(float fov) {
+  camera::main.fov = fov;
+}
+<**>
+fn int get_fps() {
+  return (int)(1 / deltaTime);
+}
 
 <* Updates the screen to apply any changes made *>
 fn void update_screen() {
@@ -245,6 +260,14 @@ fn void update_screen() {
 
   // Re-set shader
   render::set_shader(shader);
+}
+
+<**>
+fn int[2] get_display_resolution() {
+  sdl3::Rect rec;
+  sdl3::get_display_bounds(sdl3::get_primary_display(), &rec);
+
+  return {rec.w, rec.h};
 }
 
 /*

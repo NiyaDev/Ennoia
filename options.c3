@@ -144,6 +144,11 @@ fn void set_double(String optname, double data) {
   ennoia::options.set(optname, result);
 }
 
+<**>
+fn bool contains(String optname) {
+  return ennoia::options.has_key(optname);
+}
+
 <* Saves all options as a file *>
 fn void save_options() {
   // Calculate size of file

@@ -260,3 +260,6 @@
 - Fixed Mouse controls and Button interaction.
 - Added ability to change screen resolution and borderless/ fullscreen and it also changes the render resolution.
 
+#### [8/27/25]
+- Changed width/height input in init to be overrides rather than the only values. loads to original from options.
+

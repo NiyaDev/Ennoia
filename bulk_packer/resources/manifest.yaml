@@ -16,15 +16,19 @@ keybinds:
 
 
 options:
-  screen_width:  [OPTION,  INT, 1280]
-  screen_height: [OPTION,  INT,  720]
-  render_width:  [OPTION,  INT,  640]
-  render_height: [OPTION,  INT,  360]
-  fps:           [OPTION, BYTE,   60]
+  screen_width:  [OPTION,   INT, 1280]
+  screen_height: [OPTION,   INT,  720]
+  render_scale:  [OPTION, FLOAT,  1.0]
+  screen_mode:   [OPTION,  BYTE,    0]
+  fps:           [OPTION,  BYTE,   60]
+  fov:           [OPTION,  BYTE,   70]
+  volume_master: [OPTION, FLOAT, 0.25]
+  volume_music:  [OPTION, FLOAT, 0.75]
+  volume_sfx:    [OPTION, FLOAT, 0.75]
 
 default:
-  font: [FONT, 24,24, resources/font_2.png]
-  font2:[FONT, 24,24, resources/font_test.png]
+  font:    [FONT, 24,24, resources/font_2.png]
+  font2:   [FONT, 24,24, resources/font_test.png]
   texture: [TEXTURE, resources/def_tex.png]
   
 000:

@@ -275,8 +275,6 @@ fn Localization load_localization(String filepath, String dataname, bool send = 
     Local local;
     assert(val.type == OBJECT, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
     
-    //local.set(key, val.as_string);
-    //yaml::Object o = *((yaml::Object*)val.value);
     yaml::Object o = val.as_object;
     o.@each(; String key_inner, TypedValue val_inner) {
       assert(val_inner.type == STRING, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
@@ -581,19 +579,19 @@ fn String File.read_string(&self) {
 }
 
 
-<* Reads a short from file since the base language doesn't have one *>
+<* Writes a short to file since the base language doesn't have one *>
 fn void File.write_short(&self, short val) {
   self.write_byte((char)(val >>  0))!!;
   self.write_byte((char)(val >>  8))!!;
 }
-<* Reads a int from file since the base language doesn't have one *>
+<* Writes a int to file since the base language doesn't have one *>
 fn void File.write_int(&self, int val) {
   self.write_byte((char)(val >>  0))!!;
   self.write_byte((char)(val >>  8))!!;
   self.write_byte((char)(val >> 16))!!;
   self.write_byte((char)(val >> 24))!!;
 }
-<* Reads a long from file since the base language doesn't have one *>
+<* Writes a long to file since the base language doesn't have one *>
 fn void File.write_long(&self, long val) {
   self.write_byte((char)(val >>  0))!!;
   self.write_byte((char)(val >>  8))!!;
@@ -605,7 +603,7 @@ fn void File.write_long(&self, long val) {
   self.write_byte((char)(val >> 56))!!;
 }
 
-<* Reads a float from file since the base language doesn't have one *>
+<* Writes a float to file since the base language doesn't have one *>
 fn void File.write_float(&self, float val) {
   char[] dat = mem::new_array(char, 4);
   mem::copy(dat, &val, 4);
@@ -615,7 +613,7 @@ fn void File.write_float(&self, float val) {
   self.write_byte(dat[2])!!;
   self.write_byte(dat[3])!!;
 }
-<* Reads a double from file since the base language doesn't have one *>
+<* Writes a double to file since the base language doesn't have one *>
 fn void File.write_double(&self, double val) {
   char[] dat = mem::new_array(char, 8);
   mem::copy(dat, &val, 8);
@@ -629,7 +627,7 @@ fn void File.write_double(&self, double val) {
   self.write_byte(dat[6])!!;
   self.write_byte(dat[7])!!;
 }
-<**>
+<* Writes a string to file since the base language doesn't have one *>
 fn void File.write_string(&self, String val) {
   for (int i; i < val.len; i++) {
     self.write_byte(val[i])!!;
