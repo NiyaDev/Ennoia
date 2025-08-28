@@ -108,21 +108,37 @@ fn bool window_should_close() {
   keybinds::update();
   while (sdl3::poll_event(&event)) {
     switch (event.type) {
-      case sdl3::QUIT: return true;
+      case QUIT: return true;
 
-      case sdl3::KEYDOWN:
-      case sdl3::KEYUP:
+      case KEY_DOWN:
+      case KEY_UP:
         keybinds::add_queue(event.key);
 
-      case sdl3::MOUSEMOTION:
+      case WINDOW_SHOWN: break;
+      case WINDOW_EXPOSED: break;
+      case WINDOW_MOVED: break;
+      case WINDOW_PIXEL_SIZE_CHANGED: break;
+      case WINDOW_MINIMIZED: break;
+      case WINDOW_RESTORED: break;
+      case WINDOW_MOUSE_ENTER: break;
+      case WINDOW_MOUSE_LEAVE: break;
+      case WINDOW_FOCUS_GAINED: break;
+      case WINDOW_FOCUS_LOST: break;
+      case WINDOW_SAFE_AREA_CHANGED: break;
+      case WINDOW_OCCLUDED: break;
+
+      case MOUSE_MOTION:
         mousePosition = {event.motion.x, event.motion.y};
-      case sdl3::MOUSEBUTTONDOWN:
+      case MOUSE_BUTTON_DOWN:
         mouseButtons[event.button.button-1] = true;
-      case sdl3::MOUSEBUTTONUP:
+      case MOUSE_BUTTON_UP:
         mouseButtonsUp[event.button.button-1] = true;
-      case sdl3::MOUSEWHEEL:
+      case MOUSE_WHEEL:
         scrollwheel = event.wheel.y;
-      default: io::printfn("Unhandled event [%d]",event.type);
+
+      case SENSOR_UPDATE: break;
+
+      default: io::printfn("Unhandled event [0x%x]",event.type);
     }
   }
 

@@ -263,3 +263,9 @@
 #### [8/27/25]
 - Changed width/height input in init to be overrides rather than the only values. loads to original from options.
 
+#### [8/28/25]
+- Updated to using 0.7.5* of C3.
+  - Fixed all errors/warnings that came from that.
+- Updated SDL3 events from constants to a const enum.
+  - Created handlers for events 0x202, 0x204, 0x205, 0x207, 0x209, 0x20B, 0x20C, 0x20D, 0x20E, 0x20F, 0x215, 0x216, and 0x1100.
+

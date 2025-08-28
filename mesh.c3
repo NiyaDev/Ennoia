@@ -174,7 +174,7 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
         // If this isn't the first object, save vertices
         if (list.len() > 0) {
           Mesh* temp = list.get_ref(lastMember)!!;
-          temp.vertices = vertices.to_array(allocator::heap());
+          temp.vertices = vertices.to_array(mem);
           vertices.free();
           maxVertexPos += lastVertexPos;
           maxVertexNor += lastVertexNor;
@@ -182,7 +182,7 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
           lastVertexPos = 0;
           lastVertexNor = 0;
           lastVertexTex = 0;
-          temp.indices = indices.to_array(allocator::heap());
+          temp.indices = indices.to_array(mem);
           indices.free();
           lastIndices = 0;
           //temp.textures = mem::new_array(Texture*, 1);
@@ -229,9 +229,9 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
     }
   }
   Mesh* temp = list.get_ref(lastMember)!!;
-  temp.vertices = vertices.to_array(allocator::heap());
+  temp.vertices = vertices.to_array(mem);
   vertices.free();
-  temp.indices = indices.to_array(allocator::heap());
+  temp.indices = indices.to_array(mem);
   indices.free();
   temp.upload();
 
@@ -293,7 +293,7 @@ fn Mesh generate_mesh_test(uint[][] data) {
       }
     }
   }
-  output.vertices = vert_list.to_array(allocator::heap());
+  output.vertices = vert_list.to_array(mem);
   vert_list.free();
   output.upload();
 

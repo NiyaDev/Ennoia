@@ -382,7 +382,7 @@ fn String[] get_entries(String filepath) {
     list.push(name);
   }
 
-  String[] output = list.to_array(allocator::heap());
+  String[] output = list.to_array(mem);
   list.free();
 
   return output;
@@ -464,10 +464,10 @@ fn usz get_entry_len(String filepath, String dataname) {
   for (int i; i < num; i++) {
     String str = file.read_string();
     if (str == dataname) {
-      str.free(allocator::heap());
+      str.free(mem);
       return file.read_long();
     }
-    str.free(allocator::heap());
+    str.free(mem);
   }
   return -1;
 }
@@ -496,11 +496,11 @@ fn usz get_entry_ptr(String filepath, String dataname) {
   for (int i; i < num; i++) {
     String str = file.read_string();
     if (str == dataname) {
-      str.free(allocator::heap());
+      str.free(mem);
       file.read_long();
       return file.read_long();
     }
-    str.free(allocator::heap());
+    str.free(mem);
   }
   return -1;
 }

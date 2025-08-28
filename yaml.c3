@@ -129,7 +129,7 @@ fn bool String.is_value_pair(self) {
   @require self != ""
  *>
 fn String[] String.split_value(self) {
-  return self.split(allocator::temp(), ":");
+  return self.split(tmem, ":");
 }
 <* Splits string into an array *>
 fn String[] String.split_array(self) {
@@ -170,8 +170,8 @@ fn bool String.to_bool(self) {
 <* Converts a value string to an actual value
   @require self != ""
  *>
-fn Tuple{String, TypedValue} String.to_value(self) {
-  Tuple{String, TypedValue} output;
+fn Pair{String, TypedValue} String.to_value(self) {
+  Pair{String, TypedValue} output;
 
   String[] nameValue = self.split_value();
 
@@ -188,13 +188,13 @@ fn Tuple{String, TypedValue} String.to_value(self) {
     case BOOL:   output.second.as_bool   = nameValue[1].to_bool();
     case INT:    output.second.as_int    = nameValue[1].to_int()!!;
     case DOUBLE: output.second.as_double = nameValue[1].to_double()!!;
-    case STRING: output.second.as_string = nameValue[1].copy(allocator::heap());
+    case STRING: output.second.as_string = nameValue[1].copy(mem);
     case ARRAY:
       String[] valuesSplit = nameValue[1].split_array();
 
       for (int i; i < valuesSplit.len; i++) {
         String namedVal = string::tformat("_:%s", valuesSplit[i]);
-        Tuple{String, TypedValue} nval = namedVal.to_value();
+        Pair{String, TypedValue} nval = namedVal.to_value();
         output.second.as_array.push(nval.second);
       }
     default:
@@ -268,7 +268,7 @@ fn Yaml parse(String data) {
       for (int f; f < (prevIndent - indent) / fileIndent; f++) scopeStack.pop()!!;
     }
 
-    Tuple{String, TypedValue} v = lines[i].truncate_spaces().to_value();
+    Pair{String, TypedValue} v = lines[i].truncate_spaces().to_value();
 
     if (v.second.type != NONE) {
       (*((Object*)(scopeStack[scopeStack.len()-1]))).set(v.first, v.second);
@@ -292,7 +292,7 @@ fn void Yaml.clean(&self) {
 fn void TypedValue.clean(&self) {
   switch (self.type) {
     case STRING:
-      self.as_string.free(allocator::heap());
+      self.as_string.free(mem);
     case OBJECT:
       self.as_object.@each(; String key2, TypedValue val2) {
         val2.clean();
