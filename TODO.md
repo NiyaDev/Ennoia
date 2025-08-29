@@ -9,8 +9,6 @@
 ### Mid prio
 - UI
   - When drawing text apply color codes and things like "\n"
-  - Button
-    - Clicking changes color
 - Bulk
   - Loading different file types
     - etc
