@@ -114,7 +114,7 @@ fn Font load_font(String filepath, String dataname, bool send = true) {
   @param dataname: "Name of data inside bulk file"
   @require dataname != ""
  *>
-fn Model load_model(String filepath, String dataname, bool send = true, bool getMaterial = true) {
+fn Model load_model(String filepath, String dataname, bool getMaterial = true, bool send = true) {
   Model output;
 
   char[] data = load(filepath,dataname);
@@ -162,6 +162,8 @@ fn Model load_model(String filepath, String dataname, bool send = true, bool get
     output = mesh::load_from_mem((String)data);
   }
 
+  if (send) ennoia::models.set(dataname, output);
+
   return output;
 
 }
@@ -185,6 +187,8 @@ fn Shader load_shader(String filepath, String dataname, bool send = true) {
               ((usz)data[vsSize+counter++] << 32) + ((usz)data[vsSize+counter++] << 40) +
               ((usz)data[vsSize+counter++] << 48) + ((usz)data[vsSize+counter++] << 56);
   Shader shader = shader::compile((String)data[8:vsSize],(String)data[vsSize+16:fsSize]);
+
+  if (send) ennoia::shaders.set(dataname, shader);
 
   return shader;
 }
@@ -289,18 +293,19 @@ fn Localization load_localization(String filepath, String dataname, bool send = 
   return output;
 }
 
-<**>
+<* Loads all content from a single file into main storage *>
 fn void load_all(String filepath) {
   BulkTable tbls = get_table(filepath);
 
   tbls.@each(; String key, TableEntry val) {
     switch (val.type) {
-      case KEYBIND: load_keybind(filepath, key, true);
-      case OPTION:  load_option(filepath, key, true);
-      //case LOCALIZATION:
       case TEXTURE: load_texture(filepath, key, true);
       case FONT:    load_font(filepath, key, true);
-      //case SHADER:
+      case MODEL:   load_model(filepath, key, true);
+      case SHADER:  load_shader(filepath, key, true);
+      case KEYBIND: load_keybind(filepath, key, true);
+      case OPTION:  load_option(filepath, key, true);
+      case LOCALIZATION: load_localization(filepath, key, true);
       default: io::printfn("[WARNING] - ENNOIA::BULK::LOAD_ALL [Attempted to use load all on a file that contains incompatible file types. %s]", val.type);
     }
   };
@@ -315,6 +320,39 @@ fn void load_all_textures(String filepath, bool send = true) {
 
   tbls.@each(; String key, TableEntry val) {
     if (val.type == TEXTURE) load_texture(filepath, key, send);
+  };
+}
+<* Loads all fonts in file
+  @param filepath: "File path of file to load"
+  @require filepath != ""
+ *>
+fn void load_all_fonts(String filepath, bool send = true) {
+  BulkTable tbls = get_table(filepath);
+
+  tbls.@each(; String key, TableEntry val) {
+    if (val.type == FONT) load_font(filepath, key, send);
+  };
+}
+<* Loads all models in file
+  @param filepath: "File path of file to load"
+  @require filepath != ""
+ *>
+fn void load_all_models(String filepath, bool send = true) {
+  BulkTable tbls = get_table(filepath);
+
+  tbls.@each(; String key, TableEntry val) {
+    if (val.type == MODEL) load_model(filepath, key, send);
+  };
+}
+<* Loads all shaders in file
+  @param filepath: "File path of file to load"
+  @require filepath != ""
+ *>
+fn void load_all_shaders(String filepath, bool send = true) {
+  BulkTable tbls = get_table(filepath);
+
+  tbls.@each(; String key, TableEntry val) {
+    if (val.type == SHADER) load_shader(filepath, key, send);
   };
 }
 <* Loads all keybinds in file
@@ -343,11 +381,11 @@ fn void load_all_options(String filepath, bool send = true) {
   @param filepath: "File path of file to load"
   @require filepath != ""
  *>
-fn void load_all_localization(String filepath, bool send = true) {
+fn void load_all_localizations(String filepath, bool send = true) {
   BulkTable tbls = get_table(filepath);
 
   tbls.@each(; String key, TableEntry val) {
-    
+    if (val.type == LOCALIZATION) load_localization(filepath, key, send);
   };
 }
 
@@ -434,7 +472,7 @@ fn BulkTable get_table(String filepath) {
   @require dataname != ""
  *>
 fn TableEntry get_table_entry(String filepath, String dataname) {
-  HashMap{String, TableEntry} map = get_table(filepath);
+  BulkTable map = get_table(filepath);
   TableEntry output = map[dataname]!!;
   map.free();
   return output;

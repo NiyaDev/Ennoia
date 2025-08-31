@@ -16,4 +16,6 @@ String language = "english";
 // Graphics
 HashMap{String, Texture} textures;
 HashMap{String, Font}    fonts;
+HashMap{String, Model}   models;
+HashMap{String, Shader}  shaders;
 

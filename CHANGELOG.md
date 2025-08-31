@@ -275,3 +275,8 @@
 #### [8/30/25]
 - removed build.sh.
 
+#### [8/31/25]
+- Added storage for Models and Shaders.
+- Fixed non-comprehensive load_all in bulk.
+- Bulk loading for loading all Fonts, Models, and Shaders.
+
