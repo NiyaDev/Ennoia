@@ -284,6 +284,14 @@ fn Vector3 Vector3.inverse(self, float rhs) @operator_s(/) {
 		self.z / rhs,
 	};
 }
+<* % Overload *>
+fn Vector3 Vector3.remainder(self, int rhs) @operator(%) {
+	return {
+		(float)((int)self.x % rhs),
+		(float)((int)self.y % rhs),
+		(float)((int)self.z % rhs),
+	};
+}
 
 <* Converts v3 into v2 *>
 fn Vector2 Vector3.v2(self) {
@@ -304,6 +312,10 @@ fn float[3] Vector3.to_array(self) {
 <* Convert Vector3 to int array *>
 fn int[3] Vector3.to_int_array(self) {
 	return {(int)self.x, (int)self.y, (int)self.z};
+}
+<* Convert from int array to Vector3 *>
+fn Vector3 int[3].from_int_array(self) {
+	return {(float)self[0], (float)self[1], (float)self[2]};
 }
 
 <* Calculate two vectors cross product *>

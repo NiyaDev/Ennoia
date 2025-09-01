@@ -280,3 +280,7 @@
 - Fixed non-comprehensive load_all in bulk.
 - Bulk loading for loading all Fonts, Models, and Shaders.
 
+#### [9/1/25]
+- Added function for converting int[3] to Vector3.
+- Added texture overrides for model drawing.
+

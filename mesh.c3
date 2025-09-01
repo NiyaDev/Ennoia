@@ -474,9 +474,9 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
   @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
  *>
-fn void Model.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}) {
+fn void Model.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
   self.@each(; String key, Mesh val) {
-    val.draw(position, scale, rotation);
+    val.draw(position, scale, rotation, (texture != null) ? texture : null);
   };
 }
 
