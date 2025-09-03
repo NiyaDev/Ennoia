@@ -284,3 +284,6 @@
 - Added function for converting int[3] to Vector3.
 - Added texture overrides for model drawing.
 
+#### [9/2/25]
+- Added function for making a model out of a single mesh.
+

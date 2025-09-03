@@ -469,6 +469,14 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   gl::enable(gl::DEPTH_TEST);
 }
 
+<* Create Model from single mesh *>
+fn Model Mesh.to_model(&self) {
+  Model output;
+  output.set("mesh_1", *self);
+
+  return output;
+}
+
 <* Draws Mesh
   @param position: "Position in space to draw mesh. Default is {0,0,0}."
   @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
