@@ -408,25 +408,16 @@ fn void Mesh.update_color(&self, Vector4[] newColor) {
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
 fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
-  if (self.shader.id != 0) {
-    self.shader.use();
-  } else {
-    ennoia::defaultShader3d.use();
-  }
+  // Use default shader if the mesh doesn't have one
+  ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader3d.use());
 
+  // Set uniforms
   ennoia::defaultShader3d.set_mat4x4("view", camera::get_matrix());
   ennoia::defaultShader3d.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
   
-  if (texture != null) {
-    gl::bind_texture(gl::TEXTURE_2D, texture.id);
-  } else {
-    if (self.texture != null) {
-      gl::active_texture(gl::TEXTURE0);
-      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
-    } else {
-      gl::bind_texture(gl::TEXTURE_2D, 0);
-    }
-  }
+  // Check what textures are available and uses the highest priority.
+  int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
+  gl::bind_texture(gl::TEXTURE_2D, textureID);
 
 	gl::bind_vertex_array(self.vao);
 
@@ -436,6 +427,33 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
 	  gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
 	}
 }
+<* Draws Mesh multiple times with different matrices
+  @param mats: "Array of Matrixes defining the location of each mesh instance"
+ *>
+fn void Mesh.draw_instanced(&self, Matrix[] mats) {
+  // Use default shader if the mesh doesn't have one
+  ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader3d.use());
+
+  // Set Camera uniform
+  ennoia::defaultShader3d.set_mat4x4("view", camera::get_matrix());
+
+  // Check what textures are available and uses the highest priority.
+  int textureID = ((self.texture != null) ? self.texture.id : 0);
+  gl::bind_texture(gl::TEXTURE_2D, textureID);
+
+  gl::bind_vertex_array(self.vao);
+
+  for (int i; i < mats.len; i++) {
+    // Set model position'
+    ennoia::defaultShader3d.set_mat4x4("model", mats[i]);
+    
+    if (self.ebo != 0) {
+	    gl::draw_elements(gl::TRIANGLES, self.indices.len * 3, gl::UNSIGNED_INT, null);
+	  } else {
+	    gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
+	  }
+  }
+}
 <* Draws Mesh in 2d space3
   @param position: "Position in space to draw mesh. Default is {0,0,0}."
   @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
@@ -443,25 +461,16 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
 fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) {
-  if (self.shader.id != 0) {
-    self.shader.use();
-  } else {
-    ennoia::defaultShader2d.use();
-  }
+  // Use default shader if the mesh doesn't have one
+  ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
+  // Set uniforms
   ennoia::defaultShader2d.set_vec2("position", position);
   ennoia::defaultShader2d.set_vec2("scale", scale);
 
-  if (texture != null) {
-    gl::bind_texture(gl::TEXTURE_2D, texture.id);
-  } else {
-    if (self.texture != null) {
-      gl::active_texture(gl::TEXTURE0);
-      gl::bind_texture(gl::TEXTURE_2D, self.texture.id);
-    } else {
-      gl::bind_texture(gl::TEXTURE_2D, 0);
-    }
-  }
+  // Check what textures are available and uses the highest priority.
+  int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
+  gl::bind_texture(gl::TEXTURE_2D, textureID);
 
   gl::disable(gl::DEPTH_TEST);
   gl::bind_vertex_array(self.vao);
@@ -477,14 +486,22 @@ fn Model Mesh.to_model(&self) {
   return output;
 }
 
-<* Draws Mesh
-  @param position: "Position in space to draw mesh. Default is {0,0,0}."
-  @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
-  @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
+<* Draws all contained meshes
+  @param position: "Position in space to draw meshes. Default is {0,0,0}."
+  @param scale:    "Scale to draw meshes at. Default is {1,1,1}."
+  @param rotation: "Rotation to apply to meshes. Default is {0,0,0}."
  *>
 fn void Model.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
   self.@each(; String key, Mesh val) {
     val.draw(position, scale, rotation, (texture != null) ? texture : null);
+  };
+}
+<* Draws all contained meshes multiple times
+  @param mats: "Array of Matrixes defining the location of each mesh instance"
+ *>
+fn void Model.draw_instanced(&self, Matrix[] mats) {
+  self.@each(; String key, Mesh val) {
+    val.draw_instanced(mats);
   };
 }
 

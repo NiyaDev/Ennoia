@@ -121,6 +121,7 @@ extern fn void read_pixels(int x, int y, int width, int height, int format, int 
 extern fn void delete_renderbuffers(int size, uint* renderbuffers) @extern("glDeleteRenderbuffers");
 extern fn void delete_framebuffers(int size, uint* framebuffers) @extern("glDeleteFramebuffers");
 
+// Shaders
 extern fn void gen_buffers(uint, uint*) @extern("glGenBuffers");
 extern fn void bind_buffer(int, uint) @extern("glBindBuffer");
 extern fn void buffer_data(int, uint, void*, int) @extern("glBufferData");
@@ -157,6 +158,7 @@ extern fn void bind_texture(int, uint) @extern("glBindTexture");
 extern fn void generate_mipmap(int) @extern("glGenerateMipmap");
 extern fn void tex_image_2d(int target, int level, int internalFormat, int width, int height, int border, int format, int type, void* data) @extern("glTexImage2D");
 
+// Meshes
 extern fn void vertex_attrib_pointer(uint, int, int, bool, int, void*) @extern("glVertexAttribPointer");
 extern fn void enable_vertex_attrib_array(uint) @extern("glEnableVertexAttribArray");
 extern fn void gen_vertex_arrays(uint, uint*) @extern("glGenVertexArrays");
@@ -164,6 +166,7 @@ extern fn void bind_vertex_array(uint) @extern("glBindVertexArray");
 extern fn void draw_arrays(int, uint, uint) @extern("glDrawArrays");
 extern fn void draw_elements(int, uint, int, void*) @extern("glDrawElements");
 extern fn void blend_func(uint sfactor, uint dfactor) @extern("glBlendFunc");
+extern fn void draw_arrays_instanced(int mode, int first, int count, int instanceCount) @extern("glDrawArraysInstanced");
 
 
 extern fn void viewport(int, int, int, int) @extern("glViewport");

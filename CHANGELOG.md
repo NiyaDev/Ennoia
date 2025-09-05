@@ -287,3 +287,9 @@
 #### [9/2/25]
 - Added function for making a model out of a single mesh.
 
+#### [9/5/25]
+- Simplified shader use and texture use in mesh drawing.
+- Added mesh.draw_instanced.
+- Added model.draw_instanced.
+- Started RenderPipeline
+

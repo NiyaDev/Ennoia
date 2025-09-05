@@ -153,6 +153,7 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
   @param layout: "Tiling layout"
  *>
 fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE, Color color = color::WHITE) {
+  // TODO: Add a vector2 for the size of each tile
   switch (layout) {
     case THREE_THREE:
       // Calculate sizes
@@ -204,11 +205,11 @@ fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = 
       float srcHeight   = ((src.h  <= 0) ? (float)self.height     : (float)src.h);
       float middleCount = (dstWidth - (dstWidthPer * 2)) / dstWidthPer;
 
-      self.draw({dest.x, dest.y, dstWidthPer, dstHeight}, {0, 0, srcWidth, srcHeight}, color);
+      self.draw({dest.x, dest.y, dstWidthPer*3, dstHeight}, {0, 0, srcWidth, srcHeight}, color);
       for (int i; i < middleCount.round(); i++) {
         self.draw({dest.x + (((float)i+1) * dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth, 0, srcWidth, srcHeight}, color);
       }
-      self.draw({dest.x + (dstWidth - dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth*2, 0, srcWidth, srcHeight}, color);
+      self.draw({dest.x + (dstWidth - dstWidthPer), dest.y, dstWidthPer*3, dstHeight}, {srcWidth*2, 0, srcWidth, srcHeight}, color);
   }
 }
 

@@ -9,10 +9,14 @@
 ### Mid prio
 - UI
   - When drawing text apply color codes and things like "\n"
+  - Localization replacement
+  - Texture tiling fixes
 - Bulk
   - Loading different file types
     - etc
 - Meshes
+  - Render pipeline.
+  - Draw 2d instanced.
   - Culling?
 
 ### Low prio
