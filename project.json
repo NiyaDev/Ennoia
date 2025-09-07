@@ -1,0 +1,20 @@
+{
+  "langrev": "1",
+  "warnings": [ "no-unused" ],
+  "dependency-search-paths": [ "../" ],
+  "dependencies": [ "stb", "sdl3" ],
+  "linked-libraries": [ "GL", "SDL3" ],
+  "authors": [ "NiyaDev" ],
+  "version": "0.1.0",
+  "sources": [ "src/**" ],
+  "test-sources": [ "test/**" ],
+  "output": "build",
+  "targets": {
+    "ennoia": {
+      "name": "libennoia",
+      "type": "static-lib",
+    },
+  },
+  "cpu": "generic",
+  "opt": "O0"
+}

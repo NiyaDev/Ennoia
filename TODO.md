@@ -1,30 +1,28 @@
 
-## v0.1.0
+### Testing
+- Colors
+- Quaternion overloads
+- BoundingBoxes
+- Matrices
 
-### High prio
-- Write tests
-  - If I wait too long the debt is going to be insane...
-- Move ~SDL3~ and OpenGL binds to seperate projects for simplicity
-
-### Mid prio
+### Full features
 - UI
-  - When drawing text apply color codes
-  - Texture tiling fixes
+  - Look through and use richtext standard if it exists.
 - Bulk
-  - Loading different file types
-    - etc
 - Meshes
-  - Render pipeline.
-  - Draw 2d instanced.
+  - Render pipeline
+  - 2D instanced rendering
   - Culling?
+  - Plane generation
 
-### Low prio
-- If you tap shift while holding a direction it keeps going even after you let go
+### Additions
+- Vector2
+  - Min/Max
 
-### Future
-- Re-write files from Pleroma:
-  - matrix.c3
-- Confirm all matrix.c3 functions work
-- Copy over compatible tests from Pleroma
-- Mesh generation: Plane, etc
+### Fixes
+- Go over Color functions and make them modern standard.
+- Move over to using proper OpenGL bindings.
+- Texture tiling issues.
+- Tapping shift while holding direction keeps it down when you let go.
+- Confirm matrix functions work
 
