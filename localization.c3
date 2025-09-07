@@ -25,4 +25,8 @@ fn void Localization.add_assign(&self, Localization* rhs) @operator(+=) {
 fn String get(String key) {
   return ennoia::localization.get(key)!!.get(ennoia::language)!!;
 }
+<* returns whether localization string exists *>
+fn bool contains(String key) {
+  return ennoia::localization.has_key(key) && ennoia::localization.get(key)!!.has_key(ennoia::language);
+}
 

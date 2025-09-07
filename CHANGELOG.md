@@ -293,3 +293,7 @@
 - Added model.draw_instanced.
 - Started RenderPipeline
 
+#### [9/6/25]
+- Added ability to check if localization exists.
+- Added ability for font text to include '@{}' which replaces itself with its contained localization.
+

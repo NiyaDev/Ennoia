@@ -8,8 +8,7 @@
 
 ### Mid prio
 - UI
-  - When drawing text apply color codes and things like "\n"
-  - Localization replacement
+  - When drawing text apply color codes
   - Texture tiling fixes
 - Bulk
   - Loading different file types

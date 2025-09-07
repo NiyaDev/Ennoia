@@ -241,35 +241,55 @@ fn void Font.clean(&self) {
 }
 
 <* Draws font to screen
-  @param text: "Text to draw in font"
-  @require text != ""
+  @param textIn: "Text to draw in font"
+  @require textIn != ""
   @param position: "Position on screen to draw"
   @param scale: "Multiplier to size of font"
   @require scale.x > 0.0
   @require scale.y > 0.0
   @param spacing: "Space inbetween chaarcters"
  *>
-fn void Font.draw(&self, String text, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) {
+fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) {
+  String text = textIn;
+
   float char_x = 0;
   float char_y = 0;
   for (int i; i < text.len; i++) {
-    if (text[i] == '\\') {
-      switch (text[i+1]) {
-        case 'n':
-          i++;
-          char_x = 0;
-          char_y++;
-          continue;
-      }
+    // Checks for newline written out
+    if (text[i] == '\\' && text[i+1] == 'n') {
+      i++;
+      char_x = 0;
+      char_y++;
+      continue;
     }
+    // Checks for newline character
     if (text[i] == '\n') {
       char_x = 0;
       char_y++;
       continue;
     }
+    // Checks for space
     if (text[i] == ' ') {
       char_x++;
       continue;
+    }
+    // Checks for localization
+    if (text[i] == '@' && text[i+1] == '{') {
+      i += 2;
+      List{char} localName;
+      for (int j; j < text.len - i; j++) {
+        if (text[i+j] != '}') {
+          localName.push(text[i+j]);
+        } else {
+          String local = (String)localName.to_tarray();
+          String localReplace = string::tformat("@{%s}",local);
+          if (localization::contains(local)) {
+            text = text.treplace(localReplace, localization::get(local));
+          }
+          break;
+        }
+      }
+      i -= 2;
     }
     Vector2 space;
     if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
