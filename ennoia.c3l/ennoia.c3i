@@ -15,6 +15,63 @@ struct BoundingBox {
 extern fn bool check_boxes(BoundingBox b1, BoundingBox b2) @extern("bounds_checkbox");
 
 
+module ennoia::bulk;
+
+extern const char VERSION_MAJOR @extern("bulk_majorversion");
+extern const char VERSION_MINOR @extern("bulk_minorversion");
+
+struct TableEntry {
+  String name;
+  ulong length, pointer;
+  DataType type;
+  CompType comp;
+}
+
+enum DataType : short {
+  EMPTY,
+  RAW,
+  TEXT,
+  KEYBIND,
+  OPTION,
+  LOCALIZATION,
+  
+  // OpenGL/SDL3
+  TEXTURE,
+  FONT,
+  SHADER,
+  MODEL,
+  MATERIAL,
+}
+enum CompType : short {
+  NONE,
+  DEFLATE,
+}
+
+extern fn char[]  load(String filepath, String dataname) @extern("bulk_load");
+extern fn void    load_all(String filepath) @extern("bulk_loadall");
+extern fn Texture load_texture(String filepath, String dataname, bool send = true) @extern("bulk_texture");
+extern fn void    load_all_textures(String filepath) @extern("bulk_alltextures");
+extern fn Font    load_font(String filepath, String dataname, bool send = true) @extern("bulk_font");
+extern fn void    load_all_font(String filepath) @extern("bulk_allfont");
+extern fn Model   load_model(String filepath, String dataname, bool send = true) @extern("bulk_model");
+extern fn void    load_all_models(String filepath) @extern("bulk_allmodel");
+extern fn Shader  load_shader(String filepath, String dataname, bool send = true) @extern("bulk_shader");
+extern fn void    load_all_shaders(String filepath) @extern("bulk_allshader");
+extern fn Keybind load_keybind(String filepath, String dataname, bool send = true) @extern("bulk_keybind");
+extern fn void    load_all_keybinds(String filepath) @extern("bulk_allkeybind");
+extern fn Option  load_option(String filepath, String dataname, bool send = true) @extern("bulk_option");
+extern fn void    load_all_options(String filepath) @extern("bulk_alloption");
+extern fn Localization load_localization(String filepath, String dataname, bool send = true) @extern("bulk_local");
+extern fn void    load_all_localizations(String filepath) @extern("bulk_alllocal");
+
+extern fn bool TableEntry.equals_str(&self, String rhs) @operator_s(==) @extern("tableentry_equals");
+extern fn void TableEntry.size(&self) @extern("tableentry_size");
+
+extern fn String[] get_entries(String filepath) @extern("tableentry_getentries");
+extern fn BulkTable get_table(String filepath) @extern("tableentry_gettable");
+extern fn TableEntry get_table_entry(String filepath, String dataname) @extern("tableentry_gettableentry");
+
+
 module ennoia::camera;
 import ennoia::matrix;
 import ennoia::vector;

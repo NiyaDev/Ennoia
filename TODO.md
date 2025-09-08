@@ -4,6 +4,14 @@
 - Quaternion overloads
 - BoundingBoxes
 - Matrices
+- Fonts
+- Keybinds
+- Localizations
+- Meshes
+- Options
+- Shaders
+- Textures
+- Yaml
 
 ### Full features
 - UI
@@ -25,4 +33,14 @@
 - Texture tiling issues.
 - Tapping shift while holding direction keeps it down when you let go.
 - Confirm matrix functions work
+
+### Transfer
+- Fonts
+- Keybinds
+- Localizations
+- Meshes
+- Options
+- Shaders
+- Textures
+- Yaml
 

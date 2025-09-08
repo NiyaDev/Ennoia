@@ -8,3 +8,6 @@
 - Transferred over Camera.
 - Transferred over Rectangle.
 
+#### [9/8/25]
+- Transferred over Bulk.
+
