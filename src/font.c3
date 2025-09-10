@@ -1,9 +1,12 @@
 
 module ennoia::font;
+import ennoia::color;
+import ennoia::localization;
+import ennoia::rectangle;
+import ennoia::texture;
+import ennoia::vector;
 import std::io;
 import std::collections;
-import ennoia;
-
 
 
 struct Font {
@@ -13,7 +16,7 @@ struct Font {
 }
 
 <* Loads font from file *>
-fn Font load(String filename, Vector2 size) {
+fn Font load(String filename, Vector2 size) @export("font_load") {
   Font output;
   output.atlas = texture::load(filename);
   output.dim = size;
@@ -124,7 +127,7 @@ fn Font load(String filename, Vector2 size) {
   return output;
 }
 <* Loads font from data *>
-fn Font load_from_mem(char[] data, Vector2 size) {
+fn Font load_from_mem(char[] data, Vector2 size) @export("font_loadfrommem") {
   Font output;
   output.atlas = texture::load_from_mem(data);
   output.dim = size;
@@ -235,7 +238,7 @@ fn Font load_from_mem(char[] data, Vector2 size) {
   return output;
 }
 <* Cleans up font data *>
-fn void Font.clean(&self) {
+fn void Font.clean(&self) @export("font_clean") {
   self.atlas.clean();
   self.rects.free();
 }
@@ -249,7 +252,7 @@ fn void Font.clean(&self) {
   @require scale.y > 0.0
   @param spacing: "Space inbetween chaarcters"
  *>
-fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) {
+fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) @export("font_draw") {
   String text = textIn;
 
   float char_x = 0;
@@ -295,7 +298,7 @@ fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale 
     if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
     if (char_y > 0) space.y = ((spacing * scale.y) * char_y);
     self.atlas.draw(
-      dest:{
+      dst:{
         position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
         position.y + (char_y * (self.dim.y * scale.y) / 1) + space.y,
         self.dim.x * scale.x,

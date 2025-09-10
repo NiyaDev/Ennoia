@@ -16,17 +16,23 @@ extern fn bool check_boxes(BoundingBox b1, BoundingBox b2) @extern("bounds_check
 
 
 module ennoia::bulk;
+import ennoia::texture;
+import ennoia::font;
+import ennoia::mesh;
+import ennoia::kebinds;
+import ennoia::options;
+import ennoia::localization;
 
 extern const char VERSION_MAJOR @extern("bulk_majorversion");
 extern const char VERSION_MINOR @extern("bulk_minorversion");
 
+alias BulkTable = HashMap{String, TableEntry};
 struct TableEntry {
   String name;
   ulong length, pointer;
   DataType type;
   CompType comp;
 }
-
 enum DataType : short {
   EMPTY,
   RAW,
@@ -110,6 +116,23 @@ extern fn Color Color.alpha(self, float alpha) @extern("color_alpha");
 extern fn Color Color.multiply(self, float factor) @extern("color_multiply");
 
 
+module ennoia::font;
+import ennoia::vector;
+import std::collections;
+
+struct Font {
+  Texture atlas;
+  Vector2 dim;
+  HashMap{char, Rectangle} rects;
+}
+
+extern fn Font load(String filename, Vector2 size) @extern("font_load");
+extern fn Font load_from_mem(char[] data, Vector2 size) @extern("font_loadfrommem");
+extern fn void Font.clean(&self) @extern("font_clean");
+
+extern fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) @extern("font_draw");
+
+
 module ennoia::matrix;
 import ennoia::vector;
 
@@ -151,13 +174,61 @@ extern fn Matrix ortho(double left, double right, double bottom, double top, dou
 extern fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @extern("matrix_lookat");
 
 
+module ennoia::mesh;
+
+struct Mesh {
+  Vertex[] vertices;
+  Indices[] indices;
+
+  uint vao, vbo, ebo;
+
+  Shader shader;
+  String materialName;
+  Texture* texture;
+}
+alias Model = HashMap{String, Mesh};
+
+struct Vertex {
+  Vector3 position;
+  Vector3 normal;
+  Vector2 texCoords;
+  Vector4 color;
+}
+alias Indices = uint[3];
+
+extern fn Model load(String filename, bool getMaterial = true) @extern("mesh_load");
+extern fn Model load_from_mem(String data) @extern("mesh_loadfrommem");
+extern fn void Mesh.clean(&self) @extern("mesh_cleanmesh");
+extern fn void Model.clean(&self) @extern("mesh_cleanmodel");
+
+extern fn Mesh new(Vertex[] vertices = {}) @extern("mesh_new");
+extern fn Mesh gen_triangle() @extern("mesh_gentri");
+extern fn Mesh gen_quad() @extern("mesh_genquad");
+extern fn Mesh gen_cube() @extern("mesh_gencube");
+
+extern fn void Mesh.upload(&self) @extern("mesh_upload");
+extern fn void Mesh.delete(&self) @extern("mesh_delete");
+
+extern fn void Mesh.update_positions(&self, Vector3[] newPos) @extern("mesh_updatepositions");
+extern fn void Mesh.update_normals(&self, Vector3[] newNorms) @extern("mesh_updatenormals");
+extern fn void Mesh.update_texcoords(&self, Vector2[] newCoords) @extern("mesh_updatetexcoords");
+extern fn void Mesh.update_colors(&self, Vector4[] newColors) @extern("mesh_updatecolors");
+
+extern fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) @extern("mesh_draw");
+extern fn void Mesh.draw_instanced(&self, Matrix[] mats) @extern("mesh_drawinstanced");
+extern fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) @extern("mesh_draw2d");
+
+extern fn void Vertex.print(&self) @extern("mesh_print");
+
+
 module ennoia::rectangle;
+import ennoia::vector;
 
 struct Rectangle {
   float x, y, w, h;
 }
 
-extern fn Rectangle Rectangle.equals(self, Rectangle rhs) @operator(==) @extern("rect_equals");
+extern fn bool Rectangle.equals(self, Rectangle rhs) @operator(==) @extern("rect_equals");
 extern fn Rectangle Rectangle.add(self, Rectangle rhs) @operator(+) @extern("rect_add");
 extern fn Rectangle Rectangle.add_v2(self, Vector2 rhs) @operator_s(+) @extern("rect_addv2");
 extern fn Rectangle Rectangle.add_v4(self, Vector4 rhs) @operator_s(+) @extern("rect_addv4");
@@ -169,6 +240,30 @@ extern fn Rectangle Rectangle.div(self, Rectangle rhs) @operator(/) @extern("rec
 extern fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) @extern("rect_divv2");
 
 extern fn bool Rectangle.within(self, Vector2 rhs) @extern("rect_within");
+
+
+module ennoia::texture;
+
+struct Texture {
+  uint id;
+  uint width, height;
+  int mipmaps;
+  int format;
+  bool transparency;
+}
+enum TilingLayout {
+  THREE_THREE,
+  ONE_THREE,
+  THREE_ONE,
+}
+
+extern fn Texture load(String filename) @extern("texture_load");
+extern fn Texture load_from_mem(char[] dat) @extern("texture_loadfrommem");
+extern fn Texture new(int width, int height) @extern("texture_new");
+extern fn void Texture.clean(&self) @extern("texture_clean");
+
+extern fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color color = color::WHITE) @extern("texture_draw");
+extern fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE, Color color = color::WHITE) @extern("texture_drawtiled");
 
 
 module ennoia::vector;

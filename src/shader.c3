@@ -1,11 +1,11 @@
 
 module ennoia::shader;
-import ennoia::gl;
 import ennoia::vector;
 import ennoia::matrix;
 import ennoia::texture;
 import std::io;
 import std::collections;
+import gl;
 
 
 struct Shader {

@@ -1,5 +1,5 @@
 
-module ennoia::gl;
+module gl;
 
 
 // OpenGL

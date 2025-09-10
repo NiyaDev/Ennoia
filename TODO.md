@@ -19,7 +19,7 @@
 - Bulk
 - Meshes
   - Render pipeline
-  - 2D instanced rendering
+  - 2D instanced rendering --High Priority
   - Culling?
   - Plane generation
 
@@ -33,6 +33,8 @@
 - Texture tiling issues.
 - Tapping shift while holding direction keeps it down when you let go.
 - Confirm matrix functions work
+- mesh::new doesn't use input vertices and instead just returns a triangle.
+- Add inputs to mesh generation.
 
 ### Transfer
 - Fonts
@@ -43,4 +45,5 @@
 - Shaders
 - Textures
 - Yaml
+- Core/Drawing/Render
 

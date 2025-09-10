@@ -3,6 +3,7 @@ module ennoia::mesh;
 import std::io;
 import std::collections;
 import ennoia;
+import gl;
 
 
 struct Mesh {
@@ -96,7 +97,7 @@ const Vertex[] BASIC_CUBE = {
   @param filename: "Name of .obj file to load"
   @require filename != ""
  *>
-fn Model load(String filename, bool getMaterial = true) {
+fn Model load(String filename, bool getMaterial = true) @export("mesh_load") {
   Model output;
   String data = (String)file::load_temp(filename)!!;
   String[] mtl;
@@ -150,8 +151,8 @@ fn Model load(String filename, bool getMaterial = true) {
   @param data: "Data to make into mesh"
   @require data.len > 0
  *>
-fn HashMap{String, Mesh} load_from_mem(String data) {
-  HashMap{String, Mesh} list;
+fn Model load_from_mem(String data) @export("mesh_loadfrommem") {
+  Model list;
   String[] lines = data.tsplit("\n");
 
   String lastMember = "";
@@ -237,70 +238,8 @@ fn HashMap{String, Mesh} load_from_mem(String data) {
 
   return list;
 }
-<* Creates a new Mesh using input vertices and indices
-  @param vertices: "The array of vertices to set"
-  @return "Mesh struct"
- *>
-fn Mesh new(Vertex[] vertices = {}) {
-  return gen_triangle();
-}
-
-// Mesh generation
-<* Generates a simple Triangle mesh *>
-fn Mesh gen_triangle() {
-  Mesh output;
-  output.vertices = mem::new_array(Vertex, BASIC_TRI.len);
-
-  mem::copy(output.vertices, BASIC_TRI, Vertex.sizeof * BASIC_TRI.len);
-  output.upload();
-
-  return output;
-}
-<* Generates a simple Quad mesh *>
-fn Mesh gen_quad() {
-  Mesh output;
-  output.vertices = mem::new_array(Vertex, BASIC_QUAD.len);
-
-  mem::copy(output.vertices, BASIC_QUAD, Vertex.sizeof * BASIC_QUAD.len);
-  output.upload();
-
-  return output;
-}
-<* Generates a simple Cube mesh *>
-fn Mesh gen_cube() {
-  Mesh output;
-  output.vertices = mem::new_array(Vertex, BASIC_CUBE.len);
-
-  mem::copy(output.vertices, BASIC_CUBE, Vertex.sizeof * BASIC_CUBE.len);
-  output.upload();
-
-  return output;
-}
-<**>
-fn Mesh generate_mesh_test(uint[][] data) {
-  Mesh output;
-
-  List{Vertex} vert_list;
-  for (int z; z < data.len; z++) {
-    for (int x; x < data[z].len; x++) {
-      if (data[z][x] == 1) {
-        vert_list.push({{(float)x  ,0,(float)z  }, {0,1,0}, {0,0}, {0,0,0,1}});
-        vert_list.push({{(float)x+1,0,(float)z  }, {0,1,0}, {0,0}, {0,0,0,1}});
-        vert_list.push({{(float)x  ,0,(float)z+1}, {0,1,0}, {0,0}, {0,0,0,1}});
-        vert_list.push({{(float)x+1,0,(float)z  }, {0,1,0}, {0,0}, {0,0,0,1}});
-        vert_list.push({{(float)x  ,0,(float)z+1}, {0,1,0}, {0,0}, {0,0,0,1}});
-        vert_list.push({{(float)x+1,0,(float)z+1}, {0,1,0}, {0,0}, {0,0,0,1}});
-      }
-    }
-  }
-  output.vertices = vert_list.to_array(mem);
-  vert_list.free();
-  output.upload();
-
-  return output;
-}
 <* Cleans up mesh data *>
-fn void Mesh.clean(&self) {
+fn void Mesh.clean(&self) @export("mesh_cleanmesh") {
   self.delete();
   free(self.vertices);
   free(self.indices);
@@ -313,7 +252,7 @@ fn void Mesh.clean(&self) {
   self.shader.clean();
 }
 <* Cleans up model data *>
-fn void Model.clean(&self) {
+fn void Model.clean(&self) @export("mesh_cleanmodel") {
   self.@each(; String key, Mesh val) {
     Mesh* temp = self.get_ref(key)!!;
     temp.clean();
@@ -352,62 +291,13 @@ fn void Mesh.delete(&self) {
   gl::delete_buffers(1, &self.ebo);
 }
 
-<* Changes the positions of the mesh and re-uploads it
-  @param newPos: "Array of new positions"
-  @require newPos.len == self.vertices.len
- *>
-fn void Mesh.update_positions(&self, Vector3[] newPos) {
-  for (int i; i < newPos.len; i++) {
-    self.vertices[i].position = newPos[i];
-  }
-
-  self.delete();
-  self.upload();
-}
-<* Changes the normals of the mesh and re-uploads it
-  @param newNorms: "Array of new normals"
-  @require newNorms.len == self.vertices.len
- *>
-fn void Mesh.update_normals(&self, Vector3[] newNorms) {
-  for (int i; i < newNorms.len; i++) {
-    self.vertices[i].normal = newNorms[i];
-  }
-
-  self.delete();
-  self.upload();
-}
-<* Changes the TexCoords of the mesh and re-uploads it
-  @param newCoords: "Array of new texCoords"
-  @require newCoords.len == self.vertices.len
- *>
-fn void Mesh.update_texcoords(&self, Vector2[] newCoords) {
-  for (int i; i < newCoords.len; i++) {
-    self.vertices[i].texCoords = newCoords[i];
-  }
-
-  self.delete();
-  self.upload();
-}
-<* Changes the TexCoords of the mesh and re-uploads it
-  @param newColor: "Array of new texCoords"
-  @require newColor.len == self.vertices.len
- *>
-fn void Mesh.update_color(&self, Vector4[] newColor) {
-  for (int i; i < newColor.len; i++) {
-    self.vertices[i].color = newColor[i];
-  }
-
-  self.delete();
-  self.upload();
-}
-
 <* Draws Mesh
   @param position: "Position in space to draw mesh. Default is {0,0,0}."
   @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
   @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
-fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
+fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) @export("mesh_draw") {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader3d.use());
 
@@ -460,7 +350,7 @@ fn void Mesh.draw_instanced(&self, Matrix[] mats) {
   @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
-fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) {
+fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) @export("mesh_draw2d") {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
@@ -479,7 +369,7 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
 }
 
 <* Create Model from single mesh *>
-fn Model Mesh.to_model(&self) {
+fn Model Mesh.to_model(&self) @export("mesh_tomodel") {
   Model output;
   output.set("mesh_1", *self);
 
@@ -506,7 +396,7 @@ fn void Model.draw_instanced(&self, Matrix[] mats) {
 }
 
 <* Prints info on vertex *>
-fn void Vertex.print(&self) {
+fn void Vertex.print(&self) @export("mesh_print") {
   io::printfn("Position: [%f,%f,%f]\nNormals: [%f,%f,%f]\nTexCoords: [%f,%f]\n",
     self.position.x, self.position.y, self.position.z,
     self.normal.x, self.normal.y, self.normal.z,

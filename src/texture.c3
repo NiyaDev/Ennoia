@@ -1,10 +1,11 @@
 
 module ennoia::texture;
-import std::io;
-import stb;
 import ennoia::color;
 import ennoia::rectangle;
-//import ennoia;
+import ennoia::vector;
+import std::io;
+import stb;
+import gl;
 
 
 struct Texture {
@@ -22,7 +23,7 @@ enum TilingLayout {
 
 
 <* Loads image from file *>
-fn Texture load(String filename) {
+fn Texture load(String filename) @export("texture_load") {
   Texture output;
 
   // Load data from file
@@ -56,7 +57,7 @@ fn Texture load(String filename) {
   return output;
 }
 <* Load texture from memory *>
-fn Texture load_from_mem(char[] data) {
+fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
   Texture output;
 
   stb::stbi_set_flip_vertically_on_load(true);
@@ -85,7 +86,7 @@ fn Texture load_from_mem(char[] data) {
   @param height: "The height of the image"
   @require height > 0
  *>
-fn Texture new(int width, int height) {
+fn Texture new(int width, int height) @export("texture_new") {
   Texture output;
 
   gl::gen_textures(1, &output.id);
@@ -98,19 +99,20 @@ fn Texture new(int width, int height) {
   return output;
 }
 <* Cleans up texture *>
-fn void Texture.clean(&self) {
+fn void Texture.clean(&self) @export("texture_clean") {
   gl::delete_textures(1, &self.id);
 }
 
 <* Draw texture to screen
-  @param dest: "Area of screen to draw texture"
+  @param dst: "Area of screen to draw texture"
   @param src: "Area of the texture to draw"
+  @param color: "Color to tint texture"
  *>
-fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color color = color::WHITE) {
+fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color color = color::WHITE) @export("texture_draw") {
   // Calculating size on screen
-  Vector2 newSize = {dest.w, dest.h};
-  if (dest.w <= 0) newSize.x = (float)self.width;
-  if (dest.h <= 0) newSize.y = (float)self.height;
+  Vector2 newSize = {dst.w, dst.h};
+  if (dst.w <= 0) newSize.x = (float)self.width;
+  if (dst.h <= 0) newSize.y = (float)self.height;
   Vector2 scale = {
     newSize.x / (float)ennoia::renWidth,
     newSize.y / (float)ennoia::renHeight,
@@ -128,8 +130,8 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
 
   // Calculating position on screen
   Vector2 pos = {
-    -(float)ennoia::renWidth  + (dest.x * 2) + newSize.x,
-    -(float)ennoia::renHeight + (dest.y * 2) + newSize.y,
+    -(float)ennoia::renWidth  + (dst.x * 2) + newSize.x,
+    -(float)ennoia::renHeight + (dst.y * 2) + newSize.y,
   };
 
   // Color
@@ -153,7 +155,7 @@ fn void Texture.draw(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-
   @param src: "Area of the texture to draw"
   @param layout: "Tiling layout"
  *>
-fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE, Color color = color::WHITE) {
+fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE, Color color = color::WHITE) @export("texture_drawtiled") {
   // TODO: Add a vector2 for the size of each tile
   switch (layout) {
     case THREE_THREE:
