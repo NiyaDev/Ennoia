@@ -1,8 +1,29 @@
 
 module ennoia;
 
-extern double deltaTime @extern("deltatime");
-extern double lastFrame @extern("lastframe");
+extern double deltaTime  @extern("deltatime");
+extern double lastFrame  @extern("lastframe");
+extern bool   forceClose @extern("forceclose");
+
+extern fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) @extern("init");
+extern fn void clean() @extern("clean");
+extern fn bool window_should_close() @extern("windowshouldclose");
+extern fn void set_vertex_attribute(uint location, uint size, void* offset) @extern("set_vertex_attribute");
+
+extern fn void start_drawing() @extern("start_drawing");
+extern fn void end_drawing() @extern("end_drawing");
+
+extern fn void clear_background() @extern("clearbg");
+extern fn void set_Size(uint w, uint h) @extern("setsize");
+extern fn void set_render_scale(float scale) @extern("setrenderscale");
+extern fn void set_borderless(bool borderless = true) @extern("setborderless");
+extern fn void set_fullscreen(bool fullscreen = true) @extern("setfullscreen");
+extern fn void set_fov(float fov) @extern("setfov");
+extern fn int get_fps() @extern("getfps");
+extern fn int[2] get_display_resolution() @extern("getdisplayresolution");
+
+extern fn void set_shader(Shader newShader) @extern("setshader");
+extern fn Shader get_shader() @extern("getshader");
 
 
 module ennoia::bounds;
@@ -16,12 +37,15 @@ extern fn bool check_boxes(BoundingBox b1, BoundingBox b2) @extern("bounds_check
 
 
 module ennoia::bulk;
-import ennoia::texture;
 import ennoia::font;
-import ennoia::mesh;
-import ennoia::kebinds;
-import ennoia::options;
+import ennoia::keybinds;
 import ennoia::localization;
+import ennoia::mesh;
+import ennoia::options;
+import ennoia::shader;
+import ennoia::texture;
+import std::collections;
+import std::io;
 
 extern const char VERSION_MAJOR @extern("bulk_majorversion");
 extern const char VERSION_MINOR @extern("bulk_minorversion");
@@ -31,7 +55,7 @@ struct TableEntry {
   String name;
   ulong length, pointer;
   DataType type;
-  CompType comp;
+CompType comp;
 }
 enum DataType : short {
   EMPTY,
@@ -44,7 +68,7 @@ enum DataType : short {
   // OpenGL/SDL3
   TEXTURE,
   FONT,
-  SHADER,
+SHADER,
   MODEL,
   MATERIAL,
 }
@@ -71,11 +95,25 @@ extern fn Localization load_localization(String filepath, String dataname, bool 
 extern fn void    load_all_localizations(String filepath) @extern("bulk_alllocal");
 
 extern fn bool TableEntry.equals_str(&self, String rhs) @operator_s(==) @extern("tableentry_equals");
-extern fn void TableEntry.size(&self) @extern("tableentry_size");
+extern fn usz TableEntry.size(&self) @extern("tableentry_size");
 
 extern fn String[] get_entries(String filepath) @extern("tableentry_getentries");
 extern fn BulkTable get_table(String filepath) @extern("tableentry_gettable");
 extern fn TableEntry get_table_entry(String filepath, String dataname) @extern("tableentry_gettableentry");
+
+extern fn short File.read_short(&self) @extern("bulk_fileshort");
+extern fn int File.read_int(&self) @extern("bulk_fileint");
+extern fn long File.read_long(&self) @extern("bulk_filelong");
+extern fn float File.read_float(&self) @extern("bulk_filefloat");
+extern fn double File.read_double(&self) @extern("bulk_filedouble");
+extern fn String File.read_string(&self) @extern("bulk_filestring");
+
+extern fn void File.write_short(&self, short val) @extern("bulk_filewriteshort");
+extern fn void File.write_int(&self, int val) @extern("bulk_filewriteint");
+extern fn void File.write_long(&self, long val) @extern("bulk_filewritelong");
+extern fn void File.write_float(&self, float val) @extern("bulk_filewritefloat");
+extern fn void File.write_double(&self, double val) @extern("bulk_filewritedouble");
+extern fn void File.write_string(&self, String val) @extern("bulk_filewritestring");
 
 
 module ennoia::camera;
@@ -117,6 +155,9 @@ extern fn Color Color.multiply(self, float factor) @extern("color_multiply");
 
 
 module ennoia::font;
+import ennoia::color;
+import ennoia::rectangle;
+import ennoia::texture;
 import ennoia::vector;
 import std::collections;
 
@@ -131,6 +172,54 @@ extern fn Font load_from_mem(char[] data, Vector2 size) @extern("font_loadfromme
 extern fn void Font.clean(&self) @extern("font_clean");
 
 extern fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) @extern("font_draw");
+
+
+module ennoia::keybinds;
+import std::collections;
+import sdl3;
+
+alias KeyboardKey = uint;
+alias KeyboardMod = ushort;
+alias Keybindings = HashMap{String, Keybind};
+
+struct KeyData {
+  KeyboardKey key;
+  KeyboardMod mod;
+  bool down;
+  bool repeat;
+}
+struct Keybind {
+  KeyboardKey key;
+  KeyboardMod mod;
+}
+
+extern fn void save_keybinds() @extern("keybinds_save");
+extern fn void KeyData.print(&self) @extern("keybinds_print");
+
+extern fn void update() @extern("keybinds_update");
+
+extern fn int  queue_contains(SDL_KeyboardEvent data) @export("keybinds_queuecontains");
+extern fn void queue_add(SDL_KeyboardEvent data) @extern("keybinds_queueadd");
+extern fn void queue_remove(SDL_KeyboardEvent data) @extern("keybinds_queueremove");
+
+extern fn bool pressed(String key) @extern("keybinds_pressed");
+extern fn bool down(String key)    @extern("keybinds_down");
+extern fn bool up(String key)      @extern("keybinds_up");
+extern fn bool mouse_pressed(String key) @extern("keybinds_mousepressed");
+extern fn bool mouse_down(String key)    @extern("keybinds_mousedown");
+extern fn bool mouse_up(String key)      @extern("keybinds_mouseup");
+
+
+module ennoia::localization;
+import std::collections;
+
+alias Local = HashMap{String, String};
+alias Localization = HashMap{String, Local};
+
+extern fn void Localization.add_assign(&self, Localization* rhs) @operator(+=) @extern("local_add");
+
+extern fn String get(String key) @extern("local_get");
+extern fn bool contains(String key) @extern("local_contains");
 
 
 module ennoia::matrix;
@@ -175,6 +264,11 @@ extern fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @extern("matri
 
 
 module ennoia::mesh;
+import ennoia::matrix;
+import ennoia::shader;
+import ennoia::texture;
+import ennoia::vector;
+import std::collections;
 
 struct Mesh {
   Vertex[] vertices;
@@ -221,6 +315,57 @@ extern fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1},
 extern fn void Vertex.print(&self) @extern("mesh_print");
 
 
+module ennoia::options;
+import std::collections;
+
+alias Options = HashMap{String, Option};
+
+struct Option {
+  OptionType type;
+  OptionData data;
+}
+union OptionData {
+  char as_char;
+  short as_short;
+  int as_int;
+  long as_long;
+
+  float as_float;
+  double as_double;
+
+  String as_string;
+}
+enum OptionType : char {
+  CHAR,
+  SHORT,
+  INT,
+  LONG,
+
+  FLOAT,
+  DOUBLE,
+
+  STRING,
+}
+
+extern fn char get_char(String optname) @extern("options_char");
+extern fn short get_short(String optname) @extern("options_short");
+extern fn int get_int(String optname) @extern("options_int");
+extern fn long get_long(String optname) @extern("options_long");
+extern fn float get_float(String optname) @extern("options_float");
+extern fn double get_double(String optname) @extern("options_double");
+
+extern fn void set_char(String optname) @extern("options_setchar");
+extern fn void set_short(String optname) @extern("options_setshort");
+extern fn void set_int(String optname) @extern("options_setint");
+extern fn void set_long(String optname) @extern("options_setlong");
+extern fn void set_float(String optname) @extern("options_setfloat");
+extern fn void set_double(String optname) @extern("options_setdouble");
+
+extern fn bool contains(String optname) @extern("options_contains");
+
+extern fn void save() @export("options_save");
+
+
 module ennoia::rectangle;
 import ennoia::vector;
 
@@ -242,7 +387,32 @@ extern fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) @extern("
 extern fn bool Rectangle.within(self, Vector2 rhs) @extern("rect_within");
 
 
+module ennoia::shader;
+import ennoia::matrix;
+import ennoia::texture;
+import ennoia::vector;
+import std::collections;
+
+struct Shader {
+  uint id;
+  HashMap{String,uint} locs;
+}
+
+extern fn Shader load(String vert, String frag) @extern("shader_load");
+extern fn Shader compile(char[] vert = {}, char[] frag = {}) @extern("shader_compile");
+extern fn void Shader.clean(&self) @extern("shader_clean");
+extern fn void Shader.use(&self) @extern("shader_use");
+
+extern fn void Shader.set_int(&self, String name, int i) @extern("shader_setint");
+extern fn void Shader.set_float(&self, String name, float f) @extern("shader_setfloat");
+extern fn void Shader.set_vector2(&self, String name, Vector2 v2) @extern("shader_setv2");
+extern fn void Shader.set_matrix(&self, String name, Matrix mat) @extern("shader_setmat");
+extern fn void Shader.set_texture(&self, String name, Texture texture) @extern("shader_settexture");
+
+
 module ennoia::texture;
+import ennoia::color;
+import ennoia::rectangle;
 
 struct Texture {
   uint id;
@@ -417,4 +587,41 @@ extern fn Quaternion from_axis_angle(Vector3 axis, float angle) @extern("quatern
 extern fn Quaternion from_euler(float pitch, float yaw, float roll) @extern("quaternion_fromeuler");
 
 
-// extern fn int some_library_function();
+module ennoia::yaml;
+import std::collections;
+
+alias Object = HashMap{String, TypedValue};
+alias Yaml   = HashMap{String, TypedValue};
+alias Array  = List{TypedValue};
+struct TypedValue {
+  YAMLType type;
+  union {
+    void* as_void;
+    bool as_bool;
+    int as_int;
+    double as_double;
+    String as_string;
+    Object as_object;
+    Array as_array;
+  }
+}
+enum YAMLType {
+  NONE,
+  INT,
+  DOUBLE,
+  STRING,
+  ARRAY,
+  BOOL,
+  OBJECT,
+}
+
+extern fn usz TypedValue.size(&self) @extern("yaml_tvsize");
+extern fn TypedValue TypedValue.get_array(&self, usz index) @extern("yaml_tvarray");
+extern fn TypedValue TypedValue.get_object(&self, String name) @extern("yaml_tvobj");
+extern fn bool TypedValue.has_key(&self, String key) @extern("yaml_haskey");
+
+extern fn Yaml parse_file(String filename) @extern("yaml_parsefile");
+extern fn Yaml parse(String data) @extern("yaml_parse");
+extern fn void Yaml.clean(&self) @extern("yaml_clean");
+extern fn void Yaml.print(&self) @extern("yaml_print");
+

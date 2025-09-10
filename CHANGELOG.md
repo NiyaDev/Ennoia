@@ -16,3 +16,12 @@
 - Transferred over Font.
 - Transferred over Mesh.
 
+#### [9/10/25]
+- Transferred over Keybinds.
+- Transferred over Localization.
+- Transferred over Options.
+- Transferred over Shaders.
+- Transferred over Core functions.
+- Transferred over Yaml.
+- Transferred over Bulk Packer and made it work.
+

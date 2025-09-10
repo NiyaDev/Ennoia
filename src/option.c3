@@ -41,38 +41,38 @@ enum OptionType : char {
 <* Get char from options
   @param optname: "Name of option"
  *>
-fn char get_char(String optname) {
+fn char get_char(String optname) @export("options_char") {
   return ennoia::options[optname].data.as_char!!;
 }
 <* Get short from options
   @param optname: "Name of option"
  *>
-fn short get_short(String optname) {
+fn short get_short(String optname) @export("options_short") {
   return ennoia::options[optname].data.as_short!!;
 }
 <* Get int from options
   @param optname: "Name of option"
  *>
-fn int get_int(String optname) {
+fn int get_int(String optname) @export("options_int") {
   return ennoia::options[optname].data.as_int!!;
 }
 <* Get long from options
   @param optname: "Name of option"
  *>
-fn long get_long(String optname) {
+fn long get_long(String optname) @export("options_long") {
   return ennoia::options[optname].data.as_long!!;
 }
 
 <* Get float from options
   @param optname: "Name of option"
  *>
-fn float get_float(String optname) {
+fn float get_float(String optname) @export("options_float") {
   return ennoia::options[optname].data.as_float!!;
 }
 <* Get double from options
   @param optname: "Name of option"
  *>
-fn double get_double(String optname) {
+fn double get_double(String optname) @export("options_double") {
   return ennoia::options[optname].data.as_double!!;
 }
 
@@ -80,7 +80,7 @@ fn double get_double(String optname) {
   @param optname: "Name of option"
   @param data: "The new value of the option"
  *>
-fn void set_char(String optname, char data) {
+fn void set_char(String optname, char data) @export("options_setchar") {
   Option result = {
     OptionType.CHAR,
     {.as_char=data},
@@ -91,7 +91,7 @@ fn void set_char(String optname, char data) {
   @param optname: "Name of option"
   @param data: "The new value of the option"
  *>
-fn void set_short(String optname, short data) {
+fn void set_short(String optname, short data) @export("options_setshort") {
   Option result = {
     OptionType.SHORT,
     {.as_short=data},
@@ -102,7 +102,7 @@ fn void set_short(String optname, short data) {
   @param optname: "Name of option"
   @param data: "The new value of the option"
  *>
-fn void set_int(String optname, int data) {
+fn void set_int(String optname, int data) @export("options_setint") {
   Option result = {
     OptionType.INT,
     {.as_int=data},
@@ -113,7 +113,7 @@ fn void set_int(String optname, int data) {
   @param optname: "Name of option"
   @param data: "The new value of the option"
  *>
-fn void set_long(String optname, long data) {
+fn void set_long(String optname, long data) @export("options_setlong") {
   Option result = {
     OptionType.LONG,
     {.as_long=data},
@@ -125,7 +125,7 @@ fn void set_long(String optname, long data) {
   @param optname: "Name of option"
   @param data: "The new value of the option"
  *>
-fn void set_float(String optname, float data) {
+fn void set_float(String optname, float data) @export("options_setfloat") {
   Option result = {
     OptionType.FLOAT,
     {.as_float=data},
@@ -136,7 +136,7 @@ fn void set_float(String optname, float data) {
   @param optname: "Name of option"
   @param data: "The new value of the option"
  *>
-fn void set_double(String optname, double data) {
+fn void set_double(String optname, double data) @export("options_setdouble") {
   Option result = {
     OptionType.DOUBLE,
     {.as_double=data},
@@ -144,13 +144,13 @@ fn void set_double(String optname, double data) {
   ennoia::options.set(optname, result);
 }
 
-<**>
-fn bool contains(String optname) {
+<* Returns whether the input option exists *>
+fn bool contains(String optname) @export("options_contains") {
   return ennoia::options.has_key(optname);
 }
 
 <* Saves all options as a file *>
-fn void save_options() {
+fn void save_options() @export("options_save") {
   // Calculate size of file
   usz length;
   ennoia::options.@each(; String key, Option val) {

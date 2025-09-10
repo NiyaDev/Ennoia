@@ -16,12 +16,21 @@
 ### Full features
 - UI
   - Look through and use richtext standard if it exists.
+  - Input fields
+  - Hover over
+  - Containers
+    - Vertical
+    - Horizontal
+    - Square
+    - They all have the ability to scroll if turned on
+    - Culls anything not in rect
 - Bulk
 - Meshes
   - Render pipeline
   - 2D instanced rendering --High Priority
   - Culling?
   - Plane generation
+- Debug logging system
 
 ### Additions
 - Vector2
@@ -37,13 +46,5 @@
 - Add inputs to mesh generation.
 
 ### Transfer
-- Fonts
-- Keybinds
-- Localizations
-- Meshes
-- Options
-- Shaders
-- Textures
 - Yaml
-- Core/Drawing/Render
 

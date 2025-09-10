@@ -42,12 +42,12 @@ fn void clean() {
 }
 
 <* Replaces old rendershader, cleaning up the old one *>
-fn void set_shader(Shader newShader) {
+fn void set_shader(Shader newShader) @export("setshader") {
   renderQuad.shader.clean();
   renderQuad.shader = newShader;
 }
 <* Returns current rendershader *>
-fn Shader save_shader() {
+fn Shader save_shader() @export("getshader") {
   Shader sh = renderQuad.shader;
   renderQuad.shader = {};
   return sh;

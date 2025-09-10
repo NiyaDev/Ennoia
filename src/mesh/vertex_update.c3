@@ -1,5 +1,6 @@
 
 module ennoia::mesh;
+import ennoia::vector;
 
 
 <* Changes the positions of the mesh and re-uploads it
@@ -39,8 +40,8 @@ fn void Mesh.update_texcoords(&self, Vector2[] newCoords) @export("mesh_updatete
   self.upload();
 }
 <* Changes the TexCoords of the mesh and re-uploads it
-  @param newColor: "Array of new texCoords"
-  @require newColor.len == self.vertices.len
+  @param newColors: "Array of new texCoords"
+  @require newColors.len == self.vertices.len
  *>
 fn void Mesh.update_colors(&self, Vector4[] newColors) @export("mesh_updatecolors") {
   for (int i; i < newColors.len; i++) {

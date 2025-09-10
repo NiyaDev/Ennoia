@@ -16,7 +16,7 @@ Font    defaultFont;
 
 double deltaTime @export("deltatime");
 double lastFrame @export("lastframe");
-bool forceClose;
+bool forceClose @export("forceclose");
 
 int scrWidth, scrHeight;
 int renWidth, renHeight;

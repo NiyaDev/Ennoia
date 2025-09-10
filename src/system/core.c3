@@ -13,7 +13,7 @@ import gl;
   @require title != ""
   @param scale: "The value to multiple the screen resolution by to get render resolution"
  *>
-fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) {
+fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) @export("init") {
   // Options
   bulk::load_all_options("resources/options");
 
@@ -71,7 +71,7 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   bulk::load_all_keybinds("resources/keybinds");
 }
 <* Cleans up resources *>
-fn void clean() {
+fn void clean() @export("clean") {
   defaultShader2d.clean();
   defaultShader3d.clean();
 
@@ -83,7 +83,7 @@ fn void clean() {
   sdl3::quit();
 }
 <* Checks if the window should close and updating deltatime *>
-fn bool window_should_close() {
+fn bool window_should_close() @export("windowshouldclose") {
   double currentFrame = (double)sdl3::get_ticks() / 1000;
   deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame;
@@ -140,7 +140,7 @@ fn bool window_should_close() {
   @param size: "The number of floats in data"
   @param offset: "Offset to each entry of the data"
  *>
-fn void set_vertex_attribute(uint location, uint size, void* offset) {
+fn void set_vertex_attribute(uint location, uint size, void* offset) @export("setvertexattribute") {
   gl::vertex_attrib_pointer(location, size, gl::FLOAT, false, Vertex.sizeof, offset);
   gl::enable_vertex_attrib_array(location);
 }

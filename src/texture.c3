@@ -141,14 +141,14 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
     ((float)color.b) / 255,
     ((float)color.a) / 255,
   };
-  ennoia::textureMesh.update_color({col,col,col,col,col,col});
+  ennoia::textureMesh.update_colors({col,col,col,col,col,col});
 
   // Draw
   ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
 
   // Reset TexCoords
   ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
-  ennoia::textureMesh.update_color({{0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}});
+  ennoia::textureMesh.update_colors({{0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}});
 }
 <* Draw tiled texture to screen
   @param dest: "Area of screen to draw texture"

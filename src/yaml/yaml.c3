@@ -35,7 +35,7 @@ alias Array  = List{TypedValue};
 <* Get size of Array or Object member
   @require self.type == ARRAY || self.type == OBJECT
  *>
-fn usz TypedValue.size(&self) {
+fn usz TypedValue.size(&self) @export("yaml_tvsize") {
   switch (self.type) {
     case ARRAY:  return self.as_array.len();
     case OBJECT: return self.as_object.len();
@@ -45,19 +45,19 @@ fn usz TypedValue.size(&self) {
 <* Indexes TypedValue as array
   @require self.type == ARRAY
  *>
-fn TypedValue TypedValue.get_array(&self, usz index) {
+fn TypedValue TypedValue.get_array(&self, usz index) @export("yaml_tvarray") {
   return self.as_array.get(index);
 }
 <* Indexes TypedValue as HashMap
   @require self.type == OBJECT
  *>
-fn TypedValue TypedValue.get_object(&self, String name) {
+fn TypedValue TypedValue.get_object(&self, String name) @export("yaml_tvobj") {
   return self.as_object.get(name)!!;
 }
 <* Returns whether TypedValue objects contains a member with name
   @require self.type == OBJECT
  *>
-fn bool TypedValue.has_key(&self, String key) {
+fn bool TypedValue.has_key(&self, String key) @export("yaml_haskey") {
   return self.as_object.has_key(key);
 }
 
@@ -206,13 +206,13 @@ fn Pair{String, TypedValue} String.to_value(self) {
 <* Loads a file to pass into parse function
   @require filename != ""
  *>
-fn Yaml parse_file(String filename) {
+fn Yaml parse_file(String filename) @export("yaml_parsefile") {
   char[] data = io::file::load_temp(filename)!!;
 
   return parse((String)data);
 }
-<**>
-fn Yaml parse(String data) {
+<* Parse string as yaml text *>
+fn Yaml parse(String data) @export("yaml_parse") {
   Yaml output;
 
   // Split up lines
@@ -283,7 +283,7 @@ fn Yaml parse(String data) {
 }
 
 <* Cleans up Yaml data *>
-fn void Yaml.clean(&self) {
+fn void Yaml.clean(&self) @export("yaml_clean") {
   self.@each(; String key, TypedValue val) {
     val.clean();
   };
@@ -304,7 +304,7 @@ fn void TypedValue.clean(&self) {
 }
 
 <* Prints all data inside Yaml *>
-fn void Yaml.print(&self) {
+fn void Yaml.print(&self) @export("yaml_print") {
   io::printn("YAML:");
   self.@each(; String key, TypedValue val) {
     val.print(key, 1);

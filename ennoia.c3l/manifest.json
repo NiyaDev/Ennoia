@@ -34,7 +34,7 @@
     },
     "linux-x64" : {
       "link-args" : [],
-      "dependencies" : [],
+      "dependencies" : [ "sdl3" ],
       "linked-libraries" : [ "GL", "SDL3", "ennoia" ]
     },
     "macos-aarch64" : {

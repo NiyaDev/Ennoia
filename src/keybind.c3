@@ -22,7 +22,7 @@ struct Keybind {
 }
 
 <* Saves all keybinds as a file *>
-fn void save_keybinds() {
+fn void save_keybinds() @export("keybinds_save") {
   // Calculate size of file
   usz length = ennoia::keybinds.len() * 6;
   ennoia::keybinds.@each(; String key, Keybind val) {
@@ -38,12 +38,12 @@ fn void save_keybinds() {
   };
 }
 <* Prints all information from keydata entry *>
-fn void KeyData.print(&self) {
+fn void KeyData.print(&self) @export("keybinds_print") {
   io::printfn("%X - %X (%s|%s)",self.key, self.mod, self.down, self.repeat);
 }
 
 <* Sets any existing key in the queue to repeat and remove any that are still up *>
-fn void update() {
+fn void update() @export("keybinds_update") {
   for (int i; i < ennoia::keyqueue.len(); i++) {
     ennoia::keyqueue[i].repeat = true;
     if (ennoia::keyqueue[i].down == false) {
@@ -53,8 +53,6 @@ fn void update() {
   }
   for (int i; i < ennoia::mouseButtons.len; i++) {
     switch (true) {
-      //case !ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] && !ennoia::mouseButtonsUp[i]:
-        //ennoia::mouseButtons[i] = true;
       case  ennoia::mouseButtons[i] && !ennoia::mouseButtonsHeld[i] && !ennoia::mouseButtonsUp[i]:
         ennoia::mouseButtonsHeld[i] = true;
       case  ennoia::mouseButtons[i]                                 &&  ennoia::mouseButtonsUp[i]:
@@ -65,10 +63,11 @@ fn void update() {
     }
   }
 }
+
 <* Returns the position of the input key in the queue or -1 if it's not there.
   @param data: "The keyboard event data to check for in queue"
  *>
-fn int queue_contains(SDL_KeyboardEvent data) {
+fn int queue_contains(SDL_KeyboardEvent data) @export("keybinds_queuecontains") {
   int result;
   for (int i; i < ennoia::keyqueue.len(); i++) {
     if (data.key == ennoia::keyqueue[i].key && data.mod == ennoia::keyqueue[i].mod) return i;
@@ -78,7 +77,7 @@ fn int queue_contains(SDL_KeyboardEvent data) {
 <* Adds input input key to the queue.
   @param data: "Keyboard event data to add to queue"
  *>
-fn void add_queue(SDL_KeyboardEvent data) {
+fn void add_queue(SDL_KeyboardEvent data) @export("keybinds_queueadd") {
   int val = queue_contains(data);
   if (val == -1) {
     ennoia::keyqueue.push({
@@ -95,7 +94,7 @@ fn void add_queue(SDL_KeyboardEvent data) {
 <* Removes input key from queue
   @param data: "Keyboard event data to remove"
  *>
-fn void rem_queue(SDL_KeyboardEvent data) {
+fn void rem_queue(SDL_KeyboardEvent data) @export("keybinds_queueremove") {
   int val = queue_contains(data);
   if (val != -1) ennoia::keyqueue.remove_at(val);
 }
@@ -103,7 +102,7 @@ fn void rem_queue(SDL_KeyboardEvent data) {
 <* Returns whether the input keybind is currently pressed down for the first time.
   @param key: "Name of keybind"
  *>
-fn bool pressed(String key) {
+fn bool pressed(String key) @export("keybinds_pressed") {
   Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
     io::printfn("[WARNING] - ENNOIA::KEYBINDS::PRESSED [Attempted to use keybinding that doesn't exist.]");
@@ -121,7 +120,7 @@ fn bool pressed(String key) {
 <* Returns whether the input keybind is currently held down.
   @param key: "Name of keybind"
  *>
-fn bool down(String key) {
+fn bool down(String key) @export("keybinds_down") {
   Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
     io::printfn("[WARNING] - ENNOIA::KEYBINDS::DOWN [Attempted to use keybinding that doesn't exist. %s]", key);
@@ -137,7 +136,7 @@ fn bool down(String key) {
 <* Returns whether the input keybind is currently let go of.
   @param key: "Name of keybind"
  *>
-fn bool up(String key) {
+fn bool up(String key) @export("keybinds_up") {
   Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
     io::printfn("[WARNING] - ENNOIA::KEYBINDS::UP [Attempted to use keybinding that doesn't exist.]");
@@ -153,15 +152,15 @@ fn bool up(String key) {
 }
 
 <* Returns whether the input mouse button is currently pressed *>
-fn bool mouse_pressed(uint button) {
+fn bool mouse_pressed(uint button) @export("keybinds_mousepressed") {
   return (ennoia::mouseButtons[button-1] && !ennoia::mouseButtonsHeld[button-1]);
 }
 <* Returns whether the input mouse button is currently down *>
-fn bool mouse_down(uint button) {
+fn bool mouse_down(uint button) @export("keybinds_mousedown") {
   return (ennoia::mouseButtons[button-1] && ennoia::mouseButtonsHeld[button-1]);
 }
 <* Returns whether the input mouse button is currently up *>
-fn bool mouse_up(uint button) {
+fn bool mouse_up(uint button) @export("keybinds_mouseup") {
   return (!ennoia::mouseButtons[button-1] && ennoia::mouseButtonsUp[button-1]);
 }
 

@@ -295,12 +295,12 @@ fn int old_ver(String[] args) {
 	String filename = args[1];
 	HashMap{String, Entry} names;
 
-	if (file::is_file(filename)) {
-		String[] allEntries = bulk::get_entries(filename);
-		for (int i; i < allEntries.len; i++) {
-			names.set(allEntries[i], {filename,bulk::get_entry_len(filename, allEntries[i]),0});
-		}
-	}
+	//if (file::is_file(filename)) {
+	//	String[] allEntries = bulk::get_entries(filename);
+	//	for (int i; i < allEntries.len; i++) {
+	//		names.set(allEntries[i], {filename,bulk::get_entry_len(filename, allEntries[i]),0});
+	//	}
+	//}
 
 	// Read flags
 	usz numEntries = args.len;
@@ -357,7 +357,7 @@ fn int old_ver(String[] args) {
 				data.write_byte(val.filepath[i])!!;
 			}
 		} else {
-			if (val.filepath == filename) dat.seek(bulk::get_entry_ptr(filename, key))!!;
+			if (val.filepath == filename) dat.seek(val.pointer)!!;
 		
 			for (int i; i < val.length; i++) {
 				data.write_byte(dat.read_byte()!!)!!;
