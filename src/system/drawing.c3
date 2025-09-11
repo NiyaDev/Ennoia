@@ -17,6 +17,8 @@ fn void start_drawing() @export("start_drawing") {
 fn void end_drawing() @export("end_drawing") {
   scrollwheel = 0;
 
+  render::render_all();
+
   // Set up default framebuffer
   gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
   gl::disable(gl::DEPTH_TEST);

@@ -94,6 +94,24 @@ fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) @export("rect_di
   };
 }
 
+<* Converts rectangle to a Vector2 *>
+fn Vector2 Rectangle.v2(self) @export("rect_v2") {
+  return {
+    self.x,
+    self.y,
+  };
+}
+<* Converts rectangle to a Vector2 *>
+fn Vector4 Rectangle.v4(self) @export("rect_v4") {
+  return {
+    self.x,
+    self.y,
+    self.w,
+    self.h,
+  };
+}
+
+
 <* Returns whether Vector2 is within rectangle *>
 fn bool Rectangle.within(&self, Vector2 rhs) @export("rect_within") {
   return ((rhs.x >= self.x && rhs.x <= self.x + self.w) && (rhs.y >= self.y && rhs.y <= self.y + self.h));

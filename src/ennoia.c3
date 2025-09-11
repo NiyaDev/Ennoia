@@ -30,9 +30,9 @@ Shader defaultShader3d;
 Keybindings   keybinds;
 List{KeyData} keyqueue;
 
-Vector2 mousePosition;
+Vector2 mousePosition @export("mouseposition");
 bool[5] mouseButtons, mouseButtonsHeld, mouseButtonsUp;
-float scrollwheel;
+float scrollwheel @export("scrollwheel");
 
 Options options;
 

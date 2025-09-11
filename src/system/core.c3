@@ -67,6 +67,8 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   defaultFont = bulk::load_font("resources/default","font");
   defaultTexture = bulk::load_texture("resources/default","texture");
 
+  models.set("cube",mesh::gen_cube().to_model());
+
   // Keybinds
   bulk::load_all_keybinds("resources/keybinds");
 }

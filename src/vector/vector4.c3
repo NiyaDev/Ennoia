@@ -110,10 +110,10 @@ fn Quaternion Vector4.q(self) @export("vector4_q") {
 <* Converts normaized Vector4 into a color. *>
 fn Color Vector4.to_color(self) @export("vector4_color") {
 	return {
-		.r = (char)(self.x * 255),
-		.g = (char)(self.y * 255),
-		.b = (char)(self.z * 255),
-		.a = (char)(self.w * 255),
+		(char)(self.x * 255),
+		(char)(self.y * 255),
+		(char)(self.z * 255),
+		(char)(self.w * 255),
 	};
 }
 

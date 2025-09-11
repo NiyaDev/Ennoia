@@ -1,6 +1,5 @@
 
 ### Testing
-- Colors
 - Quaternion overloads
 - BoundingBoxes
 - Matrices
@@ -37,14 +36,11 @@
   - Min/Max
 
 ### Fixes
-- Go over Color functions and make them modern standard.
+- Remove models from framework. Replace with just pure meshes.
 - Move over to using proper OpenGL bindings.
 - Texture tiling issues.
 - Tapping shift while holding direction keeps it down when you let go.
 - Confirm matrix functions work
 - mesh::new doesn't use input vertices and instead just returns a triangle.
 - Add inputs to mesh generation.
-
-### Transfer
-- Yaml
 

@@ -1,9 +1,11 @@
 
 module ennoia;
 
-extern double deltaTime  @extern("deltatime");
-extern double lastFrame  @extern("lastframe");
-extern bool   forceClose @extern("forceclose");
+extern double  deltaTime    @extern("deltatime");
+extern double  lastFrame    @extern("lastframe");
+extern bool    forceClose   @extern("forceclose");
+extern Vector2 mousPosition @extern("mouseposition");
+extern float   scrollwheel  @extern("scrollwheel");
 
 extern fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) @extern("init");
 extern fn void clean() @extern("clean");
@@ -24,6 +26,12 @@ extern fn int[2] get_display_resolution() @extern("getdisplayresolution");
 
 extern fn void set_shader(Shader newShader) @extern("setshader");
 extern fn Shader get_shader() @extern("getshader");
+
+
+module ennoia::render;
+import ennoia::vector;
+
+extern fn void draw_mesh(String nameMesh = "default", String nameTexture = "", Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}) @extern("render_mesh");
 
 
 module ennoia::bounds;
@@ -141,9 +149,12 @@ struct Color {
   char r, g, b, a;
 }
 
+extern fn bool Color.equals(self, Color rhs) @operator(==) @extern("color_equals");
+
 extern fn uint Color.to_int(self) @extern("color_toint");
-extern fn Color uint.to_int(self) @extern("color_fromint");
-extern fn Vector3 Color.hsv(self) @extern("color_hsv");
+extern fn Color uint.to_color(self) @extern("color_fromint");
+extern fn Vector3 Color.to_hsv(self) @extern("color_tohsv");
+extern fn Color Vector3.to_color(self) @extern("colorfromhsv");
 extern fn Vector4 Color.normalize(self) @extern("color_normalize");
 
 extern fn void Color.fade(&self, float alpha) @extern("color_fade");
@@ -384,6 +395,9 @@ extern fn Rectangle Rectangle.mul_v2(self, Vector2 rhs) @operator_s(*) @extern("
 extern fn Rectangle Rectangle.div(self, Rectangle rhs) @operator(/) @extern("rect_div");
 extern fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) @extern("rect_divv2");
 
+extern fn Vector2 Rectangle.v2(self) @extern("rect_v2");
+extern fn Vector4 Rectangle.v4(self) @extern("rect_v4");
+
 extern fn bool Rectangle.within(self, Vector2 rhs) @extern("rect_within");
 
 
@@ -484,13 +498,20 @@ struct Vector3 {
 extern fn bool Vector3.equals(self, Vector3 rhs) @operator(==) @extern("vector3_equals");
 extern fn Vector3 Vector3.add(self, Vector3 rhs) @operator(+) @extern("vector3_add");
 extern fn Vector3 Vector3.pos_offset(self, float rhs) @operator_s(+) @extern("vector3_pos_offset");
+extern fn Vector3 Vector3.sub(self, Vector3 rhs) @operator(-) @extern("vector3_sub");
+extern fn Vector3 Vector3.neg_offset(self, float rhs) @operator_s(-) @extern("vector3_neg_offset");
+extern fn Vector3 Vector3.mul(self, Vector3 rhs) @operator(*) @extern("vector3_mul");
+extern fn Vector3 Vector3.scale(self, float rhs) @operator_s(*) @extern("vector3_scale");
+extern fn Vector3 Vector3.div(self, Vector3 rhs) @operator(/) @extern("vector3_add");
+extern fn Vector3 Vector3.inverse(self, float rhs) @operator_s(/) @extern("vector3_inverse");
+extern fn Vector3 Vector3.remainder(self, int rhs) @operator(%) @extern("vector3_remainder");
 
 extern fn Vector2 Vector3.v2(self) @extern("vector3_v2");
 extern fn Vector4 Vector3.v4(self) @extern("vector3_v4");
 extern fn Quaternion Vector3.q(self) @extern("vector3_q");
 extern fn float[3] Vector3.to_array(self) @extern("vector3_farr");
 extern fn int[3] Vector3.to_int_array(self) @extern("vector3_iarr");
-extern fn Vector3 int[3].from_int_array(self) @extern("intaray_v3");
+extern fn Vector3 int[3].from_int_array(self) @extern("intarray_v3");
 extern fn Color Vector3.color(self) @extern("vector3_color");
 
 extern fn float Vector3.cross_product(self, Vector3 v2) @extern("vector3_cross_product");

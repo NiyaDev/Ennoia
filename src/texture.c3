@@ -155,7 +155,13 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
   @param src: "Area of the texture to draw"
   @param layout: "Tiling layout"
  *>
-fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE, Color color = color::WHITE) @export("texture_drawtiled") {
+fn void Texture.draw_tiled(
+  &self,
+  Rectangle dest = {0,0,-1,-1},
+  Rectangle src = {0,0,-1,-1},
+  TilingLayout layout = THREE_THREE,
+  Color tint = color::WHITE,
+) @export("texture_drawtiled") {
   // TODO: Add a vector2 for the size of each tile
   switch (layout) {
     case THREE_THREE:
@@ -166,27 +172,27 @@ fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = 
       float middleHeight = ((dest.h <= 0) ? (float)self.height - (height * 2) : (float)dest.h - (height * 2));
 
       // Top row
-      self.draw({dest.x, dest.y, width, height}, {0, 0, width, height}, color);
+      self.draw({dest.x, dest.y, width, height}, {0, 0, width, height}, tint);
       for (int i; i <= (usz)(middleWidth / width); i++) {
-        self.draw({dest.x + (((float)i+1) * width), dest.y, width, height}, {width, 0, width, height}, color);
+        self.draw({dest.x + (((float)i+1) * width), dest.y, width, height}, {width, 0, width, height}, tint);
       }
-      self.draw({dest.x + middleWidth + width, dest.y, width, height}, {width*2, 0, width, height}, color);
+      self.draw({dest.x + middleWidth + width, dest.y, width, height}, {width*2, 0, width, height}, tint);
       
       // Middle row
       for (int y; y <= (usz)(middleHeight / height); y++) {
-        self.draw({dest.x, dest.y + (((float)y+1) * height), width, height}, {0, height, width, height}, color);
+        self.draw({dest.x, dest.y + (((float)y+1) * height), width, height}, {0, height, width, height}, tint);
         for (int i; i <= (usz)(middleWidth / width); i++) {
-          self.draw({dest.x + (((float)i+1) * width), dest.y + (((float)y+1) * height), width, height}, {width, height, width, height}, color);
+          self.draw({dest.x + (((float)i+1) * width), dest.y + (((float)y+1) * height), width, height}, {width, height, width, height}, tint);
         }
-        self.draw({dest.x + middleWidth + width, dest.y + (((float)y+1) * height), width, height}, {width*2, height, width, height}, color);
+        self.draw({dest.x + middleWidth + width, dest.y + (((float)y+1) * height), width, height}, {width*2, height, width, height}, tint);
       }
 
       // Draw bottom row
-      self.draw({dest.x, dest.y + middleHeight + height, width, height}, {0, height*2, width, height}, color);
+      self.draw({dest.x, dest.y + middleHeight + height, width, height}, {0, height*2, width, height}, tint);
       for (int i; i <= (usz)(middleWidth / width); i++) {
-        self.draw({dest.x + (((float)i+1) * width), dest.y + middleHeight + height, width, height}, {width, height*2, width, height}, color);
+        self.draw({dest.x + (((float)i+1) * width), dest.y + middleHeight + height, width, height}, {width, height*2, width, height}, tint);
       }
-      self.draw({dest.x + middleWidth + width, dest.y + middleHeight + height, width, height}, {width*2, height*2, width, height}, color);
+      self.draw({dest.x + middleWidth + width, dest.y + middleHeight + height, width, height}, {width*2, height*2, width, height}, tint);
     case ONE_THREE:
       float dstWidth     = ((dest.w <= 0) ? (float)self.width      : (float)dest.w);
       float dstHeight    = ((dest.h <= 0) ? (float)self.height     : (float)dest.h);
@@ -195,11 +201,11 @@ fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = 
       float srcHeight    = ((src.h  <= 0) ? (float)self.height / 3 : (float)src.h / 3);
       float middleCount  = (dstHeight - (dstHeightPer * 2)) / dstHeightPer;
 
-      self.draw({dest.x, dest.y, dstWidth, dstHeightPer}, {0, 0, srcWidth, srcHeight}, color);
+      self.draw({dest.x, dest.y, dstWidth, dstHeightPer}, {0, 0, srcWidth, srcHeight}, tint);
       for (int y; y <= middleCount; y++) {
-        self.draw({dest.x, dest.y + (((float)y+1) * dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight, srcWidth, srcHeight}, color);
+        self.draw({dest.x, dest.y + (((float)y+1) * dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight, srcWidth, srcHeight}, tint);
       }
-      self.draw({dest.x, dest.y + (dstHeight - dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight*2, srcWidth, srcHeight}, color);
+      self.draw({dest.x, dest.y + (dstHeight - dstHeightPer), dstWidth, dstHeightPer}, {0, srcHeight*2, srcWidth, srcHeight}, tint);
     case THREE_ONE:
       float dstWidth    = ((dest.w <= 0) ? (float)self.width      : (float)dest.w);
       float dstHeight   = ((dest.h <= 0) ? (float)self.height     : (float)dest.h);
@@ -208,11 +214,11 @@ fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = 
       float srcHeight   = ((src.h  <= 0) ? (float)self.height     : (float)src.h);
       float middleCount = (dstWidth - (dstWidthPer * 2)) / dstWidthPer;
 
-      self.draw({dest.x, dest.y, dstWidthPer*3, dstHeight}, {0, 0, srcWidth, srcHeight}, color);
+      self.draw({dest.x, dest.y, dstWidthPer*3, dstHeight}, {0, 0, srcWidth, srcHeight}, tint);
       for (int i; i < middleCount.round(); i++) {
-        self.draw({dest.x + (((float)i+1) * dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth, 0, srcWidth, srcHeight}, color);
+        self.draw({dest.x + (((float)i+1) * dstWidthPer), dest.y, dstWidthPer, dstHeight}, {srcWidth, 0, srcWidth, srcHeight}, tint);
       }
-      self.draw({dest.x + (dstWidth - dstWidthPer), dest.y, dstWidthPer*3, dstHeight}, {srcWidth*2, 0, srcWidth, srcHeight}, color);
+      self.draw({dest.x + (dstWidth - dstWidthPer), dest.y, dstWidthPer*3, dstHeight}, {srcWidth*2, 0, srcWidth, srcHeight}, tint);
   }
 }
 
