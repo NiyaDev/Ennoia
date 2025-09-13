@@ -35,3 +35,7 @@
 - Transferred over Vector3 math functions that were missed.
 - Continued on render pipeline.
 
+#### [9/12/25]
+- Added new create function to matrices.
+- Started more work on render pipeline, but ran into issues with lists in general.
+

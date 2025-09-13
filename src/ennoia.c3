@@ -11,8 +11,6 @@ SDL_Event event;
 
 Color   bgColor = color::PURPLE;
 Mesh    textureMesh;
-Texture defaultTexture;
-Font    defaultFont;
 
 double deltaTime @export("deltatime");
 double lastFrame @export("lastframe");

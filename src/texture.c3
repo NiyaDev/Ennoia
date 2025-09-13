@@ -106,9 +106,9 @@ fn void Texture.clean(&self) @export("texture_clean") {
 <* Draw texture to screen
   @param dst: "Area of screen to draw texture"
   @param src: "Area of the texture to draw"
-  @param color: "Color to tint texture"
+  @param tint: "Color to tint texture"
  *>
-fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color color = color::WHITE) @export("texture_draw") {
+fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color tint = color::WHITE) @export("texture_draw") {
   // Calculating size on screen
   Vector2 newSize = {dst.w, dst.h};
   if (dst.w <= 0) newSize.x = (float)self.width;
@@ -135,12 +135,7 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
   };
 
   // Color
-  Vector4 col = {
-    ((float)color.r) / 255,
-    ((float)color.g) / 255,
-    ((float)color.b) / 255,
-    ((float)color.a) / 255,
-  };
+  Vector4 col = tint.normalize();
   ennoia::textureMesh.update_colors({col,col,col,col,col,col});
 
   // Draw

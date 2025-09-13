@@ -29,9 +29,12 @@ extern fn Shader get_shader() @extern("getshader");
 
 
 module ennoia::render;
+import ennoia::color;
+import ennoia::rectangle;
 import ennoia::vector;
 
-extern fn void draw_mesh(String nameMesh = "default", String nameTexture = "", Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}) @extern("render_mesh");
+extern fn void draw_mesh(String nameMesh = "cube", String nameTexture = "", Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}) @extern("render_mesh");
+extern fn void draw_texture(String nameTexture = "default", Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Vector3 rotation = {}, Color tint = {255, 255, 255, 255}) @extern("render_texture");
 
 
 module ennoia::bounds;

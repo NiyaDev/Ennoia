@@ -344,7 +344,7 @@ fn void Mesh.draw_instanced(&self, Matrix[] mats) {
 	  }
   }
 }
-<* Draws Mesh in 2d space3
+<* Draws Mesh in 2d space
   @param position: "Position in space to draw mesh. Default is {0,0,0}."
   @param scale:    "Scale to draw mesh at. Default is {1,1,1}."
   @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
@@ -367,14 +367,10 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
   gl::enable(gl::DEPTH_TEST);
 }
-
-<* Create Model from single mesh *>
-fn Model Mesh.to_model(&self) @export("mesh_tomodel") {
-  Model output;
-  output.set("mesh_1", *self);
-
-  return output;
-}
+<* Draws Mesh in 2D space multiple times with different matrices
+//  @param 
+ *>
+fn void Mesh.draw_2d_instanced(&self, Matrix[] mats) {}
 
 <* Draws all contained meshes
   @param position: "Position in space to draw meshes. Default is {0,0,0}."
@@ -393,6 +389,14 @@ fn void Model.draw_instanced(&self, Matrix[] mats) {
   self.@each(; String key, Mesh val) {
     val.draw_instanced(mats);
   };
+}
+
+<* Create Model from single mesh *>
+fn Model Mesh.to_model(&self) @export("mesh_tomodel") {
+  Model output;
+  output.set("mesh_1", *self);
+
+  return output;
 }
 
 <* Prints info on vertex *>

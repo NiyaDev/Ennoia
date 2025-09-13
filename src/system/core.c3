@@ -63,9 +63,8 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   render::init(renWidth, renHeight);
 
   // Load defaults
+  bulk::load_all("resources/default");
   textureMesh = mesh::gen_quad();
-  defaultFont = bulk::load_font("resources/default","font");
-  defaultTexture = bulk::load_texture("resources/default","texture");
 
   models.set("cube",mesh::gen_cube().to_model());
 
@@ -80,6 +79,26 @@ fn void clean() @export("clean") {
   textureMesh.clean();
 
   render::clean();
+
+  textures.@each(; String key, Texture val) {
+    val.clean();
+  };
+  textures.free();
+
+  fonts.@each(; String key, Font val) {
+    val.clean();
+  };
+  fonts.free();
+
+  models.@each(; String key, Model val) {
+    val.clean();
+  };
+  models.free();
+  
+  shaders.@each(; String key, Shader val) {
+    val.clean();
+  };
+  shaders.free();
 
   sdl3::destroy_window(ennoia::window);
   sdl3::quit();
