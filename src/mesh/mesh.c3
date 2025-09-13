@@ -334,7 +334,7 @@ fn void Mesh.draw_instanced(&self, Matrix[] mats) {
   gl::bind_vertex_array(self.vao);
 
   for (int i; i < mats.len; i++) {
-    // Set model position'
+    // Set model position
     ennoia::defaultShader3d.set_mat4x4("model", mats[i]);
     
     if (self.ebo != 0) {
@@ -369,8 +369,36 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
 }
 <* Draws Mesh in 2D space multiple times with different matrices
 //  @param 
+  @require position.len == scale.len
  *>
-fn void Mesh.draw_2d_instanced(&self, Matrix[] mats) {}
+fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord) {
+  // Use default shader if the mesh doesn't have one
+  ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
+
+  // Check what textures are available and uses the highest priority.
+  //int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
+  //gl::bind_texture(gl::TEXTURE_2D, textureID);
+
+  gl::disable(gl::DEPTH_TEST);
+  gl::bind_vertex_array(self.vao);
+
+  // Loop
+  for (int i; i < position.len; i++) {
+    // Check what textures are available and uses the highest priority.
+    //int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
+    //gl::bind_texture(gl::TEXTURE_2D, texture[i].id);
+    //self.update_texcoords(&texcoord[i]);
+
+    // Set uniforms
+    ennoia::defaultShader2d.set_vec2("position", position[i]);
+    ennoia::defaultShader2d.set_vec2("scale", scale[i]);
+
+    gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
+  }
+
+  //ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
+  gl::enable(gl::DEPTH_TEST);
+}
 
 <* Draws all contained meshes
   @param position: "Position in space to draw meshes. Default is {0,0,0}."

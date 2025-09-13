@@ -143,8 +143,56 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
 
   // Reset TexCoords
   ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
-  ennoia::textureMesh.update_colors({{0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}, {0,0,0,1}});
+  ennoia::textureMesh.update_colors({{1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}});
 }
+<*
+  @require dst.len == src.len
+ *>
+fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
+  Vector2[] position    = mem::new_array(Vector2, dst.len);
+  Vector2[] scale       = mem::new_array(Vector2, dst.len);
+  Vector2[6][] texcoords = mem::new_array(Vector2[6], dst.len);
+  for (int i; i < dst.len; i++) {
+    // Calculating size on screen
+    Vector2 newSize = {dst[i].w, dst[i].h};
+    if (dst[i].w <= 0) newSize.x = (float)self.width;
+    if (dst[i].h <= 0) newSize.y = (float)self.height;
+    Vector2 sc = {
+      newSize.x / (float)ennoia::renWidth,
+      newSize.y / (float)ennoia::renHeight,
+    };
+
+    // Change texcoords
+    Rectangle newSrc = src[i];
+    if (src[i].w <= 0) newSrc.w = (float)self.width;
+    if (src[i].h <= 0) newSrc.h = (float)self.height;
+    Vector2 topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
+    Vector2 topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
+    Vector2 botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
+    Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))}; 
+
+    // Calculating position on screen
+    Vector2 pos = {
+      -(float)ennoia::renWidth  + (dst[i].x * 2) + newSize.x,
+      -(float)ennoia::renHeight + (dst[i].y * 2) + newSize.y,
+    };
+
+    // save all
+    position[i]  = pos;
+    scale[i]     = sc;
+    texcoords[i] = {topLeft, botLeft, botRight, topLeft, botRight, topRight};
+    
+    //ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
+  }
+
+  gl::bind_texture(gl::TEXTURE_2D, self.id);
+  ennoia::textureMesh.draw_2d_instanced(position, scale, texcoords);
+
+  free(position);
+  free(scale);
+  free(texcoords);
+}
+
 <* Draw tiled texture to screen
   @param dest: "Area of screen to draw texture"
   @param src: "Area of the texture to draw"

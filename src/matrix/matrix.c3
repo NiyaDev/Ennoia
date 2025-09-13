@@ -218,42 +218,6 @@ const Matrix IDENTITY = {
 
 <**>
 fn Matrix create(Vector3 position, Vector3 scale, Vector3 rotation) @export("matrix_create") {
-	/*
-	// Position
-	Matrix ps = matrix::IDENTITY;
-	ps.m12 = position.x;
-	ps.m13 = position.y;
-	ps.m14 = position.z;
-
-	// Rotation
-	Matrix ro = matrix::IDENTITY;
-	float cosz = math::cos(rotation.z * (float)(math::PI / 180));
-	float sinz = math::sin(rotation.z * (float)(math::PI / 180));
-	float cosy = math::cos(rotation.y * (float)(math::PI / 180));
-	float siny = math::sin(rotation.y * (float)(math::PI / 180));
-	float cosx = math::cos(rotation.x * (float)(math::PI / 180));
-	float sinx = math::sin(rotation.x * (float)(math::PI / 180));
-
-	ro.m0 =  cosz * cosy;
-	ro.m1 = (cosz * siny * sinx) - (sinz * cosx);
-	ro.m2 = (cosz * siny * cosx) + (sinz * sinx);
-
-	ro.m4 =  sinz * cosy;
-	ro.m5 = (sinz * siny * sinx) + (cosz * cosx);
-	ro.m6 = (sinz * siny * cosx) - (cosz * sinx);
-
-	ro.m8 = -siny;
-	ro.m9 =  cosy * sinx;
-	ro.m10=  cosy * cosx;
-
-	// Scale
-	Matrix sc = matrix::IDENTITY;
-	sc.m0  = scale.x;
-	sc.m5  = scale.y;
-	sc.m10 = scale.z;
-
-	return sc * ro * ps;
-	*/
 	float cx  = math::cos(rotation.x);
 	float sxn = math::sin(rotation.x);
 	float cy  = math::cos(rotation.y);

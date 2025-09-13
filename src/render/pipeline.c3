@@ -8,6 +8,8 @@ import std::collections;
 RenderPipeline2D rp2;
 RenderPipeline3D rp3;
 
+//RenderInstance entries;
+
 alias RenderPipeline2D = List{TextureRenderInfo};
 alias RenderPipeline3D = List{MeshRenderInfo};
 
@@ -18,8 +20,8 @@ struct TextureRenderInfo {
   String nameTexture;
   Rectangle dst;
   Rectangle src;
-  Vector3 rotation;
-  Color tint;
+  //Vector3 rotation;
+  //Color tint;
 }
 struct MeshRenderInfo {
   String nameMesh, nameTexture;
@@ -43,81 +45,77 @@ fn void draw_texture(
   String nameTexture = "default",
   Rectangle dst = {0,0,-1,-1},
   Rectangle src = {0,0,-1,-1},
-  Vector3 rotation = {},
-  Color tint = color::WHITE,
+  //Vector3 rotation = {},
+  //Color tint = color::WHITE,
 ) @export("render_texture") {
-  rp2.push({nameTexture, dst, src, rotation, tint});
+  rp2.push({nameTexture, dst, src});
 }
 
 <* Renders all meshes and textures in pipelines *>
 fn void render_all() {
-  // Make a list for each different mesh and render them in batches.
-  //List{Pair{String, int}} renderPairs;
-  //for (int i; i < )
-
   // 3D
-  List{String} allEntries;
+  List{String} entries;
+  entries.init(mem);
   for (int i; i < rp3.len(); i++) {
-    if (!allEntries.contains(rp3[i].nameMesh)) allEntries.push(rp3[i].nameMesh.tcopy());
+    if (!entries.contains(rp3[i].nameMesh)) entries.push(rp3[i].nameMesh);
   }
-
-  RenderInstance entries;
   
-
-  //io::printfn("%d",entries[allEntries[0]]!!.len());
-
-  //for (int i; i < allEntries.len(); i++) { entries.get_ref(allEntries[i])!!.free(); }
-  //io::printfn("%d",entries[allEntries[0]]!!.len());
-  //unreachable();
-  allEntries.clear();
-  entries.clear();
-  rp3.clear();
-  /*
-  RenderInstance entries;
-  for (int i; i < rp3.len(); i++) {
-    MeshRenderInfo info = rp3[i];
-    if (entries.has_key(info.nameMesh)) {
-      List{Matrix}* ref = entries.get_ref(info.nameMesh)!!;
-      //ref.push(matrix::create(info.position, info.scale, info.rotation));
-    } else {
-      List{Matrix} ref;
-      ref.push(matrix::create(info.position, info.scale, info.rotation));
-      entries.set(info.nameMesh, ref);
+  for (int i; i < entries.len(); i++) {
+    usz count;
+    for (int j; j < rp3.len(); j++) {
+      if (entries[i] == rp3[j].nameMesh) count++;
     }
+    Matrix[] arr = mem::new_array(Matrix, count);
+    usz index;
+    for (int j; j < rp3.len(); j++) {
+      if (entries[i] == rp3[j].nameMesh) {
+        arr[index] = matrix::create(rp3[j].position, rp3[j].scale, rp3[j].rotation);
+        index++;
+      }
+    }
+    ennoia::models[entries[i]]!!.draw_instanced(arr);
+    free(arr);
   }
-  String[] keys = entries.tkeys();
-  for (int i; i < keys.len; i++) {
-    List{Matrix}* mat = entries.get_ref(keys[i])!!;
-    ennoia::models[keys[i]]!!.draw_instanced(mat.to_tarray());
-    (*mat).clear();
-  }
-  //entries.@each(; String key, List{Matrix}* mats) {  
-
-    //Matrix[] arr = mats.to_array(mem);
-    //ennoia::models[key]!!.draw_instanced(arr);
-    //free(arr);
-    //List{Matrix}* ref = entries.get_ref(key)!!;
-    //ref.free();
-    //mats.clear();
-    //free(mats);
-  //};
-  entries.free();
+  free(entries.entries);
   rp3.clear();
-  */
-  /*
-  for (int i; i < rp3.len(); i++) {
-    MeshRenderInfo info = rp3[i];
-    ennoia::models[info.nameMesh]!!.draw(
-      position:info.position,
-      scale:info.scale,
-      rotation:info.rotation,
-      texture:(info.nameTexture == "" ? null : ennoia::textures.get_ref(info.nameTexture)!!),
-    );
-  }
-  rp3.clear();
-  */
 
   // 2D
+  List{String} entries2;
+  entries2.init(mem);
+  for (int i; i < rp2.len(); i++) {
+    if (!entries2.contains(rp2[i].nameTexture)) entries2.push(rp2[i].nameTexture);
+  }
+  
+  for (int i; i < entries2.len(); i++) {
+    usz count;
+    for (int j; j < rp2.len(); j++) {
+      if (entries2[i] == rp2[j].nameTexture) count++;
+    }
+    ///*
+    //Matrix[] arr = mem::new_array(Matrix, count);
+    //Vector2[] position    = mem::new_array(Vector2, count);
+    //Vector2[] scale       = mem::new_array(Vector2, count);
+    //Vector2[6][] texcoord = mem::new_array(Vector2[6], count);
+    Rectangle[] dst = mem::new_array(Rectangle, count);
+    Rectangle[] src = mem::new_array(Rectangle, count);
+    usz index;
+    for (int j; j < rp2.len(); j++) {
+      if (entries2[i] == rp2[j].nameTexture) {
+        //arr[index] = matrix::create(rp2[j].position, rp2[j].scale, rp2[j].rotation);
+        dst[index] = rp2[j].dst;
+        src[index] = rp2[j].src;
+        index++;
+      }
+    }
+    ennoia::textures[entries2[i]]!!.draw_instanced(dst, src);
+    free(dst);
+    free(src);
+    //free(arr);
+    //*/
+  }
+  free(entries2.entries);
+  rp2.clear();
+  /*
   for (int i; i < rp2.len(); i++) {
     TextureRenderInfo info = rp2[i];
     ennoia::textures[info.nameTexture]!!.draw(
@@ -127,5 +125,6 @@ fn void render_all() {
     );
   }
   rp2.clear();
+  */
 }
 

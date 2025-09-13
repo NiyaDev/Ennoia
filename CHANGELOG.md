@@ -39,3 +39,7 @@
 - Added new create function to matrices.
 - Started more work on render pipeline, but ran into issues with lists in general.
 
+#### [9/13/25]
+- Got the 3D part of the pipeline working without any leaks!!
+- Added texture instancing. It doesn't work and i'm going to rehaul the entire thing. But I added it.
+
