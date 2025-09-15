@@ -19,6 +19,8 @@ fn void end_drawing() @export("end_drawing") {
 
   render::render_all();
 
+  ui::draw();
+
   // Set up default framebuffer
   gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
   gl::disable(gl::DEPTH_TEST);

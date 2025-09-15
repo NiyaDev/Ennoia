@@ -1,12 +1,10 @@
 
 import ennoia;
 
-
+///*
 fn void test() @test {
   ennoia::init();
   defer ennoia::clean();
-
-  //bulk::load_all("resources/010");
 
   bool draw = true;
 
@@ -30,7 +28,7 @@ fn void test() @test {
         //ennoia::textures["texture"]!!.draw(
         render::draw_texture(
           nameTexture: "texture",
-          dst: {(float)(i%32) * 16,(float)(i/32) * 16, 16,16},
+          dst: {(float)(i%32) * 16,(float)(i/32) * 16, 16, 16},
         );
       }
     }
@@ -38,6 +36,7 @@ fn void test() @test {
     ennoia::end_drawing();
   }
 }
+//*/
 
 
 

@@ -5,7 +5,6 @@ import sdl3;
 
 
 SDL_Window* window;
-SDL_Surface* surface;
 SDL_GLContext* glcontext;
 SDL_Event event;
 
@@ -37,8 +36,9 @@ Options options;
 Localization localization;
 String language = "english";
 
-HashMap{String, Texture} textures;
-HashMap{String, Font}    fonts;
-HashMap{String, Model}   models;
-HashMap{String, Shader}  shaders;
+HashMap{String, Texture}  textures;
+HashMap{String, Font}     fonts;
+HashMap{String, Model}    models;
+HashMap{String, Shader}   shaders;
+HashMap{String, Element*} uiElements;
 

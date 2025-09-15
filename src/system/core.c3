@@ -73,34 +73,56 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
 }
 <* Cleans up resources *>
 fn void clean() @export("clean") {
-  defaultShader2d.clean();
-  defaultShader3d.clean();
+  sdl3::destroy_window(window);
+  window = null;
+  sdl3::gl_destroy_context(glcontext);
+  glcontext = null;
+  event = {};
 
   textureMesh.clean();
 
-  render::clean();
+  deltaTime = 0;
+  lastFrame = 0;
+  forceClose = false;
+
+  defaultShader2d.clean();
+  defaultShader3d.clean();
+
+  keybinds.clear();
+  keyqueue.clear();
+
+  mousePosition = {};
+  mouseButtons = {};
+  mouseButtonsHeld = {};
+  mouseButtonsUp = {};
+  scrollwheel = 0;
+
+  options.clear();
+  localization.clear();
 
   textures.@each(; String key, Texture val) {
     val.clean();
   };
-  textures.free();
+  textures.clear();
 
   fonts.@each(; String key, Font val) {
     val.clean();
   };
-  fonts.free();
+  fonts.clear();
 
   models.@each(; String key, Model val) {
     val.clean();
   };
-  models.free();
+  models.clear();
   
   shaders.@each(; String key, Shader val) {
     val.clean();
   };
-  shaders.free();
+  shaders.clear();
 
-  sdl3::destroy_window(ennoia::window);
+  ui::clean();
+
+  render::clean();
   sdl3::quit();
 }
 <* Checks if the window should close and updating deltatime *>
@@ -149,7 +171,7 @@ fn bool window_should_close() @export("windowshouldclose") {
   // Default exit button
   if (keybinds.has_key("quit")) {
     if (keybinds::pressed("quit")) {
-      ennoia::forceClose = true;
+      forceClose = true;
     }
   }
 

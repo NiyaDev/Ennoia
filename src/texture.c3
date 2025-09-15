@@ -140,6 +140,7 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
 
   // Draw
   ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
+  //ennoia::textureMesh.draw_2d_instanced({pos}, {scale}, {{topLeft, botLeft, botRight, topLeft, botRight, topRight}}, self);
 
   // Reset TexCoords
   ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
@@ -149,8 +150,8 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
   @require dst.len == src.len
  *>
 fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
-  Vector2[] position    = mem::new_array(Vector2, dst.len);
-  Vector2[] scale       = mem::new_array(Vector2, dst.len);
+  Vector2[] position     = mem::new_array(Vector2, dst.len);
+  Vector2[] scale        = mem::new_array(Vector2, dst.len);
   Vector2[6][] texcoords = mem::new_array(Vector2[6], dst.len);
   for (int i; i < dst.len; i++) {
     // Calculating size on screen
@@ -169,8 +170,8 @@ fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
     Vector2 topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
     Vector2 topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
     Vector2 botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
-    Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))}; 
-
+    Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
+    
     // Calculating position on screen
     Vector2 pos = {
       -(float)ennoia::renWidth  + (dst[i].x * 2) + newSize.x,
@@ -181,12 +182,16 @@ fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
     position[i]  = pos;
     scale[i]     = sc;
     texcoords[i] = {topLeft, botLeft, botRight, topLeft, botRight, topRight};
-    
-    //ennoia::textureMesh.draw_2d(position:pos,scale:scale,texture:self);
   }
+  
+  // Color
+  Vector4 col = color::WHITE.normalize();
+  ennoia::textureMesh.update_colors({col,col,col,col,col,col});
 
-  gl::bind_texture(gl::TEXTURE_2D, self.id);
-  ennoia::textureMesh.draw_2d_instanced(position, scale, texcoords);
+  ennoia::textureMesh.draw_2d_instanced(position, scale, texcoords, self);
+
+  ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
+  ennoia::textureMesh.update_colors({{1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}});
 
   free(position);
   free(scale);

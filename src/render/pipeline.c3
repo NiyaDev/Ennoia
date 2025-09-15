@@ -91,17 +91,11 @@ fn void render_all() {
     for (int j; j < rp2.len(); j++) {
       if (entries2[i] == rp2[j].nameTexture) count++;
     }
-    ///*
-    //Matrix[] arr = mem::new_array(Matrix, count);
-    //Vector2[] position    = mem::new_array(Vector2, count);
-    //Vector2[] scale       = mem::new_array(Vector2, count);
-    //Vector2[6][] texcoord = mem::new_array(Vector2[6], count);
     Rectangle[] dst = mem::new_array(Rectangle, count);
     Rectangle[] src = mem::new_array(Rectangle, count);
     usz index;
     for (int j; j < rp2.len(); j++) {
       if (entries2[i] == rp2[j].nameTexture) {
-        //arr[index] = matrix::create(rp2[j].position, rp2[j].scale, rp2[j].rotation);
         dst[index] = rp2[j].dst;
         src[index] = rp2[j].src;
         index++;
@@ -110,21 +104,8 @@ fn void render_all() {
     ennoia::textures[entries2[i]]!!.draw_instanced(dst, src);
     free(dst);
     free(src);
-    //free(arr);
-    //*/
   }
   free(entries2.entries);
   rp2.clear();
-  /*
-  for (int i; i < rp2.len(); i++) {
-    TextureRenderInfo info = rp2[i];
-    ennoia::textures[info.nameTexture]!!.draw(
-      dst:  info.dst,
-      src:  info.src,
-      tint: info.tint,
-    );
-  }
-  rp2.clear();
-  */
 }
 

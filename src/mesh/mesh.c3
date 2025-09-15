@@ -371,7 +371,7 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
 //  @param 
   @require position.len == scale.len
  *>
-fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord) {
+fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord, Texture* texture) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
@@ -381,6 +381,7 @@ fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vecto
 
   gl::disable(gl::DEPTH_TEST);
   gl::bind_vertex_array(self.vao);
+  gl::bind_texture(gl::TEXTURE_2D, texture.id);
 
   // Loop
   for (int i; i < position.len; i++) {

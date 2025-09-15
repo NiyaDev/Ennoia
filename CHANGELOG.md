@@ -43,3 +43,9 @@
 - Got the 3D part of the pipeline working without any leaks!!
 - Added texture instancing. It doesn't work and i'm going to rehaul the entire thing. But I added it.
 
+#### [9/15/25]
+- Fixed texture instancing. Turns out I never put in color, so they were just invisible.
+- Changed ennoia::clean to clear instead of free to allow tests to go sequencially.
+- Fully changed over from immediate mode UI to new system.
+  - Label + Button finished.
+

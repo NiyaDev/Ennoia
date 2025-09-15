@@ -25,11 +25,12 @@
     - Culls anything not in rect
 - Bulk
 - Meshes
-  - Render pipeline
-  - 2D instanced rendering --High Priority
+  - Render pipeline improvements
   - Culling?
   - Plane generation
 - Debug logging system
+- Screenshot
+- Ability to take a screenshot and compare it to another for testing.
 
 ### Additions
 - Vector2

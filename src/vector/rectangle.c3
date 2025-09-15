@@ -1,6 +1,7 @@
 
 module ennoia::rectangle;
 import ennoia::vector;
+import std::io;
 
 
 struct Rectangle {
@@ -117,4 +118,8 @@ fn bool Rectangle.within(&self, Vector2 rhs) @export("rect_within") {
   return ((rhs.x >= self.x && rhs.x <= self.x + self.w) && (rhs.y >= self.y && rhs.y <= self.y + self.h));
 }
 
+<* Prints info on rectangle *>
+fn void Rectangle.print(&self) {
+  io::printfn("[X: %f, Y: %f, Width: %f, Height: %f]",self.x,self.y,self.w,self.h);
+}
 

@@ -1,7 +1,8 @@
 
 module ennoia::vector;
-import std::math;
 import ennoia::matrix;
+import std::io;
+import std::math;
 
 
 struct Vector2 {
@@ -201,5 +202,10 @@ fn Vector2 Vector2.clamp_mag(self, float min, float max) @export("vector2_clamp_
 	}
 
 	return self;
+}
+
+<* Prints info *>
+fn void Vector2.print(&self) {
+	io::printfn("[%f,%f]", self.x, self.y);
 }
 
