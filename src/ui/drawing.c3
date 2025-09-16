@@ -8,13 +8,14 @@ fn void draw() {
   ennoia::uiElements.@each(; String key, Element* e) {
     switch (e.type) {
       case LABEL:
-        ennoia::fonts[e.label.font]!!.draw(
-          e.label.text,
-          e.label.position,
-          e.label.scale,
-          e.label.spacing,
-          e.label.tint,
-        );
+        e.draw_label();
+        //ennoia::fonts[e.label.font]!!.draw(
+        //  e.label.text,
+        //  e.label.position,
+        //  e.label.scale,
+        //  e.label.spacing,
+        //  e.label.tint,
+        //);
       case BUTTON:
         Font* font = ennoia::fonts.get_ref(e.button.font)!!;
         Texture* texture = ennoia::textures.get_ref(e.button.texture)!!;
@@ -70,5 +71,16 @@ fn void draw() {
       }
     }
   };
+}
+
+<* Draw label *>
+fn void Element.draw_label(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffset = {1,1}) {
+  ennoia::fonts[self.label.font]!!.draw(
+    self.label.text,
+    self.label.position + positionOffset,
+    self.label.scale * scaleOffset,
+    self.label.spacing,
+    self.label.tint,
+  );
 }
 

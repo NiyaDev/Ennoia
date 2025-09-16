@@ -14,6 +14,8 @@ struct Element {
   union {
     ElementLabel label;
     ElementButton button;
+
+    ElementVerticalContainer contVert;
   }
 }
 enum ElementType {
@@ -21,6 +23,10 @@ enum ElementType {
 
   LABEL,
   BUTTON,
+  BAR,
+
+  CONTAINER_VERT,
+  CONTAINER_HORI,
 }
 
 alias FuncCallVoid = fn void();
@@ -65,7 +71,16 @@ struct ElementButton {
   FuncCallVoid hover;
   FuncCallVoid click;
 }
+struct ElementVerticalContainer {
+  Rectangle bounds;
+  Vector2 scale;
+  Vector4 offset;
+  float spacing;
 
+  String texture;
+
+  Element*[] elements;
+}
 
 
 <* Creates a new Label element *>
@@ -83,14 +98,7 @@ fn Element* new_label(
   e.temporary     = (duration <= 0 ? false : true);
   e.duration      = (duration <= 0 ? 0 : duration);
   e.durationTotal = (duration <= 0 ? 0 : duration);
-  e.label = {
-    text,
-    font,
-    spacing,
-    tint,
-    position,
-    scale,
-  };
+  e.label = {text, font, spacing, tint, position, scale};
 
   return e;
 }
@@ -121,23 +129,45 @@ fn Element* new_button(
   e.duration      = (duration <= 0 ? 0 : duration);
   e.durationTotal = (duration <= 0 ? 0 : duration);
   e.button = {
-    text,
-    font,
-    spacing,
-    textTint,
-    texture,
-    textureTint,
-    bounds,
-    textPadding,
-    scale,
-    alignHori,
-    alignVert,
-    active,
-    hover,
-    click,
+    text, font, spacing, textTint, texture,
+    textureTint, bounds, textPadding, scale,
+    alignHori, alignVert, active, hover, click,
   };
 
   return e;
 }
+<* Creates a new Container elememt *>
+fn Element* new_container(
+  ElementType container = CONTAINER_VERT,
+  long duration = 0,
+  Rectangle bounds = {0,0,16,16},
+  Vector2 scale = {1,1},
+  Vector4 offset = {2,2,2,2},
+  float spacing = 0,
+  String texture = "",
+  Element*[] elements = {},
+) {
+  if (container != CONTAINER_VERT || container != CONTAINER_HORI) {
+    io::printfn("[ERROR] ENNOIA::UI::NEW_CONTAINER [Attempted to create a new container of a non container type]");
+    return null;
+  }
 
+  Element* e = mem::new(Element);
+  e.type = container;
+  e.temporary     = (duration <= 0 ? false : true);
+  e.duration      = (duration <= 0 ? 0 : duration);
+  e.durationTotal = (duration <= 0 ? 0 : duration);
+  
+  switch (container) {
+    case CONTAINER_VERT:
+      e.contVert = {bounds, scale, offset, spacing, texture, elements};
+    case CONTAINER_HORI:
+    default:
+      io::printfn("[ERROR] ENNOIA::UI::NEW_CONTAINER [Attempted to create a new container of a non container type]");
+      free(e);
+      return null;
+  }
+
+  return e;
+}
 

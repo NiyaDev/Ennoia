@@ -16,6 +16,14 @@ fn void test() @test {
     click: &testfn,
   ));
 
+  ui::add("test_container",
+    ui::new_container(bounds:{200,0, 64, 640}, elements:{
+      ui::new_label("fug"),
+      ui::new_label("and", 100),
+      ui::new_label("ulu"),
+    }),
+  );
+
   while (!ennoia::window_should_close()) {
 
     if (keybinds::pressed("debug")) {

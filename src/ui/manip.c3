@@ -15,6 +15,12 @@ fn void add(String name, Element* e) @export("ui_add") {
 <* Cleans up all ui elements *>
 fn void clean() {
   ennoia::uiElements.@each(; String key, Element* e) {
+    switch (e.type) {
+      case CONTAINER_VERT:
+        for (int i; i < e.contVert.elements.len; i++) free(e.contVert.elements[i]);
+        free(e.contVert.elements);
+      default:
+    }
     free(e);
   };
   ennoia::uiElements.clear();
