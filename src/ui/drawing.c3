@@ -8,14 +8,7 @@ fn void draw() {
   ennoia::uiElements.@each(; String key, Element* e) {
     switch (e.type) {
       case LABEL:
-        e.draw_label();
-        //ennoia::fonts[e.label.font]!!.draw(
-        //  e.label.text,
-        //  e.label.position,
-        //  e.label.scale,
-        //  e.label.spacing,
-        //  e.label.tint,
-        //);
+        e.label.draw();
       case BUTTON:
         Font* font = ennoia::fonts.get_ref(e.button.font)!!;
         Texture* texture = ennoia::textures.get_ref(e.button.texture)!!;
@@ -37,7 +30,8 @@ fn void draw() {
         } else { col = e.button.textureTint[1]; }
 
         // Draw bg texture
-        texture.draw_tiled(dest:tileBounds*e.button.scale, layout:THREE_ONE, tint:col);
+        render::draw_texture_tiled(e.button.texture, e.button.bounds, e.button.scale);
+        //texture.draw_tiled(dest:tileBounds*e.button.scale, layout:THREE_ONE, tint:col);
 
         // Caluclate text position
         Vector2 textPosition;
@@ -60,6 +54,8 @@ fn void draw() {
           if (tileBounds.within(ennoia::mousePosition) && e.button.hover != null) e.button.hover();
           if (tileBounds.within(ennoia::mousePosition) && keybinds::mouse_up(1) && e.button.click != null) e.button.click();
         }
+      case BAR:
+        e.bar.draw();
       default:
     }
     
@@ -74,13 +70,31 @@ fn void draw() {
 }
 
 <* Draw label *>
-fn void Element.draw_label(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffset = {1,1}) {
-  ennoia::fonts[self.label.font]!!.draw(
-    self.label.text,
-    self.label.position + positionOffset,
-    self.label.scale * scaleOffset,
-    self.label.spacing,
-    self.label.tint,
+fn void ElementLabel.draw(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffset = {1,1}) {
+  ennoia::fonts[self.font]!!.draw(
+    self.text,
+    self.position + positionOffset,
+    self.scale * scaleOffset,
+    self.spacing,
+    self.tint,
   );
+}
+<* Draw Bar *>
+fn void ElementBar.draw(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffset = {1,1}) {
+  // Draw text
+
+  // Background
+  render::draw_texture(
+    self.textureBg,
+    self.bounds,
+  );
+
+  // Foreground
+  float percentage = *(self.value) / *(self.valueMax);
+  render::draw_texture(
+    self.textureFg,
+    self.bounds * (Rectangle){1,1,percentage,1},
+  );
+  
 }
 

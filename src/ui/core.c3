@@ -14,6 +14,7 @@ struct Element {
   union {
     ElementLabel label;
     ElementButton button;
+    ElementBar bar;
 
     ElementVerticalContainer contVert;
   }
@@ -71,6 +72,24 @@ struct ElementButton {
   FuncCallVoid hover;
   FuncCallVoid click;
 }
+struct ElementBar {
+  String text;
+  String font;
+  float spacing;
+  Color textTint;
+
+  String textureBg;
+  String textureFg;
+  Color textureTint;
+
+  Rectangle bounds;
+  Vector4 textPadding;
+  Vector2 scale;
+
+  float* value;
+  float* valueMax;
+}
+
 struct ElementVerticalContainer {
   Rectangle bounds;
   Vector2 scale;
@@ -136,6 +155,36 @@ fn Element* new_button(
 
   return e;
 }
+<* Creates a new Bar element *>
+fn Element* new_bar(
+  long duration = 0,
+  String text = "",
+  String font = "font",
+  float spacing = 0,
+  Color textTint = color::WHITE,
+  String textureBg = "texture",
+  String textureFg = "texture",
+  Color textureTint = color::WHITE,
+  Rectangle bounds = {0,0,64,16},
+  Vector4 textPadding = {2,2,2,2},
+  Vector2 scale = {1,1},
+  float* value = null,
+  float* valueMax = null,
+) @export("ui_bar") {
+  Element* e = mem::new(Element);
+  e.type = BAR;
+  e.temporary     = (duration <= 0 ? false : true);
+  e.duration      = (duration <= 0 ? 0 : duration);
+  e.durationTotal = (duration <= 0 ? 0 : duration);
+  e.bar = {
+    text, font, spacing, textTint,
+    textureBg, textureFg, textureTint,
+    bounds, textPadding, scale,
+    value, valueMax,
+  };
+  return e;
+}
+
 <* Creates a new Container elememt *>
 fn Element* new_container(
   ElementType container = CONTAINER_VERT,
@@ -146,17 +195,13 @@ fn Element* new_container(
   float spacing = 0,
   String texture = "",
   Element*[] elements = {},
-) {
-  if (container != CONTAINER_VERT || container != CONTAINER_HORI) {
-    io::printfn("[ERROR] ENNOIA::UI::NEW_CONTAINER [Attempted to create a new container of a non container type]");
-    return null;
-  }
-
+) @export("ui_container") {
   Element* e = mem::new(Element);
   e.type = container;
   e.temporary     = (duration <= 0 ? false : true);
   e.duration      = (duration <= 0 ? 0 : duration);
   e.durationTotal = (duration <= 0 ? 0 : duration);
+
   
   switch (container) {
     case CONTAINER_VERT:

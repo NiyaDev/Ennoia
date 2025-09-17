@@ -52,3 +52,7 @@
 #### [9/16/25]
 - Started on Containers.
 
+#### [9/17/25]
+- Added bar UI element.
+- Started trying to redo Texture tiling.
+

@@ -152,7 +152,8 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
 fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
   Vector2[] position     = mem::new_array(Vector2, dst.len);
   Vector2[] scale        = mem::new_array(Vector2, dst.len);
-  Vector2[6][] texcoords = mem::new_array(Vector2[6], dst.len);
+  //Vector2[6][] texcoords = mem::new_array(Vector2[6], dst.len);
+  Vector4[] texcoords    = mem::new_array(Vector4, dst.len);
   for (int i; i < dst.len; i++) {
     // Calculating size on screen
     Vector2 newSize = {dst[i].w, dst[i].h};
@@ -181,7 +182,8 @@ fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
     // save all
     position[i]  = pos;
     scale[i]     = sc;
-    texcoords[i] = {topLeft, botLeft, botRight, topLeft, botRight, topRight};
+    //texcoords[i] = {topLeft, botLeft, botRight, topLeft, botRight, topRight};
+    texcoords[i] = {src[i].x / src[i].w, src[i].y / src[i].h, src[i].w / self.width, src[i].h / self.height};
   }
   
   // Color

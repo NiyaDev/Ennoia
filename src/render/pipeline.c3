@@ -30,26 +30,6 @@ struct MeshRenderInfo {
   Vector3 rotation;
 }
 
-<* Sends model info to renderpipline for rendering *>
-fn void draw_mesh(
-  String nameMesh = "cube",
-  String nameTexture = "",
-  Vector3 position = {},
-  Vector3 scale = {1,1,1},
-  Vector3 rotation = {},
-) @export("render_mesh") {
-  rp3.push({nameMesh, nameTexture, position, scale, rotation});
-}
-<* Sends texture info to renderpipeline for rendering *>
-fn void draw_texture(
-  String nameTexture = "default",
-  Rectangle dst = {0,0,-1,-1},
-  Rectangle src = {0,0,-1,-1},
-  //Vector3 rotation = {},
-  //Color tint = color::WHITE,
-) @export("render_texture") {
-  rp2.push({nameTexture, dst, src});
-}
 
 <* Renders all meshes and textures in pipelines *>
 fn void render_all() {

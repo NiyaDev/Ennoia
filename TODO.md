@@ -17,7 +17,6 @@
   - Look through and use richtext standard if it exists.
   - Input fields
   - Hover over
-  - Bar
   - Containers
     - Vertical
     - Horizontal

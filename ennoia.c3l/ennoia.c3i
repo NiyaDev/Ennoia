@@ -458,9 +458,12 @@ module ennoia::ui;
 alias Element = void;
 
 extern fn void add(String name, Element* e) @extern("ui_add");
+extern fn bool exists(String name) @extern("ui_exists");
+extern fn Element* get(String name) @extern("ui_get");
 
 extern fn Element* new_label(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color tint = color::WHITE, Vector2 position = {0,0}, Vector2 scale = {1,1}) @extern("ui_label");
-extern fn Element* new_button( String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color textTint = color::WHITE, String texture = "texture", Color[3] textureTint = {color::WHITE, color::LIGHTGRAY, color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector4 textPadding = {2,2,2,2}, Vector2 scale = {1,1}, TextAlignmentHorizontal alignHori = CENTER, TextAlignmentVertical alignVert = CENTER, bool active = true, FuncCallVoid hover = null, FuncCallVoid click = null) @extern("ui_button");
+extern fn Element* new_button(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color textTint = color::WHITE, String texture = "texture", Color[3] textureTint = {color::WHITE, color::LIGHTGRAY, color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector4 textPadding = {2,2,2,2}, Vector2 scale = {1,1}, TextAlignmentHorizontal alignHori = CENTER, TextAlignmentVertical alignVert = CENTER, bool active = true, FuncCallVoid hover = null, FuncCallVoid click = null) @extern("ui_button");
+extern fn Element* new_container(ElementType container = CONTAINER_VERT, long duration = 0, Rectangle bounds = {0,0,16,16}, Vector2 scale = {1,1}, Vector4 offset = {2,2,2,2}, float spacing = 0, String texture = "", Element*[] elements = {}) @extern("ui_container");
 
 
 module ennoia::vector;

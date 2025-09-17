@@ -357,6 +357,8 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   // Set uniforms
   ennoia::defaultShader2d.set_vec2("position", position);
   ennoia::defaultShader2d.set_vec2("scale", scale);
+  ennoia::defaultShader2d.set_vec2("texOffset", {0,0});
+  ennoia::defaultShader2d.set_vec2("texScale",  {1,1});
 
   // Check what textures are available and uses the highest priority.
   int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
@@ -371,7 +373,8 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
 //  @param 
   @require position.len == scale.len
  *>
-fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord, Texture* texture) {
+//fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord, Texture* texture) {
+fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Texture* texture) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
@@ -391,8 +394,10 @@ fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vecto
     //self.update_texcoords(&texcoord[i]);
 
     // Set uniforms
-    ennoia::defaultShader2d.set_vec2("position", position[i]);
-    ennoia::defaultShader2d.set_vec2("scale", scale[i]);
+    ennoia::defaultShader2d.set_vec2("position",  position[i]);
+    ennoia::defaultShader2d.set_vec2("scale",     scale[i]);
+    ennoia::defaultShader2d.set_vec2("texOffset", {texcoord[i].x,texcoord[i].y});
+    ennoia::defaultShader2d.set_vec2("texScale",  {texcoord[i].z,texcoord[i].w});
 
     gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
   }
