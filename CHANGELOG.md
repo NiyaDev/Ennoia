@@ -56,3 +56,6 @@
 - Added bar UI element.
 - Started trying to redo Texture tiling.
 
+#### [9/18/25]
+- Minor changes.
+
