@@ -6,6 +6,7 @@ import std::collections;
 
 
 RenderPipeline2D rp2;
+RenderPipeline2D rpf;
 RenderPipeline3D rp3;
 
 //RenderInstance entries;

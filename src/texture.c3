@@ -152,8 +152,8 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
 fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
   Vector2[] position     = mem::new_array(Vector2, dst.len);
   Vector2[] scale        = mem::new_array(Vector2, dst.len);
-  //Vector2[6][] texcoords = mem::new_array(Vector2[6], dst.len);
   Vector4[] texcoords    = mem::new_array(Vector4, dst.len);
+  bool section;
   for (int i; i < dst.len; i++) {
     // Calculating size on screen
     Vector2 newSize = {dst[i].w, dst[i].h};
@@ -182,15 +182,15 @@ fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
     // save all
     position[i]  = pos;
     scale[i]     = sc;
-    //texcoords[i] = {topLeft, botLeft, botRight, topLeft, botRight, topRight};
-    texcoords[i] = {src[i].x / src[i].w, src[i].y / src[i].h, src[i].w / self.width, src[i].h / self.height};
+    texcoords[i] = {newSrc.x / self.width, newSrc.y / self.height, newSrc.w / self.width, newSrc.h / self.height};
+    if (newSrc.w != self.width && newSrc.h != self.height) section = true;
   }
   
   // Color
   Vector4 col = color::WHITE.normalize();
   ennoia::textureMesh.update_colors({col,col,col,col,col,col});
 
-  ennoia::textureMesh.draw_2d_instanced(position, scale, texcoords, self);
+  ennoia::textureMesh.draw_2d_instanced(position, scale, texcoords, self, section);
 
   ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
   ennoia::textureMesh.update_colors({{1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}});

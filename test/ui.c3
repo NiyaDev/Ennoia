@@ -21,17 +21,20 @@ fn void test() @test {
     text:    "fug",
     texture: "bar_bg",
     bounds:  {0,100,128,32},
-    scale:   {2,2},
+    scale:   {5,5},
     click:   &testfn,
   ));
 
+  ///*
   ui::add("bar_1", ui::new_bar(
     textureBg: "bar_bg",
     textureFg: "bar_fill",
     bounds:    {0,200,128,32},
+    scale:     {3,3},
     value:     &timer,
     valueMax:  &timerLength,
   ));
+  //*/
 
   ui::add("container_1",
     ui::new_container(bounds:{200,0, 64, 640}, elements:{

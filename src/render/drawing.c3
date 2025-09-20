@@ -1,8 +1,11 @@
 
 module ennoia::render;
+import ennoia::font;
+import ennoia::localization;
 import ennoia::rectangle;
 import ennoia::texture;
 import ennoia::vector;
+import std::collections;
 
 
 <* Sends model info to renderpipline for rendering *>
@@ -15,6 +18,7 @@ fn void draw_mesh(
 ) @export("render_mesh") {
   rp3.push({nameMesh, nameTexture, position, scale, rotation});
 }
+
 <* Sends texture info to renderpipeline for rendering *>
 fn void draw_texture(
   String nameTexture = "texture",
@@ -61,37 +65,152 @@ fn void draw_texture_tiled(
         height * scale.y,
       };
       Vector2 numberOfTiles = {
-        dst.w / dstSize.x,
-        dst.h / dstSize.y,
+        (dst.w / dstSize.x)-1,
+        (dst.h / dstSize.y)-1,
       };
 
       //*
+      // Top
       rp2.push({
         nameTexture,
         {dst.x, dst.y, dstSize.x, dstSize.y},
         topleft,
       });
+      for (int i = 1; i < numberOfTiles.x; i++) {
+        rp2.push({
+          nameTexture,
+          {dst.x+(dstSize.x*i), dst.y, dstSize.x, dstSize.y},
+          top,
+        });
+      }
+      rp2.push({
+        nameTexture,
+        {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y, dstSize.x, dstSize.y},
+        topright,
+      });
       
-      //*/
-      /*
-      for (int y; y < numberOfTiles.y; y++) {
-        for (int x; x < numberOfTiles.x; x++) {
-          Rectangle src = {0,0,width,height};
-          if (x > 0 && x < numberOfTiles.x) src.x = width;
-          if (x == numberOfTiles.x) src.x = width*2;
-          if (y > 0 && y < numberOfTiles.y) src.y = height;
-          if (y == numberOfTiles.y) src.y = height*2;
-
+      // Middle
+      for (int j = 1; j < numberOfTiles.y; j++) {
+        rp2.push({
+          nameTexture,
+          {dst.x, dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
+          midleft,
+        });
+        for (int i = 1; i < numberOfTiles.x; i++) {
           rp2.push({
             nameTexture,
-            dst + (Rectangle){x*dstSize.x, y*dstSize.y, dstSize.x, dstSize.y},
-            src,
+            {dst.x+(dstSize.x*i), dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
+            mid,
           });
         }
+        rp2.push({
+          nameTexture,
+          {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
+          midright,
+        });
       }
-      */
+      
+      // Bottom
+      //*
+      rp2.push({
+        nameTexture,
+        {dst.x, dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
+        botleft,
+      });
+      for (int i = 1; i < numberOfTiles.x; i++) {
+        rp2.push({
+          nameTexture,
+          {dst.x+(dstSize.x*i), dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
+          bot,
+        });
+      }
+      rp2.push({
+        nameTexture,
+        {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
+        botright,
+      });
     case THREE_ONE:
     case ONE_THREE:
   }
+}
+
+<* Sends texture info for tiled textures *>
+fn void draw_font(
+  String nameFont,
+  String textIn,
+  Vector2 position = {0,0},
+  Vector2 scale = {1,1},
+  float spacing = 0,
+) {
+  Font* font = ennoia::fonts.get_ref(nameFont)!!;
+  String text = textIn;
+
+  float char_x = 0;
+  float char_y = 0;
+  for (int i; i < text.len; i++) {
+    // Checks for newline written out
+    if (text[i] == '\\' && text[i+1] == 'n') {
+      i++;
+      char_x = 0;
+      char_y++;
+      continue;
+    }
+    // Checks for newline character
+    if (text[i] == '\n') {
+      char_x = 0;
+      char_y++;
+      continue;
+    }
+    // Checks for space
+    if (text[i] == ' ') {
+      char_x++;
+      continue;
+    }
+    // Checks for localization
+    if (text[i] == '@' && text[i+1] == '{') {
+      i += 2;
+      List{char} localName;
+      for (int j; j < text.len - i; j++) {
+        if (text[i+j] != '}') {
+          localName.push(text[i+j]);
+        } else {
+          String local = (String)localName.to_tarray();
+          String localReplace = string::tformat("@{%s}",local);
+          if (localization::contains(local)) {
+            text = text.treplace(localReplace, localization::get(local));
+          }
+          break;
+        }
+      }
+      i -= 2;
+    }
+    Vector2 space;
+    if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
+    if (char_y > 0) space.y = ((spacing * scale.y) * char_y);
+    render::draw_texture(
+      nameFont,
+      dst: {
+        position.x + (char_x * (font.dim.x * scale.x) / 1) + space.x,
+        position.y + (char_y * (font.dim.y * scale.y) / 1) + space.y,
+        font.dim.x * scale.x,
+        font.dim.y * scale.y,
+      },
+      src: font.rects[text[i]]!!,
+    );
+    /*
+    self.atlas.draw(
+      dst:{
+        position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
+        position.y + (char_y * (self.dim.y * scale.y) / 1) + space.y,
+        self.dim.x * scale.x,
+        self.dim.y * scale.y,
+      },
+      src:self.rects[text[i]]!!,
+      tint: tint,
+    );
+    */
+    char_x++;
+  }
+
 }
 

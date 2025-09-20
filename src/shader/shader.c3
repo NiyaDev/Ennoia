@@ -96,7 +96,7 @@ const char[] DEFAULT_VERTEX_2D =
   "  gl_Position = scaled + pixel_pos;\n"
   "  TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
   "  Color = aColor;"
-  "  fragUV = aTexCoord * texScale + texOffset;\n"
+  "  fragUV = (aTexCoord * texScale) + texOffset;\n"
   "}\n";
 const char[] DEFAULT_FRAGMENT_2D = 
   "#version 330 core\n"

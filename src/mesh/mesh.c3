@@ -374,35 +374,26 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   @require position.len == scale.len
  *>
 //fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord, Texture* texture) {
-fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Texture* texture) {
+fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Texture* texture, bool section) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
-
-  // Check what textures are available and uses the highest priority.
-  //int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
-  //gl::bind_texture(gl::TEXTURE_2D, textureID);
 
   gl::disable(gl::DEPTH_TEST);
   gl::bind_vertex_array(self.vao);
   gl::bind_texture(gl::TEXTURE_2D, texture.id);
 
   // Loop
-  for (int i; i < position.len; i++) {
-    // Check what textures are available and uses the highest priority.
-    //int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
-    //gl::bind_texture(gl::TEXTURE_2D, texture[i].id);
-    //self.update_texcoords(&texcoord[i]);
-
-    // Set uniforms
+  for (int i; i < position.len; i++) {    // Set uniforms
     ennoia::defaultShader2d.set_vec2("position",  position[i]);
     ennoia::defaultShader2d.set_vec2("scale",     scale[i]);
-    ennoia::defaultShader2d.set_vec2("texOffset", {texcoord[i].x,texcoord[i].y});
+    float yOffset = texcoord[i].y;
+    if (section) yOffset = 0.666666666667 - yOffset;
+    ennoia::defaultShader2d.set_vec2("texOffset", {texcoord[i].x,yOffset});
     ennoia::defaultShader2d.set_vec2("texScale",  {texcoord[i].z,texcoord[i].w});
 
     gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
   }
 
-  //ennoia::textureMesh.update_texcoords({{0,1}, {0,0}, {1,0}, {0,1}, {1,0}, {1,1}});
   gl::enable(gl::DEPTH_TEST);
 }
 

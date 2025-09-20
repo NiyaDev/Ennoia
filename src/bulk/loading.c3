@@ -104,7 +104,10 @@ fn Font load_font(String filepath, String dataname, bool send = true) @export("b
 
   Font font = font::load_from_mem(data[2..], {(float)data[0], (float)data[1]});
 
-  if (send) ennoia::fonts.set(dataname, font);
+  if (send) {
+    ennoia::fonts.set(dataname, font);
+    ennoia::textures.set(dataname, font.atlas);
+  }
 
   return font;
 }

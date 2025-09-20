@@ -297,6 +297,18 @@ fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale 
     Vector2 space;
     if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
     if (char_y > 0) space.y = ((spacing * scale.y) * char_y);
+    /*
+    render::draw_texture(
+      dst: {
+        position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
+        position.y + (char_y * (self.dim.y * scale.y) / 1) + space.y,
+        self.dim.x * scale.x,
+        self.dim.y * scale.y,
+      },
+      src: self.rects[text[i]]!!,
+    );
+    */
+    /*
     self.atlas.draw(
       dst:{
         position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
@@ -307,6 +319,7 @@ fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale 
       src:self.rects[text[i]]!!,
       tint: tint,
     );
+    */
     char_x++;
   }
 }

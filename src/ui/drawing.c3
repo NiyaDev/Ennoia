@@ -47,7 +47,8 @@ fn void draw() {
         }
 
         // Draw text
-        font.draw(e.button.text, textPosition, e.button.scale, e.button.spacing, e.button.textTint);
+        //font.draw(e.button.text, textPosition, e.button.scale, e.button.spacing, e.button.textTint);
+        render::draw_font(e.button.font, e.button.text, textPosition, e.button.scale, e.button.spacing);
 
         // Activate when let go of
         if (e.button.active) {
@@ -84,16 +85,18 @@ fn void ElementBar.draw(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffs
   // Draw text
 
   // Background
-  render::draw_texture(
+  render::draw_texture_tiled(
     self.textureBg,
     self.bounds,
+    self.scale
   );
 
   // Foreground
   float percentage = *(self.value) / *(self.valueMax);
-  render::draw_texture(
+  render::draw_texture_tiled(
     self.textureFg,
     self.bounds * (Rectangle){1,1,percentage,1},
+    self.scale
   );
   
 }
