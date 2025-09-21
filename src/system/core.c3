@@ -66,72 +66,84 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   bulk::load_all("resources/default");
   textureMesh = mesh::gen_quad();
 
-  models.set("cube",mesh::gen_cube().to_model());
+  meshes.set("tri", mesh::gen_tri(1,1));
+  meshes.set("cube", mesh::gen_cube(0.5,0.5,0.5));
 
   // Keybinds
   bulk::load_all_keybinds("resources/keybinds");
 }
 <* Cleans up resources *>
 fn void clean() @export("clean") {
+  // Destroy window, OpenGL context, and event structure
   sdl3::destroy_window(window);
   window = null;
   sdl3::gl_destroy_context(glcontext);
   glcontext = null;
   event = {};
 
+  // Clean up mesh used for textures
   textureMesh.clean();
 
+  // Clean up timing variables
   deltaTime = 0;
   lastFrame = 0;
   forceClose = false;
 
+  // Clean up shaders
   defaultShader2d.clean();
   defaultShader3d.clean();
 
+  // Clean up keybindings
   keybinds.clear();
   keyqueue.clear();
 
+  // Clean up mouse controls
   mousePosition = {};
   mouseButtons = {};
   mouseButtonsHeld = {};
   mouseButtonsUp = {};
   scrollwheel = 0;
 
+  // Clean up options ans localization
   options.clear();
   localization.clear();
 
-  textures.@each(; String key, Texture val) {
-    val.clean();
-  };
+  // Clean up Textures
+  textures.@each(; String key, Texture val) { val.clean(); };
   textures.clear();
 
-  fonts.@each(; String key, Font val) {
-    val.clean();
-  };
+  // Clean up fonts
+  fonts.@each(; String key, Font val) { val.clean(); };
   fonts.clear();
 
-  models.@each(; String key, Model val) {
-    val.clean();
-  };
-  models.clear();
+  // Clean up Meshes
+  meshes.@each(; String key, Mesh val) { val.clean(); };
+  meshes.clear();
   
-  shaders.@each(; String key, Shader val) {
-    val.clean();
-  };
+  // Clean up shaders
+  shaders.@each(; String key, Shader val) { val.clean(); };
   shaders.clear();
 
+  // Clean up UI handler
   ui::clean();
 
+  // Clean up renderbuffers
   render::clean();
+
+  // Quit SDL3
   sdl3::quit();
 }
 <* Checks if the window should close and updating deltatime *>
 fn bool window_should_close() @export("windowshouldclose") {
+  // Calculate deltaTime
   double currentFrame = (double)sdl3::get_ticks() / 1000;
   deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame;
 
+  // Update keybinds
   keybinds::update();
+
+  // Poll event handler
   while (sdl3::poll_event(&event)) {
     switch (event.type) {
       case QUIT: return true;
@@ -169,11 +181,7 @@ fn bool window_should_close() @export("windowshouldclose") {
   }
 
   // Default exit button
-  if (keybinds.has_key("quit")) {
-    if (keybinds::pressed("quit")) {
-      forceClose = true;
-    }
-  }
+  if (keybinds.has_key("quit") && keybinds::pressed("quit")) forceClose = true;
 
   return forceClose;
 }

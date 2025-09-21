@@ -63,3 +63,14 @@
 - Finished Texture tiling.
 - Next session *HAS* to be me cleaning everything up...
 
+#### [9/21/25]
+- Cleaned up mesh.c3
+  - Seperated mesh constants into file.
+  - Removed Models completely and changed all references to meshes.
+- Cleaned up texture.c3
+  - Seperated draing functions into new file.
+  - Removed draw_tiled.
+- Fixed the magic number issue in drawing textures.
+  - Turns out it was the percentage the section was of the total texture height.
+- Fixed memory leak with UI elements being added over each other.
+

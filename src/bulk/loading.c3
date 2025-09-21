@@ -1,6 +1,5 @@
 
 module ennoia::bulk;
-import std::io;
 import ennoia::texture;
 import ennoia::font;
 import ennoia::mesh;
@@ -9,6 +8,8 @@ import ennoia::keybinds;
 import ennoia::options;
 import ennoia::localization;
 import ennoia::yaml;
+import std::io;
+import std::collections;
 
 
 const char VERSION_MAJOR @export("bulk_majorversion") = 3;
@@ -129,8 +130,8 @@ fn void load_all_fonts(String filepath) @export("bulk_allfont") {
   @param dataname: "Name of data inside bulk file"
   @require dataname != ""
  *>
-fn Model load_model(String filepath, String dataname, bool getMaterial = true, bool send = true) @export("bulk_model") {
-  Model output;
+fn HashMap{String, Mesh} load_model(String filepath, String dataname, bool getMaterial = true, bool send = true) @export("bulk_model") {
+  HashMap{String, Mesh} output;
 
   char[] data = load(filepath,dataname);
   defer free(data);
@@ -177,7 +178,11 @@ fn Model load_model(String filepath, String dataname, bool getMaterial = true, b
     output = mesh::load_from_mem((String)data);
   }
 
-  if (send) ennoia::models.set(dataname, output);
+  if (send) {
+    output.@each(; String key, Mesh val) {
+      ennoia::meshes.set(dataname, val);
+    };
+  }
 
   return output;
 

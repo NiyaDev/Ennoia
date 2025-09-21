@@ -37,7 +37,6 @@
   - Min/Max
 
 ### Fixes
-- Remove models from framework. Replace with just pure meshes.
 - Move over to using proper OpenGL bindings.
 - Texture tiling issues.
 - Tapping shift while holding direction keeps it down when you let go.

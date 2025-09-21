@@ -28,7 +28,6 @@ options:
 
 default:
   font:    [FONT, 24,24, resources/font_2.png]
-  font2:   [FONT, 24,24, resources/font_test.png]
   texture: [TEXTURE, resources/def_tex.png]
   
 000:

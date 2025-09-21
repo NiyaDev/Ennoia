@@ -6,6 +6,10 @@ import std::io;
 <* Adds new UI element to handler *>
 fn void add(String name, Element* e) @export("ui_add") {
   if (e == null) return;
+  if (exists(name)) {
+    free(e);
+    return;
+  }
 
   if (ennoia::uiElements.has_key(name)) {
     io::printfn("[WARNING] - ENNOIA::UI::ADD [Attempted to add ui element that already exists.]");

@@ -94,7 +94,7 @@ extern fn Texture load_texture(String filepath, String dataname, bool send = tru
 extern fn void    load_all_textures(String filepath) @extern("bulk_alltextures");
 extern fn Font    load_font(String filepath, String dataname, bool send = true) @extern("bulk_font");
 extern fn void    load_all_font(String filepath) @extern("bulk_allfont");
-extern fn Model   load_model(String filepath, String dataname, bool send = true) @extern("bulk_model");
+extern fn HashMap{String, Mesh} load_model(String filepath, String dataname, bool send = true) @extern("bulk_model");
 extern fn void    load_all_models(String filepath) @extern("bulk_allmodel");
 extern fn Shader  load_shader(String filepath, String dataname, bool send = true) @extern("bulk_shader");
 extern fn void    load_all_shaders(String filepath) @extern("bulk_allshader");
@@ -294,7 +294,6 @@ struct Mesh {
   String materialName;
   Texture* texture;
 }
-alias Model = HashMap{String, Mesh};
 
 struct Vertex {
   Vector3 position;
@@ -304,15 +303,13 @@ struct Vertex {
 }
 alias Indices = uint[3];
 
-extern fn Model load(String filename, bool getMaterial = true) @extern("mesh_load");
-extern fn Model load_from_mem(String data) @extern("mesh_loadfrommem");
+extern fn HashMap{String, Mesh} load_from_mem(String data) @extern("mesh_loadfrommem");
 extern fn void Mesh.clean(&self) @extern("mesh_cleanmesh");
-extern fn void Model.clean(&self) @extern("mesh_cleanmodel");
 
 extern fn Mesh new(Vertex[] vertices = {}) @extern("mesh_new");
-extern fn Mesh gen_triangle() @extern("mesh_gentri");
+extern fn Mesh gen_tri(float width, float height) @extern("mesh_gentri");
 extern fn Mesh gen_quad() @extern("mesh_genquad");
-extern fn Mesh gen_cube() @extern("mesh_gencube");
+extern fn Mesh gen_cube(float width, float height, float depth) @extern("mesh_gencube");
 
 extern fn void Mesh.upload(&self) @extern("mesh_upload");
 extern fn void Mesh.delete(&self) @extern("mesh_delete");
@@ -454,8 +451,32 @@ extern fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle
 
 
 module ennoia::ui;
+import ennoia::color;
+import ennoia::rectangle;
+import ennoia::vector;
 
 alias Element = void;
+alias FuncCallVoid = fn void();
+enum ElementType {
+  EMPTY,
+
+  LABEL,
+  BUTTON,
+  BAR,
+
+  CONTAINER_VERT,
+  CONTAINER_HORI,
+}
+enum TextAlignmentHorizontal {
+  RIGHT,
+  CENTER,
+  LEFT,
+}
+enum TextAlignmentVertical {
+  TOP,
+  CENTER,
+  BOTTOM,
+}
 
 extern fn void add(String name, Element* e) @extern("ui_add");
 extern fn bool exists(String name) @extern("ui_exists");

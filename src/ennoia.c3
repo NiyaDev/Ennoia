@@ -38,7 +38,7 @@ String language = "english";
 
 HashMap{String, Texture}  textures;
 HashMap{String, Font}     fonts;
-HashMap{String, Model}    models;
+HashMap{String, Mesh}     meshes;
 HashMap{String, Shader}   shaders;
 HashMap{String, Element*} uiElements;
 

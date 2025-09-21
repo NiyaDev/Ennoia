@@ -54,7 +54,7 @@ fn void render_all() {
         index++;
       }
     }
-    ennoia::models[entries[i]]!!.draw_instanced(arr);
+    ennoia::meshes[entries[i]]!!.draw_instanced(arr, (rp3[i].nameTexture != "" ? ennoia::textures.get_ref(rp3[i].nameTexture)!! : null));
     free(arr);
   }
   free(entries.entries);

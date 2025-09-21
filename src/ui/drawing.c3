@@ -72,12 +72,12 @@ fn void draw() {
 
 <* Draw label *>
 fn void ElementLabel.draw(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffset = {1,1}) {
-  ennoia::fonts[self.font]!!.draw(
+  render::draw_font(
+    self.font,
     self.text,
     self.position + positionOffset,
     self.scale * scaleOffset,
     self.spacing,
-    self.tint,
   );
 }
 <* Draw Bar *>

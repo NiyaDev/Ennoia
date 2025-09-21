@@ -18,10 +18,31 @@ fn void test() @test {
   ui::add("label_2", ui::new_label("TESTIFICATE", 100));
   
   ui::add("button_1", ui::new_button(
-    text:    "fug",
+    text:    "abcdefghijklmnopqrstuvwxyz",
     texture: "bar_bg",
-    bounds:  {0,100,128,32},
-    scale:   {5,5},
+    bounds:  {400,100,128,32},
+    scale:   {1,1},
+    click:   &testfn,
+  ));
+  ui::add("button_2", ui::new_button(
+    text:    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    texture: "bar_bg",
+    bounds:  {400,200,128,32},
+    scale:   {1,1},
+    click:   &testfn,
+  ));
+  ui::add("button_3", ui::new_button(
+    text:    "!@#$%^&*()-_=+[]\\|`~;:'\"",
+    texture: "bar_bg",
+    bounds:  {400,300,128,32},
+    scale:   {1,1},
+    click:   &testfn,
+  ));
+  ui::add("button_4", ui::new_button(
+    text:    ",.<>/?0123456789",
+    texture: "bar_bg",
+    bounds:  {400,400,128,32},
+    scale:   {1,1},
     click:   &testfn,
   ));
 

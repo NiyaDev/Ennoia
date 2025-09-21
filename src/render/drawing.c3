@@ -197,18 +197,6 @@ fn void draw_font(
       },
       src: font.rects[text[i]]!!,
     );
-    /*
-    self.atlas.draw(
-      dst:{
-        position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
-        position.y + (char_y * (self.dim.y * scale.y) / 1) + space.y,
-        self.dim.x * scale.x,
-        self.dim.y * scale.y,
-      },
-      src:self.rects[text[i]]!!,
-      tint: tint,
-    );
-    */
     char_x++;
   }
 

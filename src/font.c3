@@ -97,14 +97,14 @@ fn Font load(String filename, Vector2 size) @export("font_load") {
   output.rects.set(']', {x * 15, y * 2, x, y});
   output.rects.set('{', {x * 16, y * 2, x, y});
   output.rects.set('}', {x * 17, y * 2, x, y});
-  output.rects.set('\\', {x * 18, y * 2, x, y});
+  output.rects.set('\\',{x * 18, y * 2, x, y});
   output.rects.set('|', {x * 19, y * 2, x, y});
   output.rects.set('`', {x * 20, y * 2, x, y});
   output.rects.set('~', {x * 21, y * 2, x, y});
   output.rects.set(';', {x * 22, y * 2, x, y});
   output.rects.set(':', {x * 23, y * 2, x, y});
-  output.rects.set('\'', {x * 24, y * 2, x, y});
-  output.rects.set('\"', {x * 25, y * 2, x, y});
+  output.rects.set('\'',{x * 24, y * 2, x, y});
+  output.rects.set('\"',{x * 25, y * 2, x, y});
 
   output.rects.set(',', {x *  0, y * 3, x, y});
   output.rects.set('.', {x *  1, y * 3, x, y});
@@ -241,86 +241,5 @@ fn Font load_from_mem(char[] data, Vector2 size) @export("font_loadfrommem") {
 fn void Font.clean(&self) @export("font_clean") {
   self.atlas.clean();
   self.rects.free();
-}
-
-<* Draws font to screen
-  @param textIn: "Text to draw in font"
-  @require textIn != ""
-  @param position: "Position on screen to draw"
-  @param scale: "Multiplier to size of font"
-  @require scale.x > 0.0
-  @require scale.y > 0.0
-  @param spacing: "Space inbetween chaarcters"
- *>
-fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color tint = color::WHITE) @export("font_draw") {
-  String text = textIn;
-
-  float char_x = 0;
-  float char_y = 0;
-  for (int i; i < text.len; i++) {
-    // Checks for newline written out
-    if (text[i] == '\\' && text[i+1] == 'n') {
-      i++;
-      char_x = 0;
-      char_y++;
-      continue;
-    }
-    // Checks for newline character
-    if (text[i] == '\n') {
-      char_x = 0;
-      char_y++;
-      continue;
-    }
-    // Checks for space
-    if (text[i] == ' ') {
-      char_x++;
-      continue;
-    }
-    // Checks for localization
-    if (text[i] == '@' && text[i+1] == '{') {
-      i += 2;
-      List{char} localName;
-      for (int j; j < text.len - i; j++) {
-        if (text[i+j] != '}') {
-          localName.push(text[i+j]);
-        } else {
-          String local = (String)localName.to_tarray();
-          String localReplace = string::tformat("@{%s}",local);
-          if (localization::contains(local)) {
-            text = text.treplace(localReplace, localization::get(local));
-          }
-          break;
-        }
-      }
-      i -= 2;
-    }
-    Vector2 space;
-    if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
-    if (char_y > 0) space.y = ((spacing * scale.y) * char_y);
-    /*
-    render::draw_texture(
-      dst: {
-        position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
-        position.y + (char_y * (self.dim.y * scale.y) / 1) + space.y,
-        self.dim.x * scale.x,
-        self.dim.y * scale.y,
-      },
-      src: self.rects[text[i]]!!,
-    );
-    */
-    /*
-    self.atlas.draw(
-      dst:{
-        position.x + (char_x * (self.dim.x * scale.x) / 1) + space.x,
-        position.y + (char_y * (self.dim.y * scale.y) / 1) + space.y,
-        self.dim.x * scale.x,
-        self.dim.y * scale.y,
-      },
-      src:self.rects[text[i]]!!,
-      tint: tint,
-    );
-    */
-    char_x++;
-  }
 }
 

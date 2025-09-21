@@ -16,7 +16,6 @@ struct Mesh {
   String materialName;
   Texture* texture;
 }
-alias Model = HashMap{String, Mesh};
 
 struct Vertex {
   Vector3 position;
@@ -33,126 +32,13 @@ const void* VERTEX_NORMAL   = (void*)(Vector3.sizeof);
 const void* VERTEX_TEXCOORD = (void*)((long)VERTEX_NORMAL * 2);
 const void* VERTEX_COLOR    = (void*)((long)VERTEX_TEXCOORD + Vector2.sizeof);
 
-const Vertex[] BASIC_TRI = {
-  {{ 0.0,  0.5, 0.0}, {0,0,1}, {1,1}, {0,0,0,1}},
-  {{-0.5, -0.5, 0.0}, {0,0,1}, {1,0}, {0,0,0,1}},
-  {{ 0.5, -0.5, 0.0}, {0,0,1}, {0,1}, {0,0,0,1}},
-};
-const Vertex[] BASIC_QUAD = {
-  {{-1, 1, 0}, {}, {0,1}, {0,0,0,0}},
-  {{-1,-1, 0}, {}, {0,0}, {0,0,0,0}},
-  {{ 1,-1, 0}, {}, {1,0}, {0,0,0,0}},
 
-  {{-1, 1, 0}, {}, {0,1}, {0,0,0,0}},
-  {{ 1,-1, 0}, {}, {1,0}, {0,0,0,0}},
-  {{ 1, 1, 0}, {}, {1,1}, {0,0,0,0}},
-};
-const Vertex[] BASIC_CUBE = {
-  // Back
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,0},{0,0,0,1}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{-0.5,  0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,0},{0,0,0,1}},
-  // Front
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{-0.5,  0.5,  0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
-  // Left
-  {{-0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{-0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
-  {{-0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  // Right
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  // Bottom
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{ 0.5, -0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{ 0.5, -0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{-0.5, -0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
-  {{-0.5, -0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  // Top
-  {{-0.5,  0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-  {{ 0.5,  0.5, -0.5},{0,0,1},{1,1},{0,0,0,1}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{ 0.5,  0.5,  0.5},{0,0,1},{1,0},{0,0,0,1}},
-  {{-0.5,  0.5,  0.5},{0,0,1},{0,0},{0,0,0,1}},
-  {{-0.5,  0.5, -0.5},{0,0,1},{0,1},{0,0,0,1}},
-};
-
-
-<* Loads Mesh from .obj file
-  @param filename: "Name of .obj file to load"
-  @require filename != ""
- *>
-fn Model load(String filename, bool getMaterial = true) @export("mesh_load") {
-  Model output;
-  String data = (String)file::load_temp(filename)!!;
-  String[] mtl;
-
-  // Create base directory path
-  String[] pathSplit = filename.tsplit("/");
-  String dir = filename.trim(pathSplit[pathSplit.len-1]);
-
-  if (getMaterial) {
-    // Get material name and load file
-    String[] split = data.tsplit("\n");
-    for (int i; i < split.len; i++) {
-      String[] splitTwo = split[i].tsplit(" ");
-      if (splitTwo[0] == "mtllib") {
-        String path = string::tformat("%s%s",dir,splitTwo[1]);
-        mtl = ((String)file::load_temp(path)!!).tsplit("\n");
-        break;
-      }
-    }
-    
-    // Load Mesh
-    output = load_from_mem(data);
-
-    // Iterate through material file to find material and load data
-    output.@each(; String key, Mesh val) {
-      bool myMat = false;
-      for (int i; i < mtl.len; i++) {
-        String[] line = mtl[i].tsplit(" ");
-        switch (line[0]) {
-          case "newmtl": // Material definition
-            if (line[1] == val.materialName) {
-              myMat = true;
-            } else { myMat = false; }
-          case "map_Kd": // Texture name
-            if (myMat) {
-              String texturePath = string::tformat("%s%s", dir, line[1]);
-              Mesh* temp = output.get_ref(key)!!;
-              temp.texture = mem::new(Texture);
-              *temp.texture = texture::load(texturePath);
-            }
-        }
-      }
-    };
-  } else {
-    output = load_from_mem(data);
-  }
-
-  return output;
-}
 <* Loads Mesh from data
   @param data: "Data to make into mesh"
   @require data.len > 0
  *>
-fn Model load_from_mem(String data) @export("mesh_loadfrommem") {
-  Model list;
+fn HashMap{String, Mesh} load_from_mem(String data) @export("mesh_loadfrommem") {
+  HashMap{String, Mesh} list;
   String[] lines = data.tsplit("\n");
 
   String lastMember = "";
@@ -186,7 +72,6 @@ fn Model load_from_mem(String data) @export("mesh_loadfrommem") {
           temp.indices = indices.to_array(mem);
           indices.free();
           lastIndices = 0;
-          //temp.textures = mem::new_array(Texture*, 1);
           temp.upload();
         }
         // Create new mesh
@@ -238,6 +123,7 @@ fn Model load_from_mem(String data) @export("mesh_loadfrommem") {
 
   return list;
 }
+
 <* Cleans up mesh data *>
 fn void Mesh.clean(&self) @export("mesh_cleanmesh") {
   self.delete();
@@ -250,14 +136,6 @@ fn void Mesh.clean(&self) @export("mesh_cleanmesh") {
   }
   
   self.shader.clean();
-}
-<* Cleans up model data *>
-fn void Model.clean(&self) @export("mesh_cleanmodel") {
-  self.@each(; String key, Mesh val) {
-    Mesh* temp = self.get_ref(key)!!;
-    temp.clean();
-  };
-  self.free();
 }
 
 <* Uploads mesh data to GPU *>
@@ -320,7 +198,7 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
 <* Draws Mesh multiple times with different matrices
   @param mats: "Array of Matrixes defining the location of each mesh instance"
  *>
-fn void Mesh.draw_instanced(&self, Matrix[] mats) {
+fn void Mesh.draw_instanced(&self, Matrix[] mats, Texture* texture = null) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader3d.use());
 
@@ -328,7 +206,7 @@ fn void Mesh.draw_instanced(&self, Matrix[] mats) {
   ennoia::defaultShader3d.set_mat4x4("view", camera::get_matrix());
 
   // Check what textures are available and uses the highest priority.
-  int textureID = ((self.texture != null) ? self.texture.id : 0);
+  int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
   gl::bind_texture(gl::TEXTURE_2D, textureID);
 
   gl::bind_vertex_array(self.vao);
@@ -374,7 +252,7 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   @require position.len == scale.len
  *>
 //fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord, Texture* texture) {
-fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Texture* texture, bool section) {
+fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Texture* texture) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
@@ -386,42 +264,13 @@ fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vecto
   for (int i; i < position.len; i++) {    // Set uniforms
     ennoia::defaultShader2d.set_vec2("position",  position[i]);
     ennoia::defaultShader2d.set_vec2("scale",     scale[i]);
-    float yOffset = texcoord[i].y;
-    if (section) yOffset = 0.666666666667 - yOffset;
-    ennoia::defaultShader2d.set_vec2("texOffset", {texcoord[i].x,yOffset});
+    ennoia::defaultShader2d.set_vec2("texOffset", {texcoord[i].x,(1 - texcoord[i].w) - texcoord[i].y});
     ennoia::defaultShader2d.set_vec2("texScale",  {texcoord[i].z,texcoord[i].w});
 
     gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
   }
 
   gl::enable(gl::DEPTH_TEST);
-}
-
-<* Draws all contained meshes
-  @param position: "Position in space to draw meshes. Default is {0,0,0}."
-  @param scale:    "Scale to draw meshes at. Default is {1,1,1}."
-  @param rotation: "Rotation to apply to meshes. Default is {0,0,0}."
- *>
-fn void Model.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) {
-  self.@each(; String key, Mesh val) {
-    val.draw(position, scale, rotation, (texture != null) ? texture : null);
-  };
-}
-<* Draws all contained meshes multiple times
-  @param mats: "Array of Matrixes defining the location of each mesh instance"
- *>
-fn void Model.draw_instanced(&self, Matrix[] mats) {
-  self.@each(; String key, Mesh val) {
-    val.draw_instanced(mats);
-  };
-}
-
-<* Create Model from single mesh *>
-fn Model Mesh.to_model(&self) @export("mesh_tomodel") {
-  Model output;
-  output.set("mesh_1", *self);
-
-  return output;
 }
 
 <* Prints info on vertex *>
