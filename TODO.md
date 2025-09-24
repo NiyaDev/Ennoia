@@ -26,6 +26,7 @@
 - Bulk
 - Meshes
   - Render pipeline improvements
+    - Have pipeline remove duplicates
   - Culling?
   - Plane generation
 - Debug logging system
@@ -38,7 +39,6 @@
 
 ### Fixes
 - Move over to using proper OpenGL bindings.
-- Texture tiling issues.
 - Tapping shift while holding direction keeps it down when you let go.
 - Confirm matrix functions work
 - mesh::new doesn't use input vertices and instead just returns a triangle.

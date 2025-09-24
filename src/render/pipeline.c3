@@ -22,7 +22,7 @@ struct TextureRenderInfo {
   Rectangle dst;
   Rectangle src;
   //Vector3 rotation;
-  //Color tint;
+  Color tint;
 }
 struct MeshRenderInfo {
   String nameMesh, nameTexture;
@@ -74,17 +74,20 @@ fn void render_all() {
     }
     Rectangle[] dst = mem::new_array(Rectangle, count);
     Rectangle[] src = mem::new_array(Rectangle, count);
+    Color[] tint    = mem::new_array(Color,     count);
     usz index;
     for (int j; j < rp2.len(); j++) {
       if (entries2[i] == rp2[j].nameTexture) {
-        dst[index] = rp2[j].dst;
-        src[index] = rp2[j].src;
+        dst[index]  = rp2[j].dst;
+        src[index]  = rp2[j].src;
+        tint[index] = rp2[j].tint;
         index++;
       }
     }
-    ennoia::textures[entries2[i]]!!.draw_instanced(dst, src);
+    ennoia::textures[entries2[i]]!!.draw_instanced(dst, src, tint);
     free(dst);
     free(src);
+    free(tint);
   }
   free(entries2.entries);
   rp2.clear();

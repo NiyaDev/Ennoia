@@ -1,5 +1,6 @@
 
 module ennoia::render;
+import ennoia::color;
 import ennoia::font;
 import ennoia::localization;
 import ennoia::rectangle;
@@ -25,9 +26,9 @@ fn void draw_texture(
   Rectangle dst = {0,0,-1,-1},
   Rectangle src = {0,0,-1,-1},
   //Vector3 rotation = {},
-  //Color tint = color::WHITE,
+  Color tint = color::WHITE,
 ) @export("render_texture") {
-  rp2.push({nameTexture, dst, src});
+  rp2.push({nameTexture, dst, src, tint});
 }
 <* Sends texture info for tiled textures *>
 fn void draw_texture_tiled(
@@ -35,6 +36,7 @@ fn void draw_texture_tiled(
   Rectangle dst = {0,0,-1,-1},
   Vector2 scale = {1,1},
   TilingLayout layout = THREE_THREE,
+  Color tint = color::WHITE,
 ) @export("render_texture_tiled") {
   switch (layout) {
     case THREE_THREE:
@@ -75,18 +77,21 @@ fn void draw_texture_tiled(
         nameTexture,
         {dst.x, dst.y, dstSize.x, dstSize.y},
         topleft,
+        tint,
       });
       for (int i = 1; i < numberOfTiles.x; i++) {
         rp2.push({
           nameTexture,
           {dst.x+(dstSize.x*i), dst.y, dstSize.x, dstSize.y},
           top,
+          tint,
         });
       }
       rp2.push({
         nameTexture,
         {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y, dstSize.x, dstSize.y},
         topright,
+        tint,
       });
       
       // Middle
@@ -95,18 +100,21 @@ fn void draw_texture_tiled(
           nameTexture,
           {dst.x, dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
           midleft,
+          tint,
         });
         for (int i = 1; i < numberOfTiles.x; i++) {
           rp2.push({
             nameTexture,
             {dst.x+(dstSize.x*i), dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
             mid,
+          tint,
           });
         }
         rp2.push({
           nameTexture,
           {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
           midright,
+          tint,
         });
       }
       
@@ -116,18 +124,21 @@ fn void draw_texture_tiled(
         nameTexture,
         {dst.x, dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
         botleft,
+        tint,
       });
       for (int i = 1; i < numberOfTiles.x; i++) {
         rp2.push({
           nameTexture,
           {dst.x+(dstSize.x*i), dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
           bot,
+          tint,
         });
       }
       rp2.push({
         nameTexture,
         {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
         botright,
+        tint,
       });
     case THREE_ONE:
     case ONE_THREE:
@@ -141,6 +152,7 @@ fn void draw_font(
   Vector2 position = {0,0},
   Vector2 scale = {1,1},
   float spacing = 0,
+  Color tint = color::WHITE,
 ) {
   Font* font = ennoia::fonts.get_ref(nameFont)!!;
   String text = textIn;
@@ -196,6 +208,7 @@ fn void draw_font(
         font.dim.y * scale.y,
       },
       src: font.rects[text[i]]!!,
+      tint: tint,
     );
     char_x++;
   }

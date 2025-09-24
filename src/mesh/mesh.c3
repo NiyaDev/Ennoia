@@ -252,7 +252,7 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   @require position.len == scale.len
  *>
 //fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord, Texture* texture) {
-fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Texture* texture) {
+fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Color[] tint, Texture* texture) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
@@ -266,6 +266,7 @@ fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vecto
     ennoia::defaultShader2d.set_vec2("scale",     scale[i]);
     ennoia::defaultShader2d.set_vec2("texOffset", {texcoord[i].x,(1 - texcoord[i].w) - texcoord[i].y});
     ennoia::defaultShader2d.set_vec2("texScale",  {texcoord[i].z,texcoord[i].w});
+    ennoia::defaultShader2d.set_vec4("texColor",  tint[i].normalize());
 
     gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
   }

@@ -36,6 +36,16 @@ fn void Shader.set_vec2(&self, String name, Vector2 v2) @export("shader_setv2") 
     gl::program_uniform_2f(self.id, loc, v2.x, v2.y);
   }
 }
+<* Sets vector4 uniform value *>
+fn void Shader.set_vec4(&self, String name, Vector4 v4) @export("shader_setv4") {
+  if (self.locs.has_key(name)) {
+    gl::program_uniform_4f(self.id, self.locs[name]!!, v4.x, v4.y, v4.z, v4.w);
+  } else {
+    uint loc = gl::get_uniform_location(self.id, name.zstr_tcopy());
+    self.locs.set(name, loc);
+    gl::program_uniform_4f(self.id, loc, v4.x, v4.y, v4.z, v4.w);
+  }
+}
 <* Sets 4x4matrix uniform value *>
 fn void Shader.set_mat4x4(&self, String name, Matrix mat) @export("shader_setmat") {
   if (self.locs.has_key(name)) {

@@ -487,6 +487,15 @@ extern fn Element* new_button(String text = "NULL", long duration = 0, String fo
 extern fn Element* new_container(ElementType container = CONTAINER_VERT, long duration = 0, Rectangle bounds = {0,0,16,16}, Vector2 scale = {1,1}, Vector4 offset = {2,2,2,2}, float spacing = 0, String texture = "", Element*[] elements = {}) @extern("ui_container");
 
 
+
+module ennoia::ui::imm;
+
+extern fn void label(String text = "", String font = "font", float spacing = 0, Color tint = color:: WHITE, Vector2 position = {0,0}, Vector2 scale = {1,1}) @extern("imm_label");
+extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = color::WHITE, Vector2 textScale = {1,1}, String texture = "", Color[3] textureTint = {color::WHITE,color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}) @extern("imm_button");
+extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = color::WHITE, Vector2 textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, float* value = null, float* valueMax = null) @extern("imm_bar");
+
+
+
 module ennoia::vector;
 import ennoia::color;
 import ennoia::matrix;

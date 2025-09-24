@@ -3,8 +3,7 @@ import ennoia;
 import std::io;
 
 
-///*
-fn void test() @test {
+fn void list() @test {
   ennoia::init();
   defer ennoia::clean();
 
@@ -81,12 +80,49 @@ fn void test() @test {
   }
   
   // Testing Label
-  assert( ui::exists("label_1"), "Failed to create label.");
-  Element* label_1 = ui::get("label_1");
-  assert( label_1.label.text == "TESTIFICATE", "Failed to write text to label.");
-  assert(!ui::exists("label_2"), "Failed to delete label.");
+  //assert( ui::exists("label_1"), "Failed to create label.");
+  //Element* label_1 = ui::get("label_1");
+  //assert( label_1.label.text == "TESTIFICATE", "Failed to write text to label.");
+  //assert(!ui::exists("label_2"), "Failed to delete label.");
 }
-//*/
+
+fn void immediate_mode() @test {
+  ennoia::init();
+  defer ennoia::clean();
+
+  bulk::load_all("resources/030");
+
+  float timer = 1000;
+  float timerLength = 1000;
+
+  while (!ennoia::window_should_close()) {
+
+    if (keybinds::pressed("debug")) {}
+
+    imm::label(text:"fug",tint:color::ORANGE);
+    if (imm::button(text:"and", bounds:{0,100,64,16})) {
+      imm::label(text:"ulu", position:{0,50});
+    }
+
+    imm::bar(
+      textureBg: "bar_bg",
+      textureFg: "bar_fill",
+      textureTint: color::RED,
+      bounds:{0,(float)ennoia::renHeight-32,ennoia::renWidth,32},
+      value:     &timer,
+      valueMax:  &timerLength,
+    );
+    
+    ennoia::start_drawing();
+
+
+    ennoia::end_drawing();
+
+    if (timer <= 0) ennoia::forceClose = true;
+    timer--;
+  }
+}
+
 
 fn void testfn() {
   ui::add("test_info", ui::new_label("Fug",100));

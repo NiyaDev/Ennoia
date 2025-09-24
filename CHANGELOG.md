@@ -74,3 +74,13 @@
   - Turns out it was the percentage the section was of the total texture height.
 - Fixed memory leak with UI elements being added over each other.
 
+#### [9/24/25]
+- Re-added immediate mode UI.
+  - Label
+  - Button
+  - Bar
+- Moved default shader definitions to own file and removed unused uniform enum.
+- Added ability to set vector4 uniform.
+- Re-added color to texture drawing.
+- Added color to texture render pipeline.
+

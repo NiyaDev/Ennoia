@@ -53,7 +53,7 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
   @param src: "Array of all sections of a texture to draw"
   @require dst.len == src.len
  *>
-fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
+fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src, Color[] tint) {
   // Allocates memory for input
   Vector2[] position     = mem::new_array(Vector2, dst.len);
   Vector2[] scale        = mem::new_array(Vector2, dst.len);
@@ -91,11 +91,11 @@ fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src) {
   }
   
   // Color
-  Vector4 col = color::WHITE.normalize();
-  ennoia::textureMesh.update_colors({col,col,col,col,col,col});
+  //Vector4 col = color::WHITE.normalize();
+  //ennoia::textureMesh.update_colors({col,col,col,col,col,col});
 
   // Draw
-  ennoia::textureMesh.draw_2d_instanced(position, scale, texcoords, self);
+  ennoia::textureMesh.draw_2d_instanced(position, scale, texcoords, tint, self);
 
   // Free memory
   free(position);
