@@ -67,7 +67,7 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   textureMesh = mesh::gen_quad();
 
   meshes.set("tri", mesh::gen_tri(1,1));
-  meshes.set("cube", mesh::gen_cube(0.5,0.5,0.5));
+  meshes.set("cube", mesh::gen_cube(1,1,1));
 
   // Keybinds
   bulk::load_all_keybinds("resources/keybinds");

@@ -27,8 +27,9 @@ fn void draw_texture(
   Rectangle src = {0,0,-1,-1},
   //Vector3 rotation = {},
   Color tint = color::WHITE,
+  int priority = 1,
 ) @export("render_texture") {
-  rp2.push({nameTexture, dst, src, tint});
+  rp2.push({nameTexture, dst, src, tint, priority});
 }
 <* Sends texture info for tiled textures *>
 fn void draw_texture_tiled(
@@ -37,6 +38,7 @@ fn void draw_texture_tiled(
   Vector2 scale = {1,1},
   TilingLayout layout = THREE_THREE,
   Color tint = color::WHITE,
+  int priority = 1,
 ) @export("render_texture_tiled") {
   switch (layout) {
     case THREE_THREE:
@@ -78,6 +80,7 @@ fn void draw_texture_tiled(
         {dst.x, dst.y, dstSize.x, dstSize.y},
         topleft,
         tint,
+        priority,
       });
       for (int i = 1; i < numberOfTiles.x; i++) {
         rp2.push({
@@ -85,6 +88,7 @@ fn void draw_texture_tiled(
           {dst.x+(dstSize.x*i), dst.y, dstSize.x, dstSize.y},
           top,
           tint,
+          priority,
         });
       }
       rp2.push({
@@ -92,6 +96,7 @@ fn void draw_texture_tiled(
         {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y, dstSize.x, dstSize.y},
         topright,
         tint,
+        priority,
       });
       
       // Middle
@@ -101,13 +106,15 @@ fn void draw_texture_tiled(
           {dst.x, dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
           midleft,
           tint,
+          priority,
         });
         for (int i = 1; i < numberOfTiles.x; i++) {
           rp2.push({
             nameTexture,
             {dst.x+(dstSize.x*i), dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
             mid,
-          tint,
+            tint,
+            priority,
           });
         }
         rp2.push({
@@ -115,6 +122,7 @@ fn void draw_texture_tiled(
           {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y+(dstSize.y*j), dstSize.x, dstSize.y},
           midright,
           tint,
+          priority,
         });
       }
       
@@ -125,6 +133,7 @@ fn void draw_texture_tiled(
         {dst.x, dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
         botleft,
         tint,
+        priority,
       });
       for (int i = 1; i < numberOfTiles.x; i++) {
         rp2.push({
@@ -132,6 +141,7 @@ fn void draw_texture_tiled(
           {dst.x+(dstSize.x*i), dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
           bot,
           tint,
+          priority,
         });
       }
       rp2.push({
@@ -139,6 +149,7 @@ fn void draw_texture_tiled(
         {dst.x+(dstSize.x*(numberOfTiles.x)), dst.y+(dstSize.y*(numberOfTiles.y)), dstSize.x, dstSize.y},
         botright,
         tint,
+        priority,
       });
     case THREE_ONE:
     case ONE_THREE:
@@ -153,6 +164,7 @@ fn void draw_font(
   Vector2 scale = {1,1},
   float spacing = 0,
   Color tint = color::WHITE,
+  int priority = 1,
 ) {
   Font* font = ennoia::fonts.get_ref(nameFont)!!;
   String text = textIn;
@@ -209,6 +221,7 @@ fn void draw_font(
       },
       src: font.rects[text[i]]!!,
       tint: tint,
+      priority: priority,
     );
     char_x++;
   }

@@ -84,3 +84,13 @@
 - Re-added color to texture drawing.
 - Added color to texture render pipeline.
 
+#### [9/25/25]
+- Fixed library functions.
+- Fixed generateing cube mesh too small.
+- Started merging start_drawing and end_drawing.
+- Immediate-mode UI:
+  - Added Texture.
+  - Added Tiled Texture.
+- Added priority system 5->0 for pipeline textures. Higher is drawn first.
+  - Still need to do something similar for 3D transparency.
+

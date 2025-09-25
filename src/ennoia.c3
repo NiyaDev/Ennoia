@@ -8,15 +8,16 @@ SDL_Window* window;
 SDL_GLContext* glcontext;
 SDL_Event event;
 
-Color   bgColor = color::PURPLE;
-Mesh    textureMesh;
+Color bgColor @export("bgcolor") = color::PURPLE;
+Mesh  textureMesh;
 
 double deltaTime @export("deltatime");
 double lastFrame @export("lastframe");
 bool forceClose @export("forceclose");
 
 int scrWidth, scrHeight;
-int renWidth, renHeight;
+int renWidth @export("renderwidth");
+int renHeight @export("renderheight");
 float renRes;
 bool borderless, fullscreen;
 

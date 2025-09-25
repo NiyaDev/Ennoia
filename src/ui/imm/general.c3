@@ -12,6 +12,7 @@ fn void label(
 
   Vector2 position = {0,0},
   Vector2 scale = {1,1},
+  int priority = 0,
 ) @export("imm_label") {
   render::draw_font(
     font,
@@ -20,7 +21,48 @@ fn void label(
     scale,
     spacing,
     tint,
+    1 + priority,
   );
+}
+<* Immediate mode Texture *>
+fn void texture(
+  String texture = "texture",
+  Color tint = color::WHITE,
+  Rectangle bounds = {0,0,64,16},
+  int priority = 0,
+) @export("imm_texture") {
+  Texture? t = ennoia::textures.get(texture);
+  
+  // Draw texture
+  if (try t) {
+    render::draw_texture(
+      nameTexture: texture,
+      dst:         bounds,
+      tint:        tint,
+      priority:    2 + priority
+    );
+  }
+}
+<* Immediate mode Tiled Texture *>
+fn void texture_tiled(
+  String texture = "texture",
+  Color tint = color::WHITE,
+  Rectangle bounds = {0,0,64,16},
+  Vector2 scale = {1,1},
+  int priority = 0,
+) @export("imm_texturetiled") {
+  Texture? t = ennoia::textures.get(texture);
+  
+  // Draw texture
+  if (try t) {
+    render::draw_texture_tiled(
+      nameTexture: texture,
+      dst:         bounds,
+      scale:       scale,
+      tint:        tint,
+      priority:    2 + priority,
+    );
+  }
 }
 <* Immediate mode Button *>
 fn bool button(
@@ -34,6 +76,7 @@ fn bool button(
   Color[3] textureTint = {color::WHITE,color::LIGHTGRAY,color::DARKGRAY},
   Rectangle bounds = {0,0,64,16},
   Vector2 textureScale = {1,1},
+  int priority = 0,
 ) @export("imm_button") {
   Font? f = ennoia::fonts.get(font);
   Texture? t = ennoia::textures.get(texture);
@@ -51,6 +94,7 @@ fn bool button(
       dst:         bounds,
       scale:       textureScale,
       tint:        col,
+      priority:    2 + priority,
     );
   }
 
@@ -67,7 +111,7 @@ fn bool button(
       (bounds.y + (bounds.h / 2)) - yOffset,
     };
 
-    render::draw_font(font, text, textPosition, textScale, spacing, col);
+    render::draw_font(font, text, textPosition, textScale, spacing, col, 1 + priority);
   }
 
   // Interaction
@@ -88,6 +132,7 @@ fn void bar(
 
   Rectangle bounds = {0,0,64,16},
   Vector2 textureScale = {1,1},
+  int priority = 0,
 
   float* value = null,
   float* valueMax = null,
@@ -103,6 +148,7 @@ fn void bar(
       dst:         bounds,
       scale:       textureScale,
       tint:        textureTint,
+      priority:    3 + priority,
     );
   }
   float percentage = value != null && valueMax != null ? *value / *valueMax : 1;
@@ -112,6 +158,7 @@ fn void bar(
       dst:         bounds * (Rectangle){1,1,percentage,1},
       scale:       textureScale,
       tint:        textureTint,
+      priority:    2 + priority,
     );
   }
   
@@ -128,7 +175,7 @@ fn void bar(
       (bounds.y + (bounds.h / 2)) - yOffset,
     };
 
-    render::draw_font(font, text, textPosition, textScale, spacing, textTint);
+    render::draw_font(font, text, textPosition, textScale, spacing, textTint, 1 + priority);
   }
 }
 

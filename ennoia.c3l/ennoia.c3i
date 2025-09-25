@@ -1,17 +1,22 @@
 
 module ennoia;
 
+extern Color   bgColor      @extern("bgcolor");
 extern double  deltaTime    @extern("deltatime");
 extern double  lastFrame    @extern("lastframe");
 extern bool    forceClose   @extern("forceclose");
+extern int     renWidth     @extern("renderwidth");
+extern int     renHeight    @extern("renderheight");
 extern Vector2 mousPosition @extern("mouseposition");
 extern float   scrollwheel  @extern("scrollwheel");
+
 
 extern fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) @extern("init");
 extern fn void clean() @extern("clean");
 extern fn bool window_should_close() @extern("windowshouldclose");
 extern fn void set_vertex_attribute(uint location, uint size, void* offset) @extern("set_vertex_attribute");
 
+extern fn void drawing() @extern("drawing");
 extern fn void start_drawing() @extern("start_drawing");
 extern fn void end_drawing() @extern("end_drawing");
 
@@ -151,6 +156,34 @@ import ennoia::vector;
 struct Color {
   char r, g, b, a;
 }
+
+const Color LIGHTGRAY		= {200, 200, 200, 255};
+const Color GRAY		  	= {130, 130, 130, 255};
+const Color DARKGRAY		= { 80,  80,  80, 255};
+const Color YELLOW			= {253, 249,   0, 255};
+const Color GOLD		  	= {255, 203,   0, 255};
+const Color ORANGE	 		= {255, 161,   0, 255};
+const Color PINK 				= {255, 109, 194, 255};
+const Color RED 				= {230,  41,  55, 255};
+const Color MAROON 			= {190,  33,  55, 255};
+const Color GREEN 			= {  0, 228,  48, 255};
+const Color LIME				= {  0, 158,  47, 255};
+const Color DARKGREEN		= {  0, 117,  44, 255};
+const Color SKYBLUE			= {102, 191, 255, 255};
+const Color BLUE				= {  0, 121, 241, 255};
+const Color DARKBLUE		= {  0,  82, 172, 255};
+const Color PURPLE			= {200, 122, 255, 255};
+const Color VIOLET			= {135,  60, 190, 255};
+const Color DARKPURPLE	= {112,  31, 126, 255};
+const Color BEIGE				= {211, 176, 131, 255};
+const Color BROWN				= {127, 106,  79, 255};
+const Color DARKBROWN		= { 76,  63,  47, 255};
+const Color WHITE				= {255, 255, 255, 255};
+const Color BLACK				= {  0,   0,   0, 255};
+const Color BLANK				= {  0,   0,   0,   0};
+const Color MAGENTA			= {255,   0, 255, 255};
+const Color PALETTE_30	= { 48,  56,  67, 255};
+
 
 extern fn bool Color.equals(self, Color rhs) @operator(==) @extern("color_equals");
 
@@ -483,17 +516,20 @@ extern fn bool exists(String name) @extern("ui_exists");
 extern fn Element* get(String name) @extern("ui_get");
 
 extern fn Element* new_label(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color tint = color::WHITE, Vector2 position = {0,0}, Vector2 scale = {1,1}) @extern("ui_label");
-extern fn Element* new_button(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color textTint = color::WHITE, String texture = "texture", Color[3] textureTint = {color::WHITE, color::LIGHTGRAY, color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector4 textPadding = {2,2,2,2}, Vector2 scale = {1,1}, TextAlignmentHorizontal alignHori = CENTER, TextAlignmentVertical alignVert = CENTER, bool active = true, FuncCallVoid hover = null, FuncCallVoid click = null) @extern("ui_button");
+extern fn Element* new_button(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color textTint = color::WHITE, String texture = "texture", Color[3] textureTint = {{255, 255, 255, 255}, color::LIGHTGRAY, color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector4 textPadding = {2,2,2,2}, Vector2 scale = {1,1}, TextAlignmentHorizontal alignHori = CENTER, TextAlignmentVertical alignVert = CENTER, bool active = true, FuncCallVoid hover = null, FuncCallVoid click = null) @extern("ui_button");
 extern fn Element* new_container(ElementType container = CONTAINER_VERT, long duration = 0, Rectangle bounds = {0,0,16,16}, Vector2 scale = {1,1}, Vector4 offset = {2,2,2,2}, float spacing = 0, String texture = "", Element*[] elements = {}) @extern("ui_container");
 
 
-
 module ennoia::ui::imm;
+import ennoia::color;
+import ennoia::rectangle;
+import ennoia::vector;
 
-extern fn void label(String text = "", String font = "font", float spacing = 0, Color tint = color:: WHITE, Vector2 position = {0,0}, Vector2 scale = {1,1}) @extern("imm_label");
-extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = color::WHITE, Vector2 textScale = {1,1}, String texture = "", Color[3] textureTint = {color::WHITE,color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}) @extern("imm_button");
-extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = color::WHITE, Vector2 textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, float* value = null, float* valueMax = null) @extern("imm_bar");
-
+extern fn void label(String text = "", String font = "font", float spacing = 0, Color tint = {255, 255, 255, 255}, Vector2 position = {0,0}, Vector2 scale = {1,1}, int priority = 0) @extern("imm_label");
+extern fn void texture(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, int priority = 0) @extern("imm_texture");
+extern fn void texture_tiled(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vector2 scale = {1,1}, int priority = 0) @extern("imm_texturetiled");
+extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vector2 textScale = {1,1}, String texture = "", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, int priority = 0) @extern("imm_button");
+extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vector2 textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = {255, 255, 255, 255}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, int priority = 0, float* value = null, float* valueMax = null) @extern("imm_bar");
 
 
 module ennoia::vector;

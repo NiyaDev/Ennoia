@@ -16,6 +16,7 @@ alias RenderPipeline3D = List{MeshRenderInfo};
 
 //alias RenderInstance = HashMap{String,List{Matrix}};
 alias RenderInstance = HashMap{String, Matrix[]};
+alias Render2DList = List{Pair{String, int}};
 
 struct TextureRenderInfo {
   String nameTexture;
@@ -23,6 +24,7 @@ struct TextureRenderInfo {
   Rectangle src;
   //Vector3 rotation;
   Color tint;
+  int priority;
 }
 struct MeshRenderInfo {
   String nameMesh, nameTexture;
@@ -61,33 +63,37 @@ fn void render_all() {
   rp3.clear();
 
   // 2D
-  List{String} entries2;
+  Render2DList entries2;
   entries2.init(mem);
   for (int i; i < rp2.len(); i++) {
-    if (!entries2.contains(rp2[i].nameTexture)) entries2.push(rp2[i].nameTexture);
+    if (!entries2.contains({rp2[i].nameTexture,rp2[i].priority})) entries2.push({rp2[i].nameTexture,rp2[i].priority});
   }
   
-  for (int i; i < entries2.len(); i++) {
-    usz count;
-    for (int j; j < rp2.len(); j++) {
-      if (entries2[i] == rp2[j].nameTexture) count++;
-    }
-    Rectangle[] dst = mem::new_array(Rectangle, count);
-    Rectangle[] src = mem::new_array(Rectangle, count);
-    Color[] tint    = mem::new_array(Color,     count);
-    usz index;
-    for (int j; j < rp2.len(); j++) {
-      if (entries2[i] == rp2[j].nameTexture) {
-        dst[index]  = rp2[j].dst;
-        src[index]  = rp2[j].src;
-        tint[index] = rp2[j].tint;
-        index++;
+  for (int p = 5; p > 0; p--) {
+    for (int i; i < entries2.len(); i++) {
+      if (entries2[i].second == p) {
+        usz count;
+        for (int j; j < rp2.len(); j++) {
+          if (entries2[i].first == rp2[j].nameTexture) count++;
+        }
+        Rectangle[] dst = mem::new_array(Rectangle, count);
+        Rectangle[] src = mem::new_array(Rectangle, count);
+        Color[] tint    = mem::new_array(Color,     count);
+        usz index;
+        for (int j; j < rp2.len(); j++) {
+          if (entries2[i].first == rp2[j].nameTexture) {
+            dst[index]  = rp2[j].dst;
+            src[index]  = rp2[j].src;
+            tint[index] = rp2[j].tint;
+            index++;
+          }
+        }
+        ennoia::textures[entries2[i].first]!!.draw_instanced(dst, src, tint);
+        free(dst);
+        free(src);
+        free(tint);
       }
     }
-    ennoia::textures[entries2[i]]!!.draw_instanced(dst, src, tint);
-    free(dst);
-    free(src);
-    free(tint);
   }
   free(entries2.entries);
   rp2.clear();

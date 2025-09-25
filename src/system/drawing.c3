@@ -5,6 +5,11 @@ import sdl3;
 import gl;
 
 
+<* Shorthand for doing both drawing until i merge them *>
+fn void drawing() @export("drawing") {
+  start_drawing();
+  end_drawing();
+}
 <* Starts the process of drawing *>
 fn void start_drawing() @export("start_drawing") {
   gl::bind_framebuffer(gl::FRAMEBUFFER, render::framebuffer);
