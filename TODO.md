@@ -22,7 +22,7 @@
     - Horizontal
     - Square
     - They all have the ability to scroll if turned on
-  - Culls anything not in rect
+    - Culls anything not in rect
 - Bulk
 - Meshes
   - Render pipeline improvements
