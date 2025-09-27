@@ -94,3 +94,6 @@
 - Added priority system 5->0 for pipeline textures. Higher is drawn first.
   - Still need to do something similar for 3D transparency.
 
+#### [9/26/25]
+-  Moved basic structures into seperate directory.
+
