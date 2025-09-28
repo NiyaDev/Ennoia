@@ -166,7 +166,9 @@ fn bool window_should_close() @export("windowshouldclose") {
       case WINDOW_OCCLUDED: break;
 
       case MOUSE_MOTION:
-        mousePosition = {event.motion.x, event.motion.y};
+        Vector2 temp = {event.motion.x, event.motion.y};
+        mouseDelta = {event.motion.xrel, event.motion.yrel};
+        mousePosition = temp;
       case MOUSE_BUTTON_DOWN:
         mouseButtons[event.button.button-1] = true;
       case MOUSE_BUTTON_UP:

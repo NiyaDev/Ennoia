@@ -29,6 +29,7 @@ Keybindings   keybinds;
 List{KeyData} keyqueue;
 
 Vector2 mousePosition @export("mouseposition");
+Vector2 mouseDelta    @export("mousedelta");
 bool[5] mouseButtons, mouseButtonsHeld, mouseButtonsUp;
 float scrollwheel @export("scrollwheel");
 

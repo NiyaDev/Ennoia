@@ -97,3 +97,9 @@
 #### [9/26/25]
 -  Moved basic structures into seperate directory.
 
+#### [9/27/25]
+- Added dubiously working imm::container_drag.
+- Added ennoia::mouseDelta to see change in mouse position since last frame.
+- Fixed library error with ennoia::mousePosition being used as ennoia::mousPosition.
+- Fixed library error with keybinds::mouse(down, up, pressed) having a String input instead of uint.
+

@@ -44,6 +44,8 @@ fn void KeyData.print(&self) @export("keybinds_print") {
 
 <* Sets any existing key in the queue to repeat and remove any that are still up *>
 fn void update() @export("keybinds_update") {
+  ennoia::mouseDelta = {0,0};
+
   for (int i; i < ennoia::keyqueue.len(); i++) {
     ennoia::keyqueue[i].repeat = true;
     if (ennoia::keyqueue[i].down == false) {

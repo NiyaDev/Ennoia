@@ -1,14 +1,15 @@
 
 module ennoia;
 
-extern Color   bgColor      @extern("bgcolor");
-extern double  deltaTime    @extern("deltatime");
-extern double  lastFrame    @extern("lastframe");
-extern bool    forceClose   @extern("forceclose");
-extern int     renWidth     @extern("renderwidth");
-extern int     renHeight    @extern("renderheight");
-extern Vector2 mousPosition @extern("mouseposition");
-extern float   scrollwheel  @extern("scrollwheel");
+extern Color   bgColor       @extern("bgcolor");
+extern double  deltaTime     @extern("deltatime");
+extern double  lastFrame     @extern("lastframe");
+extern bool    forceClose    @extern("forceclose");
+extern int     renWidth      @extern("renderwidth");
+extern int     renHeight     @extern("renderheight");
+extern Vector2 mousePosition @extern("mouseposition");
+extern Vector2 mouseDelta    @extern("mousedelta");
+extern float   scrollwheel   @extern("scrollwheel");
 
 
 extern fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) @extern("init");
@@ -252,9 +253,9 @@ extern fn void queue_remove(SDL_KeyboardEvent data) @extern("keybinds_queueremov
 extern fn bool pressed(String key) @extern("keybinds_pressed");
 extern fn bool down(String key)    @extern("keybinds_down");
 extern fn bool up(String key)      @extern("keybinds_up");
-extern fn bool mouse_pressed(String key) @extern("keybinds_mousepressed");
-extern fn bool mouse_down(String key)    @extern("keybinds_mousedown");
-extern fn bool mouse_up(String key)      @extern("keybinds_mouseup");
+extern fn bool mouse_pressed(uint button) @extern("keybinds_mousepressed");
+extern fn bool mouse_down(int button)     @extern("keybinds_mousedown");
+extern fn bool mouse_up(int button)       @extern("keybinds_mouseup");
 
 
 module ennoia::localization;
@@ -530,6 +531,8 @@ extern fn void texture(String texture = "texture", Color tint = color::WHITE, Re
 extern fn void texture_tiled(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vector2 scale = {1,1}, int priority = 0) @extern("imm_texturetiled");
 extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vector2 textScale = {1,1}, String texture = "", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, int priority = 0) @extern("imm_button");
 extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vector2 textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = {255, 255, 255, 255}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, int priority = 0, float* value = null, float* valueMax = null) @extern("imm_bar");
+
+extern fn void container_drag(Vector2* position, Rectangle dragArea = {0,0,32,8}) @extern("imm_contdrag");
 
 
 module ennoia::vector;
