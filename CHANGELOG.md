@@ -103,3 +103,6 @@
 - Fixed library error with ennoia::mousePosition being used as ennoia::mousPosition.
 - Fixed library error with keybinds::mouse(down, up, pressed) having a String input instead of uint.
 
+#### [9/30/25]
+- Started on Debug utilities. Didn't get far.
+
