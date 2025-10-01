@@ -1,0 +1,14 @@
+
+module ennoia::debug;
+
+extern fn void error(String err, args...) @extern("debug_error");
+extern fn void warning(String err, args...) @extern("debug_error");
+extern fn void info(String err, args...) @extern("debug_error");
+
+
+module ennoia::console;
+import ennoia::color;
+
+extern fn void print_color(String text, Color color) @extern("console_printcolor");
+extern fn String String.color(self, Color color) @extern("console_textcolor");
+

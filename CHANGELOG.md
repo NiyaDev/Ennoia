@@ -106,3 +106,8 @@
 #### [9/30/25]
 - Started on Debug utilities. Didn't get far.
 
+#### [10/1/25]
+- Fixed print_color.
+- Added debug Error, Warning, and Info.
+  - Error closes program.
+
