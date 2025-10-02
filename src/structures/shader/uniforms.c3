@@ -4,6 +4,7 @@ import ennoia::matrix;
 import ennoia::texture;
 import ennoia::vector;
 import gl;
+import std::math;
 
 
 <* Sets integer uniform value *>
@@ -27,7 +28,7 @@ fn void Shader.set_float(&self, String name, float f) @export("shader_setfloat")
   }
 }
 <* Sets vector2 uniform value *>
-fn void Shader.set_vec2(&self, String name, Vector2 v2) @export("shader_setv2") {
+fn void Shader.set_vec2f(&self, String name, Vec2f v2) @export("shader_setv2") {
   if (self.locs.has_key(name)) {
     gl::program_uniform_2f(self.id, self.locs[name]!!, v2.x, v2.y);
   } else {
@@ -37,7 +38,7 @@ fn void Shader.set_vec2(&self, String name, Vector2 v2) @export("shader_setv2") 
   }
 }
 <* Sets vector4 uniform value *>
-fn void Shader.set_vec4(&self, String name, Vector4 v4) @export("shader_setv4") {
+fn void Shader.set_vec4f(&self, String name, Vec4f v4) @export("shader_setv4") {
   if (self.locs.has_key(name)) {
     gl::program_uniform_4f(self.id, self.locs[name]!!, v4.x, v4.y, v4.z, v4.w);
   } else {
@@ -47,7 +48,7 @@ fn void Shader.set_vec4(&self, String name, Vector4 v4) @export("shader_setv4") 
   }
 }
 <* Sets 4x4matrix uniform value *>
-fn void Shader.set_mat4x4(&self, String name, Matrix mat) @export("shader_setmat") {
+fn void Shader.set_mat4x4(&self, String name, Matrix4f mat) @export("shader_setmat") {
   if (self.locs.has_key(name)) {
     gl::program_uniform_matrix4_fv(self.id, self.locs[name]!!, 1, false, (float*)&mat);
   } else {

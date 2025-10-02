@@ -13,9 +13,9 @@ import std::collections;
 fn void draw_mesh(
   String nameMesh = "cube",
   String nameTexture = "",
-  Vector3 position = {},
-  Vector3 scale = {1,1,1},
-  Vector3 rotation = {},
+  Vec3f position = {},
+  Vec3f scale = {1,1,1},
+  Vec3f rotation = {},
 ) @export("render_mesh") {
   rp3.push({nameMesh, nameTexture, position, scale, rotation});
 }
@@ -35,7 +35,7 @@ fn void draw_texture(
 fn void draw_texture_tiled(
   String nameTexture = "texture",
   Rectangle dst = {0,0,-1,-1},
-  Vector2 scale = {1,1},
+  Vec2f scale = {1,1},
   TilingLayout layout = THREE_THREE,
   Color tint = color::WHITE,
   int priority = 1,
@@ -64,11 +64,11 @@ fn void draw_texture_tiled(
         (dst.w > 0 ? dst.w : width*3),
         (dst.h > 0 ? dst.h : height*3),
       };
-      Vector2 dstSize = {
+      Vec2f dstSize = {
         width  * scale.x,
         height * scale.y,
       };
-      Vector2 numberOfTiles = {
+      Vec2f numberOfTiles = {
         (dst.w / dstSize.x)-1,
         (dst.h / dstSize.y)-1,
       };
@@ -160,8 +160,8 @@ fn void draw_texture_tiled(
 fn void draw_font(
   String nameFont,
   String textIn,
-  Vector2 position = {0,0},
-  Vector2 scale = {1,1},
+  Vec2f position = {0,0},
+  Vec2f scale = {1,1},
   float spacing = 0,
   Color tint = color::WHITE,
   int priority = 1,
@@ -208,7 +208,7 @@ fn void draw_font(
       }
       i -= 2;
     }
-    Vector2 space;
+    Vec2f space;
     if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
     if (char_y > 0) space.y = ((spacing * scale.y) * char_y);
     render::draw_texture(

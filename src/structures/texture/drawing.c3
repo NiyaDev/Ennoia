@@ -12,10 +12,10 @@ import ennoia::vector;
  *>
 fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color tint = color::WHITE) @export("texture_draw") {
   // Calculating size on screen
-  Vector2 newSize = {dst.w, dst.h};
+  Vec2f newSize = {dst.w, dst.h};
   if (dst.w <= 0) newSize.x = (float)self.width;
   if (dst.h <= 0) newSize.y = (float)self.height;
-  Vector2 scale = {
+  Vec2f scale = {
     newSize.x / (float)ennoia::renWidth,
     newSize.y / (float)ennoia::renHeight,
   };
@@ -24,20 +24,20 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
   Rectangle newSrc = src;
   if (src.w <= 0) newSrc.w = (float)self.width;
   if (src.h <= 0) newSrc.h = (float)self.height;
-  Vector2 topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
-  Vector2 topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
-  Vector2 botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
-  Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))}; 
+  Vec2f topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
+  Vec2f topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
+  Vec2f botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
+  Vec2f botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))}; 
   ennoia::textureMesh.update_texcoords({topLeft, botLeft, botRight, topLeft, botRight, topRight});
 
   // Calculating position on screen
-  Vector2 pos = {
+  Vec2f pos = {
     -(float)ennoia::renWidth  + (dst.x * 2) + newSize.x,
     -(float)ennoia::renHeight + (dst.y * 2) + newSize.y,
   };
 
   // Color
-  Vector4 col = tint.normalize();
+  Vec4f col = tint.normalize();
   ennoia::textureMesh.update_colors({col,col,col,col,col,col});
 
   // Draw
@@ -55,16 +55,16 @@ fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1
  *>
 fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src, Color[] tint) {
   // Allocates memory for input
-  Vector2[] position     = mem::new_array(Vector2, dst.len);
-  Vector2[] scale        = mem::new_array(Vector2, dst.len);
-  Vector4[] texcoords    = mem::new_array(Vector4, dst.len);
+  Vec2f[] position     = mem::new_array(Vec2f, dst.len);
+  Vec2f[] scale        = mem::new_array(Vec2f, dst.len);
+  Vec4f[] texcoords    = mem::new_array(Vec4f, dst.len);
 
   for (int i; i < dst.len; i++) {
     // Calculating size on screen
-    Vector2 newSize = {dst[i].w, dst[i].h};
+    Vec2f newSize = {dst[i].w, dst[i].h};
     if (dst[i].w <= 0) newSize.x = (float)self.width;
     if (dst[i].h <= 0) newSize.y = (float)self.height;
-    Vector2 sc = {
+    Vec2f sc = {
       newSize.x / (float)ennoia::renWidth,
       newSize.y / (float)ennoia::renHeight,
     };
@@ -73,13 +73,13 @@ fn void Texture.draw_instanced(&self, Rectangle[] dst, Rectangle[] src, Color[] 
     Rectangle newSrc = src[i];
     if (src[i].w <= 0) newSrc.w = (float)self.width;
     if (src[i].h <= 0) newSrc.h = (float)self.height;
-    Vector2 topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
-    Vector2 topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
-    Vector2 botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
-    Vector2 botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
+    Vec2f topLeft  = {newSrc.x  / (float)self.width,                                   1 - (newSrc.y  / (float)self.height)};
+    Vec2f topRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - (newSrc.y  / (float)self.height)};
+    Vec2f botLeft  = {newSrc.x  / (float)self.width,                                   1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
+    Vec2f botRight = {(newSrc.x / (float)self.width) + (newSrc.w / (float)self.width), 1 - ((newSrc.y / (float)self.height) + (newSrc.h / (float)self.height))};
     
     // Calculating position on screen
-    Vector2 pos = {
+    Vec2f pos = {
       -(float)ennoia::renWidth  + (dst[i].x * 2) + newSize.x,
       -(float)ennoia::renHeight + (dst[i].y * 2) + newSize.y,
     };

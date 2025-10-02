@@ -34,10 +34,11 @@ fn void draw() {
         //texture.draw_tiled(dest:tileBounds*e.button.scale, layout:THREE_ONE, tint:col);
 
         // Caluclate text position
-        Vector2 textPosition;
+        Vec2f textPosition;
         switch (e.button.alignHori) {
           case RIGHT:
-            textPosition = (tileBounds.v2() + e.button.textPadding.v2()) * e.button.scale;
+            break; // TODO:
+            //textPosition = (tileBounds.v2() + e.button.textPadding.xy) * e.button.scale;
           case CENTER:
             textPosition.x = ((tileBounds.x + (tileBounds.w / 2)) - (((font.dim.x + e.button.spacing) * e.button.text.len) / 2)) * e.button.scale.x;
             textPosition.y = ((tileBounds.y + (tileBounds.h / 2)) - (((font.dim.y + e.button.spacing) * ((float)e.button.text.count("\n") + 1)) / 2)) * e.button.scale.y;
@@ -71,7 +72,7 @@ fn void draw() {
 }
 
 <* Draw label *>
-fn void ElementLabel.draw(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffset = {1,1}) {
+fn void ElementLabel.draw(&self, Vec2f positionOffset = {0,0}, Vec2f scaleOffset = {1,1}) {
   render::draw_font(
     self.font,
     self.text,
@@ -81,7 +82,7 @@ fn void ElementLabel.draw(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOf
   );
 }
 <* Draw Bar *>
-fn void ElementBar.draw(&self, Vector2 positionOffset = {0,0}, Vector2 scaleOffset = {1,1}) {
+fn void ElementBar.draw(&self, Vec2f positionOffset = {0,0}, Vec2f scaleOffset = {1,1}) {
   // Draw text
 
   // Background

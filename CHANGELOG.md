@@ -111,3 +111,13 @@
 - Added debug Error, Warning, and Info.
   - Error closes program.
 
+#### [10/2/25]
+- Converted Vector2 (float x,y)     to Vec2f (float[<2>]) and Vec2i.
+- Converted Vector3 (float x,y,z)   to Vec3f (float[<3>]) and Vec3i.
+- Converted Vector4 (float x,y,z,w) to Vec4f (float[<4>]) and Vec4i.
+- Removed my version of Quaternion and started using maths Quaternionf.
+- Converted Color (char r,g,b,a) to (char[<4>]).
+- Started working on using Matrix4f from std::math instead of my own, but maybe i need to use my own?
+  - It seems like it may be a different layout from OpenGL. Which is weird...
+  - Changed: matrix.c3, uniforms.c3, mesh.c3, pipeline.c3, camera.c3, system/drawing.c3, and system/core.c3.
+

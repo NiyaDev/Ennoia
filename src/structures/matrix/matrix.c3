@@ -1,5 +1,6 @@
 
 module ennoia::matrix;
+/*
 import std::io;
 import std::math;
 import ennoia::vector;
@@ -190,12 +191,12 @@ fn Matrix Matrix.invert(self) @export("matrix_invert") {
 	return result;
 }
 <* Transform a quaternion given a transformation matrix *>
-fn Vector4 Matrix.quaternion_transform(self, vector::Quaternion q) @export("matrix_quaterniontransform") {
+fn Vec4f Matrix.quaternion_transform(self, Quaternionf q) @export("matrix_quaterniontransform") {
 	return {
-		.x = self.m0 * q.x + self.m4 * q.y + self.m8  * q.z + self.m12 * q.w,
-		.y = self.m1 * q.x + self.m5 * q.y + self.m9  * q.z + self.m13 * q.w,
-		.z = self.m2 * q.x + self.m6 * q.y + self.m10 * q.z + self.m14 * q.w,
-		.w = self.m3 * q.x + self.m7 * q.y + self.m11 * q.z + self.m15 * q.w,
+		self.m0 * q.i + self.m4 * q.j + self.m8  * q.k + self.m12 * q.l,
+		self.m1 * q.i + self.m5 * q.j + self.m9  * q.k + self.m13 * q.l,
+		self.m2 * q.i + self.m6 * q.j + self.m10 * q.k + self.m14 * q.l,
+		self.m3 * q.i + self.m7 * q.j + self.m11 * q.k + self.m15 * q.l,
 	};
 }
 <* Prints matrix to console *>
@@ -217,7 +218,7 @@ const Matrix IDENTITY = {
 };
 
 <**>
-fn Matrix create(Vector3 position, Vector3 scale, Vector3 rotation) @export("matrix_create") {
+fn Matrix create(Vec3f position, Vec3f scale, Vec3f rotation) @export("matrix_create") {
 	float cx  = math::cos(rotation.x);
 	float sxn = math::sin(rotation.x);
 	float cy  = math::cos(rotation.y);
@@ -247,7 +248,7 @@ fn Matrix create(Vector3 position, Vector3 scale, Vector3 rotation) @export("mat
 <* Create translation matrix
 	@param v: "Position offset"
  *>
-fn Matrix Matrix.translate(self, Vector3 v) @export("matrix_translate") {
+fn Matrix Matrix.translate(self, Vec3f v) @export("matrix_translate") {
 	return self + (Matrix){
 		0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 0.0, 0.0,
@@ -297,7 +298,7 @@ fn Matrix rotate_z(float angle) @export("matrix_rotatez") {
 <* Get xyz-rotation matrix
 	@param angle: "New rotation for matrix in degrees"
  *>
-fn Matrix Matrix.rotate(&self, Vector3 angle) @export("matrix_rotatexyz") {
+fn Matrix Matrix.rotate(&self, Vec3f angle) @export("matrix_rotatexyz") {
 	//Matrix result;
 	float cosz = math::cos(angle.z * (float)(math::PI / 180));
 	float sinz = math::sin(angle.z * (float)(math::PI / 180));
@@ -321,7 +322,7 @@ fn Matrix Matrix.rotate(&self, Vector3 angle) @export("matrix_rotatexyz") {
 	return *self;
 }
 <* Get xyz-rotation matrix *>
-fn Matrix rotate_zyx(Vector3 angle) @export("matrix_rotatezyx") {
+fn Matrix rotate_zyx(Vec3f angle) @export("matrix_rotatezyx") {
 	Matrix result;
 	float cz = math::cos(angle.z);
 	float sz = math::sin(angle.z);
@@ -355,7 +356,7 @@ fn Matrix rotate_zyx(Vector3 angle) @export("matrix_rotatezyx") {
 <* Get scaling matrix
 	@param scale: "New scale values"
  *>
-fn Matrix Matrix.scale(self, Vector3 scale) @export("matrix_scale") {
+fn Matrix Matrix.scale(self, Vec3f scale) @export("matrix_scale") {
 	Matrix output = self;
 	output.m0 = scale.x;
 	output.m5 = scale.y;
@@ -442,15 +443,15 @@ fn Matrix ortho(double left, double right, double bottom, double top, double nea
 	return result;
 }
 <* Get camera look-at matrix (view matrix) *>
-fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @export("matrix_lookat") {
+fn Matrix look_at(Vec3f eye, Vec3f target, Vec3f up) @export("matrix_lookat") {
 	Matrix result;
 	float length;
 	float ilength;
 
-	Vector3 vz = eye - target;
+	Vec3f vz = eye - target;
 
 	//* Vector3Normalize(vz)
-	Vector3 v = vz;
+	Vec3f v = vz;
 	length = v.length();
 	if (length == 0) { length = 1; }
 	ilength = 1 / length;
@@ -459,7 +460,7 @@ fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @export("matrix_looka
 	vz.z *= ilength;
 
 	//* Vector3CrossProduct(up, vz)
-	Vector3 vx = up.cross_product(vz);
+	Vec3f vx = up.cross_product(vz);
 
 	//* Vector3Normalize(x)
 	v = vx;
@@ -471,7 +472,7 @@ fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @export("matrix_looka
 	vx.z *= ilength;
 
 	//* Vector3CrossProduct(vz, vx)
-	Vector3 vy = vz.cross_product(vx);
+	Vec3f vy = vz.cross_product(vx);
 
 	/*
 	Vector3 f = (target - eye).normalize();
@@ -507,4 +508,4 @@ fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @export("matrix_looka
 	return result;
 }
 
-
+*/

@@ -1,15 +1,15 @@
 
 module ennoia;
 
-extern Color   bgColor       @extern("bgcolor");
-extern double  deltaTime     @extern("deltatime");
-extern double  lastFrame     @extern("lastframe");
-extern bool    forceClose    @extern("forceclose");
-extern int     renWidth      @extern("renderwidth");
-extern int     renHeight     @extern("renderheight");
-extern Vector2 mousePosition @extern("mouseposition");
-extern Vector2 mouseDelta    @extern("mousedelta");
-extern float   scrollwheel   @extern("scrollwheel");
+extern Color  bgColor       @extern("bgcolor");
+extern double deltaTime     @extern("deltatime");
+extern double lastFrame     @extern("lastframe");
+extern bool   forceClose    @extern("forceclose");
+extern int    renWidth      @extern("renderwidth");
+extern int    renHeight     @extern("renderheight");
+extern Vec2f  mousePosition @extern("mouseposition");
+extern Vec2f  mouseDelta    @extern("mousedelta");
+extern float  scrollwheel   @extern("scrollwheel");
 
 
 extern fn void init(int width = -1, int height = -1, String title = "ENNOIA", float scale = 0) @extern("init");
@@ -39,15 +39,15 @@ import ennoia::color;
 import ennoia::rectangle;
 import ennoia::vector;
 
-extern fn void draw_mesh(String nameMesh = "cube", String nameTexture = "", Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}) @extern("render_mesh");
-extern fn void draw_texture(String nameTexture = "default", Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Vector3 rotation = {}, Color tint = {255, 255, 255, 255}) @extern("render_texture");
+extern fn void draw_mesh(String nameMesh = "cube", String nameTexture = "", Vec3f position = {}, Vec3f scale = {1,1,1}, Vec3f rotation = {}) @extern("render_mesh");
+extern fn void draw_texture(String nameTexture = "default", Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Vec3f rotation = {}, Color tint = {255, 255, 255, 255}) @extern("render_texture");
 
 
 module ennoia::bounds;
 import ennoia::vector;
 
 struct BoundingBox {
-  Vector3 min, max;
+  Vec3f min, max;
 }
 
 extern fn bool check_boxes(BoundingBox b1, BoundingBox b2) @extern("bounds_checkbox");
@@ -138,7 +138,7 @@ import ennoia::matrix;
 import ennoia::vector;
 
 struct Camera {
-  Vector3 target, distance, up;
+  Vec3f target, distance, up;
   float fov, rotation, rot_target;
 }
 
@@ -190,9 +190,9 @@ extern fn bool Color.equals(self, Color rhs) @operator(==) @extern("color_equals
 
 extern fn uint Color.to_int(self) @extern("color_toint");
 extern fn Color uint.to_color(self) @extern("color_fromint");
-extern fn Vector3 Color.to_hsv(self) @extern("color_tohsv");
-extern fn Color Vector3.to_color(self) @extern("colorfromhsv");
-extern fn Vector4 Color.normalize(self) @extern("color_normalize");
+extern fn Vec3f Color.to_hsv(self) @extern("color_tohsv");
+extern fn Color Vec3f.to_color(self) @extern("colorfromhsv");
+extern fn Vec4f Color.normalize(self) @extern("color_normalize");
 
 extern fn void Color.fade(&self, float alpha) @extern("color_fade");
 extern fn Color Color.tint(self, Color tint) @extern("color_tint");
@@ -211,15 +211,15 @@ import std::collections;
 
 struct Font {
   Texture atlas;
-  Vector2 dim;
+  Vec2f dim;
   HashMap{char, Rectangle} rects;
 }
 
-extern fn Font load(String filename, Vector2 size) @extern("font_load");
-extern fn Font load_from_mem(char[] data, Vector2 size) @extern("font_loadfrommem");
+extern fn Font load(String filename, Vec2f size) @extern("font_load");
+extern fn Font load_from_mem(char[] data, Vec2f size) @extern("font_loadfrommem");
 extern fn void Font.clean(&self) @extern("font_clean");
 
-extern fn void Font.draw(&self, String textIn, Vector2 position = {0,0}, Vector2 scale = {1,1}, float spacing = 0, Color color = color::WHITE) @extern("font_draw");
+extern fn void Font.draw(&self, String textIn, Vec2f position = {0,0}, Vec2f scale = {1,1}, float spacing = 0, Color color = color::WHITE) @extern("font_draw");
 
 
 module ennoia::keybinds;
@@ -272,6 +272,7 @@ extern fn bool contains(String key) @extern("local_contains");
 
 module ennoia::matrix;
 import ennoia::vector;
+import std::math;
 
 struct Matrix {
   float m0,  m1,  m2,  m3;
@@ -296,19 +297,19 @@ extern fn float Matrix.determinant(self) @extern("matrix_determinant");
 extern fn float Matrix.trace(self) @extern("matrix_trace");
 extern fn Matrix Matrix.transpose(self) @extern("matrix_transpose");
 extern fn Matrix Matrix.invert(self) @extern("matrix_invert");
-extern fn Vector4 Matrix.quaternion_transform(self, Quaternion q) @extern("matrix_quaterniontransform");
+extern fn Vec4f Matrix.quaternion_transform(self, Quaternionf q) @extern("matrix_quaterniontransform");
 extern fn void Matrix.print(&self) @extern("matrix_print");
-extern fn Matrix Matrix.translate(self, Vector3 v) @extern("matrix_translate");
+extern fn Matrix Matrix.translate(self, Vec3f v) @extern("matrix_translate");
 extern fn Matrix rotate_x(float angle) @extern("matrix_rotatex");
 extern fn Matrix rotate_y(float angle) @extern("matrix_rotatey");
 extern fn Matrix rotate_z(float angle) @extern("matrix_rotatez");
-extern fn Matrix Matrix.rotate(&self, Vector3 angle) @extern("matrix_rotatexyz");
-extern fn Matrix rotate_zyx(Vector3 angle) @extern("matrix_rotatezyx");
-extern fn Matrix Matrix.scale(self, Vector3 scale) @extern("matrix_scale");
+extern fn Matrix Matrix.rotate(&self, Vec3f angle) @extern("matrix_rotatexyz");
+extern fn Matrix rotate_zyx(Vec3f angle) @extern("matrix_rotatezyx");
+extern fn Matrix Matrix.scale(self, Vec3f scale) @extern("matrix_scale");
 extern fn Matrix frustum(double left, double right, double bottom, double top, double near_plane, double far_plane) @extern("matrix_frustum");
 extern fn Matrix perspective(double fov_y, double aspect, double near_plane, double far_plane) @extern("matrix_perspective");
 extern fn Matrix ortho(double left, double right, double bottom, double top, double near_plane, double far_plane) @extern("matrix_");
-extern fn Matrix look_at(Vector3 eye, Vector3 target, Vector3 up) @extern("matrix_lookat");
+extern fn Matrix look_at(Vec3f eye, Vec3f target, Vec3f up) @extern("matrix_lookat");
 
 
 module ennoia::mesh;
@@ -330,10 +331,10 @@ struct Mesh {
 }
 
 struct Vertex {
-  Vector3 position;
-  Vector3 normal;
-  Vector2 texCoords;
-  Vector4 color;
+  Vec3f position;
+  Vec3f normal;
+  Vec2f texCoords;
+  Vec4f color;
 }
 alias Indices = uint[3];
 
@@ -348,14 +349,14 @@ extern fn Mesh gen_cube(float width, float height, float depth) @extern("mesh_ge
 extern fn void Mesh.upload(&self) @extern("mesh_upload");
 extern fn void Mesh.delete(&self) @extern("mesh_delete");
 
-extern fn void Mesh.update_positions(&self, Vector3[] newPos) @extern("mesh_updatepositions");
-extern fn void Mesh.update_normals(&self, Vector3[] newNorms) @extern("mesh_updatenormals");
-extern fn void Mesh.update_texcoords(&self, Vector2[] newCoords) @extern("mesh_updatetexcoords");
-extern fn void Mesh.update_colors(&self, Vector4[] newColors) @extern("mesh_updatecolors");
+extern fn void Mesh.update_positions(&self, Vec3f[] newPos) @extern("mesh_updatepositions");
+extern fn void Mesh.update_normals(&self, Vec3f[] newNorms) @extern("mesh_updatenormals");
+extern fn void Mesh.update_texcoords(&self, Vec2f[] newCoords) @extern("mesh_updatetexcoords");
+extern fn void Mesh.update_colors(&self, Vec4f[] newColors) @extern("mesh_updatecolors");
 
-extern fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) @extern("mesh_draw");
+extern fn void Mesh.draw(&self, Vec3f position = {}, Vec3f scale = {1,1,1}, Vec3f rotation = {}, Texture* texture = null) @extern("mesh_draw");
 extern fn void Mesh.draw_instanced(&self, Matrix[] mats) @extern("mesh_drawinstanced");
-extern fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) @extern("mesh_draw2d");
+extern fn void Mesh.draw_2d(&self, Vec2f position = {}, Vec2f scale = {1,1}, float rotation = 0, Texture* texture = null) @extern("mesh_draw2d");
 
 extern fn void Vertex.print(&self) @extern("mesh_print");
 
@@ -420,19 +421,19 @@ struct Rectangle {
 
 extern fn bool Rectangle.equals(self, Rectangle rhs) @operator(==) @extern("rect_equals");
 extern fn Rectangle Rectangle.add(self, Rectangle rhs) @operator(+) @extern("rect_add");
-extern fn Rectangle Rectangle.add_v2(self, Vector2 rhs) @operator_s(+) @extern("rect_addv2");
-extern fn Rectangle Rectangle.add_v4(self, Vector4 rhs) @operator_s(+) @extern("rect_addv4");
+extern fn Rectangle Rectangle.add_v2(self, Vec2f rhs) @operator_s(+) @extern("rect_addv2");
+extern fn Rectangle Rectangle.add_v4(self, Vec4f rhs) @operator_s(+) @extern("rect_addv4");
 extern fn Rectangle Rectangle.sub(self, Rectangle rhs) @operator(-) @extern("rect_sub");
-extern fn Rectangle Rectangle.sub_v2(self, Vector2 rhs) @operator_s(-) @extern("rect_subv2");
+extern fn Rectangle Rectangle.sub_v2(self, Vec2f rhs) @operator_s(-) @extern("rect_subv2");
 extern fn Rectangle Rectangle.mul(self, Rectangle rhs) @operator(*) @extern("rect_mul");
-extern fn Rectangle Rectangle.mul_v2(self, Vector2 rhs) @operator_s(*) @extern("rect_mulv2");
+extern fn Rectangle Rectangle.mul_v2(self, Vec2f rhs) @operator_s(*) @extern("rect_mulv2");
 extern fn Rectangle Rectangle.div(self, Rectangle rhs) @operator(/) @extern("rect_div");
-extern fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) @extern("rect_divv2");
+extern fn Rectangle Rectangle.div_v2(self, Vec2f rhs) @operator_s(/) @extern("rect_divv2");
 
-extern fn Vector2 Rectangle.v2(self) @extern("rect_v2");
-extern fn Vector4 Rectangle.v4(self) @extern("rect_v4");
+extern fn Vec2f Rectangle.v2(self) @extern("rect_v2");
+extern fn Vec4f Rectangle.v4(self) @extern("rect_v4");
 
-extern fn bool Rectangle.within(self, Vector2 rhs) @extern("rect_within");
+extern fn bool Rectangle.within(self, Vec2f rhs) @extern("rect_within");
 
 
 module ennoia::shader;
@@ -453,7 +454,8 @@ extern fn void Shader.use(&self) @extern("shader_use");
 
 extern fn void Shader.set_int(&self, String name, int i) @extern("shader_setint");
 extern fn void Shader.set_float(&self, String name, float f) @extern("shader_setfloat");
-extern fn void Shader.set_vector2(&self, String name, Vector2 v2) @extern("shader_setv2");
+extern fn void Shader.set_vec2f(&self, String name, Vec2f v2) @extern("shader_setv2");
+extern fn void Shader.set_vec4f(&self, String name, Vec4f v4) @extern("shader_setv4");
 extern fn void Shader.set_matrix(&self, String name, Matrix mat) @extern("shader_setmat");
 extern fn void Shader.set_texture(&self, String name, Texture texture) @extern("shader_settexture");
 
@@ -516,9 +518,9 @@ extern fn void add(String name, Element* e) @extern("ui_add");
 extern fn bool exists(String name) @extern("ui_exists");
 extern fn Element* get(String name) @extern("ui_get");
 
-extern fn Element* new_label(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color tint = color::WHITE, Vector2 position = {0,0}, Vector2 scale = {1,1}) @extern("ui_label");
-extern fn Element* new_button(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color textTint = color::WHITE, String texture = "texture", Color[3] textureTint = {{255, 255, 255, 255}, color::LIGHTGRAY, color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector4 textPadding = {2,2,2,2}, Vector2 scale = {1,1}, TextAlignmentHorizontal alignHori = CENTER, TextAlignmentVertical alignVert = CENTER, bool active = true, FuncCallVoid hover = null, FuncCallVoid click = null) @extern("ui_button");
-extern fn Element* new_container(ElementType container = CONTAINER_VERT, long duration = 0, Rectangle bounds = {0,0,16,16}, Vector2 scale = {1,1}, Vector4 offset = {2,2,2,2}, float spacing = 0, String texture = "", Element*[] elements = {}) @extern("ui_container");
+extern fn Element* new_label(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color tint = color::WHITE, Vec2f position = {0,0}, Vec2f scale = {1,1}) @extern("ui_label");
+extern fn Element* new_button(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color textTint = color::WHITE, String texture = "texture", Color[3] textureTint = {{255, 255, 255, 255}, color::LIGHTGRAY, color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vec4f textPadding = {2,2,2,2}, Vec2f scale = {1,1}, TextAlignmentHorizontal alignHori = CENTER, TextAlignmentVertical alignVert = CENTER, bool active = true, FuncCallVoid hover = null, FuncCallVoid click = null) @extern("ui_button");
+extern fn Element* new_container(ElementType container = CONTAINER_VERT, long duration = 0, Rectangle bounds = {0,0,16,16}, Vec2f scale = {1,1}, Vec4f offset = {2,2,2,2}, float spacing = 0, String texture = "", Element*[] elements = {}) @extern("ui_container");
 
 
 module ennoia::ui::imm;
@@ -526,171 +528,73 @@ import ennoia::color;
 import ennoia::rectangle;
 import ennoia::vector;
 
-extern fn void label(String text = "", String font = "font", float spacing = 0, Color tint = {255, 255, 255, 255}, Vector2 position = {0,0}, Vector2 scale = {1,1}, int priority = 0) @extern("imm_label");
+extern fn void label(String text = "", String font = "font", float spacing = 0, Color tint = {255, 255, 255, 255}, Vec2f position = {0,0}, Vec2f scale = {1,1}, int priority = 0) @extern("imm_label");
 extern fn void texture(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, int priority = 0) @extern("imm_texture");
-extern fn void texture_tiled(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vector2 scale = {1,1}, int priority = 0) @extern("imm_texturetiled");
-extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vector2 textScale = {1,1}, String texture = "", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, int priority = 0) @extern("imm_button");
-extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vector2 textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = {255, 255, 255, 255}, Rectangle bounds = {0,0,64,16}, Vector2 textureScale = {1,1}, int priority = 0, float* value = null, float* valueMax = null) @extern("imm_bar");
+extern fn void texture_tiled(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vec2f scale = {1,1}, int priority = 0) @extern("imm_texturetiled");
+extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String texture = "", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0) @extern("imm_button");
+extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = {255, 255, 255, 255}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0, float* value = null, float* valueMax = null) @extern("imm_bar");
 
-extern fn void container_drag(Vector2* position, Rectangle dragArea = {0,0,32,8}) @extern("imm_contdrag");
+extern fn void container_drag(Vec2f* position, Rectangle dragArea = {0,0,32,8}) @extern("imm_contdrag");
 
 
 module ennoia::vector;
 import ennoia::color;
 import ennoia::matrix;
+import std::math;
 
-struct Vector2 {
-  float x, y;
-}
+alias Vec2f = float[<2>];
+alias Vec2i = int[<2>];
 
-extern fn bool Vector2.equals(self, Vector2 rhs) @operator(==) @extern("vector2_equals");
-extern fn Vector2 Vector2.add(self, Vector2 rhs) @operator(+) @extern("vector2_add");
-extern fn Vector2 Vector2.pos_offset(self, float rhs) @operator_s(+) @extern("vector2_pos_offset");
-extern fn Vector2 Vector2.sub(self, Vector2 rhs) @operator(-) @extern("vector2_sub");
-extern fn Vector2 Vector2.neg_offset(self, float rhs) @operator_s(-) @extern("vector2_neg_offset");
-extern fn Vector2 Vector2.mul(self, Vector2 rhs) @operator(*) @extern("vector2_mul");
-extern fn Vector2 Vector2.scale(self, float rhs) @operator_s(*) @extern("vector2_scale");
-extern fn Vector2 Vector2.div(self, Vector2 rhs) @operator(/) @extern("vector2_div");
-extern fn Vector2 Vector2.inverse(self, float rhs) @operator_s(/) @extern("vector2_inverse");
-
-extern fn Vector3 Vector2.v3(self) @extern("vector2_v3");
-extern fn Vector4 Vector2.v4(self) @extern("vector2_v4");
-extern fn Quaternion Vector2.q(self) @extern("vector2_q");
-
-extern fn float Vector2.length(self) @extern("vector2_length");
-extern fn float Vector2.length_sqr(self) @extern("vector2_length_sqr");
-extern fn float Vector2.dot_product(self, Vector2 v2) @extern("vector2_dot_product");
-extern fn float Vector2.distance(self, Vector2 v2) @extern("vector2_distance");
-extern fn float Vector2.distance_sqr(self, Vector2 v2) @extern("vector2_distance_sqr");
-extern fn float Vector2.angle_rad(self, Vector2 v2) @extern("vector2_angle_rad");
-extern fn float Vector2.angle_deg(self, Vector2 v2) @extern("vector2_angle_deg");
-extern fn Vector2 Vector2.normalize(self) @extern("vector2_normalize");
-extern fn Vector2 Vector2.transform(self, Matrix mat) @extern("vector2_transform");
-extern fn Vector2 Vector2.lerp(self, Vector2 v2, float amount) @extern("vector2_lerp");
-extern fn Vector2 Vector2.reflect(self, Vector2 normal) @extern("vector2_reflect");
-extern fn Vector2 Vector2.rotate_rad(self, float angle) @extern("vector2_rotate_rad");
-extern fn Vector2 Vector2.rotate_deg(self, float angle) @extern("vector2_rotate_deg");
-extern fn Vector2 Vector2.move_towards(self, Vector2 target, float max_distance) @extern("vector2_move_toward");
-extern fn Vector2 Vector2.invert(self) @extern("vector2_invert");
-extern fn Vector2 Vector2.clamp(self, Vector2 min, Vector2 max) @extern("vector2_clamp");
-extern fn Vector2 Vector2.clamp_mag(self, float min, float max) @extern("vector2_clamp_mag");
+extern fn float Vec2f.angle_rad(self, Vec2f v2) @extern("vector2_angle_rad");
+extern fn float Vec2f.angle_deg(self, Vec2f v2) @extern("vector2_angle_deg");
+extern fn Vec2f Vec2f.lerp(self, Vec2f v2, float amount) @extern("vector2_lerp");
+extern fn Vec2f Vec2f.reflect(self, Vec2f normal) @extern("vector2_reflect");
+extern fn Vec2f Vec2f.rotate_rad(self, float angle) @extern("vector2_rotate_rad");
+extern fn Vec2f Vec2f.rotate_deg(self, float angle) @extern("vector2_rotate_deg");
+extern fn Vec2f Vec2f.move_towards(self, Vec2f target, float max_distance) @extern("vector2_move_toward");
+extern fn Vec2f Vec2f.invert(self) @extern("vector2_invert");
+extern fn Vec2f Vec2f.clamp(self, Vec2f min, Vec2f max) @extern("vector2_clamp");
+extern fn Vec2f Vec2f.clamp_mag(self, float min, float max) @extern("vector2_clamp_mag");
 
 
-struct Vector3 {
-  float x, y, z;
-}
+alias Vec3f = float[<3>];
+alias Vec3i = int[<3>];
 
-extern fn bool Vector3.equals(self, Vector3 rhs) @operator(==) @extern("vector3_equals");
-extern fn Vector3 Vector3.add(self, Vector3 rhs) @operator(+) @extern("vector3_add");
-extern fn Vector3 Vector3.pos_offset(self, float rhs) @operator_s(+) @extern("vector3_pos_offset");
-extern fn Vector3 Vector3.sub(self, Vector3 rhs) @operator(-) @extern("vector3_sub");
-extern fn Vector3 Vector3.neg_offset(self, float rhs) @operator_s(-) @extern("vector3_neg_offset");
-extern fn Vector3 Vector3.mul(self, Vector3 rhs) @operator(*) @extern("vector3_mul");
-extern fn Vector3 Vector3.scale(self, float rhs) @operator_s(*) @extern("vector3_scale");
-extern fn Vector3 Vector3.div(self, Vector3 rhs) @operator(/) @extern("vector3_add");
-extern fn Vector3 Vector3.inverse(self, float rhs) @operator_s(/) @extern("vector3_inverse");
-extern fn Vector3 Vector3.remainder(self, int rhs) @operator(%) @extern("vector3_remainder");
-
-extern fn Vector2 Vector3.v2(self) @extern("vector3_v2");
-extern fn Vector4 Vector3.v4(self) @extern("vector3_v4");
-extern fn Quaternion Vector3.q(self) @extern("vector3_q");
-extern fn float[3] Vector3.to_array(self) @extern("vector3_farr");
-extern fn int[3] Vector3.to_int_array(self) @extern("vector3_iarr");
-extern fn Vector3 int[3].from_int_array(self) @extern("intarray_v3");
-extern fn Color Vector3.color(self) @extern("vector3_color");
-
-extern fn float Vector3.cross_product(self, Vector3 v2) @extern("vector3_cross_product");
-extern fn float Vector3.perpendicular(self) @extern("vector3_perpendicular");
-extern fn float Vector3.length(self) @extern("vector3_length");
-extern fn float Vector3.length_sqr(self) @extern("vector3_legnth_sqr");
-extern fn float Vector3.dot_product(self, Vector3 v2) @extern("vector3_dot_product");
-extern fn float Vector3.distance(self, Vector3 v2) @extern("vector3_distance");
-extern fn float Vector3.distance_sqr(self, Vector3 v2) @extern("vector3_distance_sqr");
-extern fn float Vector3.angle_rad(self, Vector3 v2) @extern("vector3_angle_rad");
-extern fn float Vector3.angle_deg(self, Vector3 v2) @extern("vector3_angle_deg");
-extern fn Vector3 Vector3.normalize(self) @extern("vector3_normalize");
-extern fn Vector3 Vector3.project(self, Vector3 v2) @extern("vector3_project");
-extern fn Vector3 Vector3.reject(self, Vector3 v2) @extern("vector3_reject");
-extern fn void Vector3.orthonormalize(&self, Vector3* v2) @extern("vector3_orthonormalize");
-extern fn Vector3 Vector3.transform(self, Matrix mat) @extern("vector3_transform");
-extern fn Vector3 Vector3.rotate_quaternion(self, Quaternion q) @extern("vector3_rotate_q");
-extern fn Vector3 Vector3.rotate(self, Vector3 dist, float rot) @extern("vector3_rotate");
-extern fn Vector3 Vector3.rotate_axis(self, Vector3 axis, float angle) @extern("vector3_rotate_axis");
-extern fn Vector3 Vector3.move_towards(self, Vector3 target, float max_distance) @extern("vector3_move_towards");
-extern fn Vector3 Vector3.lerp(self, Vector3 target, float amount) @extern("vector3_lerp");
-extern fn Vector3 Vector3.reflect(self, Vector3 normal) @extern("vector3_reflect");
-extern fn Vector3 Vector3.min(self, Vector3 v2) @extern("vector3_min");
-extern fn Vector3 Vector3.max(self, Vector3 v2) @extern("vector3_max");
-extern fn Vector3 Vector3.barycenter(self, Vector3 a, Vector3 b, Vector3 c) @extern("vector3_barycenter");
-extern fn Vector3 Vector3.unproject(self, Matrix projection, Matrix view) @extern("vector3_unproject");
-extern fn Vector3 Vector3.invert(self) @extern("vector3_invert");
-extern fn Vector3 Vector3.clamp(self, Vector3 min, Vector3 max) @extern("vector3_clamp");
-extern fn Vector3 Vector3.clamp_mag(self, float min, float max) @extern("vector3_clamp_mag");
-extern fn Vector3 refract(Vector3 v, Vector3 n, float r) @extern("vector3_refract");
+extern fn Color Vec3f.color(self) @extern("vector3_color");
+extern fn float Vec3f.cross_product(self, Vec3f v2) @extern("vector3_cross_product");
+extern fn float Vec3f.angle_rad(self, Vec3f v2) @extern("vector3_angle_rad");
+extern fn float Vec3f.angle_deg(self, Vec3f v2) @extern("vector3_angle_deg");
+extern fn Vec3f Vec3f.normalize(self) @extern("vector3_normalize");
+extern fn Vec3f Vec3f.project(self, Vec3f v2) @extern("vector3_project");
+extern fn Vec3f Vec3f.reject(self, Vec3f v2) @extern("vector3_reject");
+extern fn void Vec3f.orthonormalize(&self, Vec3f* v2) @extern("vector3_orthonormalize");
+extern fn Vec3f Vec3f.rotate_quaternion(self, Quaternionf q) @extern("vector3_rotate_q");
+extern fn Vec3f Vec3f.rotate(self, Vec3f dist, float rot) @extern("vector3_rotate");
+extern fn Vec3f Vec3f.move_towards(self, Vec3f target, float max_distance) @extern("vector3_move_towards");
+extern fn Vec3f Vec3f.lerp(self, Vec3f target, float amount) @extern("vector3_lerp");
+extern fn Vec3f Vec3f.reflect(self, Vec3f normal) @extern("vector3_reflect");
+extern fn Vec3f Vec3f.min(self, Vec3f v2) @extern("vector3_min");
+extern fn Vec3f Vec3f.max(self, Vec3f v2) @extern("vector3_max");
+extern fn Vec3f Vec3f.invert(self) @extern("vector3_invert");
+extern fn Vec3f Vec3f.clamp(self, Vec3f min, Vec3f max) @extern("vector3_clamp");
+extern fn Vec3f Vec3f.clamp_mag(self, float min, float max) @extern("vector3_clamp_mag");
 extern fn bool float.close(self, float f2, float amount) @extern("float_close");
-extern fn bool Vector3.close(self, Vector3 v2, float amount) @extern("vector3_close");
-extern fn void Vector3.print(self) @extern("vector3_print");
+extern fn bool Vec3f.close(self, Vec3f v2, float amount) @extern("vector3_close");
 
 
-struct Vector4 {
-  float x, y, z, w;
-}
+alias Vec4f = float[<4>];
+alias Vec4i = int[<4>];
 
-extern fn bool Vector4.equals(self, Vector4 rhs) @operator(==) @extern("vector4_equals");
-extern fn Vector4 Vector4.add(self, Vector4 rhs) @operator(+) @extern("vector4_add");
-extern fn Vector4 Vector4.pos_offset(self, float rhs) @operator_s(+) @extern("vector4_pos_offset");
-extern fn Vector4 Vector4.sub(self, Vector4 rhs) @operator(-) @extern("vector4_sub");
-extern fn Vector4 Vector4.neg_offset(self, float rhs) @operator_s(-) @extern("vector4_neg_offset");
-extern fn Vector4 Vector4.mul(self, Vector4 rhs) @operator(*) @extern("vector4_mul");
-extern fn Vector4 Vector4.scale(self, float rhs) @operator_s(*) @extern("vector4_scale");
-extern fn Vector4 Vector4.mul_mat(self, Matrix rhs) @operator_s(*) @extern("vector4_mulmat");
-extern fn Vector4 Vector4.div(self, Vector4 rhs) @operator(/) @extern("vector4_div");
-extern fn Vector4 Vector4.inverse(self, float rhs) @operator_s(/) @extern("vector4_inverse");
+extern fn Color Vec4f.color(self) @extern("vector4_color");
 
-extern fn Vector2 Vector4.v2(self) @extern("vector4_v2");
-extern fn Vector3 Vector4.v3(self) @extern("vector4_v3");
-extern fn Quaternion Vector4.q(self) @extern("vector4_q");
-extern fn Color Vector4.color(self) @extern("vector4_color");
-
-extern fn float Vector4.length(self) @extern("vector4_length");
-extern fn float Vector4.length_sqr(self) @extern("vector4_length_sqr");
-extern fn float Vector4.dot_product(self, Vector4 v2) @extern("vector4_dot_product");
-extern fn float Vector4.distance(self, Vector4 v2) @extern("vector4_distance");
-extern fn float Vector4.distance_sqr(self, Vector4 v2) @extern("vector4_distance_sqr");
-extern fn Vector4 Vector4.normalize(self) @extern("vector4_normalize");
-extern fn Vector4 Vector4.min(self, Vector4 v2) @extern("vector4_min");
-extern fn Vector4 Vector4.max(self, Vector4 v2) @extern("vector4_max");
-extern fn Vector4 Vector4.lerp(self, Vector4 target, float amount) @extern("vector4_lerp");
-extern fn Vector4 Vector4.move_towards(self, Vector4 target, float max_distance) @extern("vector4_move_towards");
-extern fn Vector4 Vector4.invert(self) @extern("vector4_invert");
+extern fn Vec4f Vec4f.min(self, Vec4f v2) @extern("vector4_min");
+extern fn Vec4f Vec4f.max(self, Vec4f v2) @extern("vector4_max");
+extern fn Vec4f Vec4f.lerp(self, Vec4f target, float amount) @extern("vector4_lerp");
+extern fn Vec4f Vec4f.move_towards(self, Vec4f target, float max_distance) @extern("vector4_move_towards");
+extern fn Vec4f Vec4f.invert(self) @extern("vector4_invert");
 
 
 const float EPSILON = 1.1920929E-7;
-
-struct Quaternion {
-  float x, y, z, w;
-}
-
-extern fn bool Quaternion.equals(self, Quaternion rhs) @operator(==) @extern("quaternion_equals");
-extern fn Quaternion Quaternion.mul(self, Quaternion rhs) @operator(*) @extern("quaternion_mul");
-extern fn Quaternion Quaternion.scale(self, float rhs) @operator_s(*) @extern("quaternion_scale");
-
-extern fn Vector2 Quaternion.v2(self) @extern("quaternion_v2");
-extern fn Vector3 Quaternion.v3(self) @extern("quaternion_v3");
-extern fn Vector4 Quaternion.v4(self) @extern("quaternion_v4");
-extern fn Quaternion Quaternion.to_axis_angle(self) @extern("quaternion_axisangle");
-
-extern fn float Quaternion.length(self) @extern("quaternion_length");
-extern fn float Quaternion.length_sqr(self) @extern("quaternion_length_sqr");
-extern fn float Quaternion.dot_product(self, Quaternion v2) @extern("quaternion_dot_product");
-extern fn Quaternion Quaternion.normalize(self) @extern("quaternion_normalize");
-extern fn Quaternion Quaternion.n_lerp(self, Quaternion target, float amount) @extern("quaternion_nlerp");
-extern fn Quaternion Quaternion.slerp(self, Quaternion target, float amount) @extern("quaternion_slerp");
-extern fn Quaternion Quaternion.to_euler(self) @extern("quaternion_toeuler");
-extern fn Quaternion Quaternion.transform(self, Matrix mat) @extern("quaternion_transform");
-extern fn Quaternion from_v3_to_v3(Vector3 from, Vector3 to) @extern("quaternion_fromv3tov3");
-extern fn Quaternion from_axis_angle(Vector3 axis, float angle) @extern("quaternion_fromaxisangle");
-extern fn Quaternion from_euler(float pitch, float yaw, float roll) @extern("quaternion_fromeuler");
 
 
 module ennoia::yaml;

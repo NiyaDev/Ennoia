@@ -10,8 +10,8 @@ fn void label(
   float spacing = 0,
   Color tint = color::WHITE,
 
-  Vector2 position = {0,0},
-  Vector2 scale = {1,1},
+  Vec2f position = {0,0},
+  Vec2f scale = {1,1},
   int priority = 0,
 ) @export("imm_label") {
   render::draw_font(
@@ -48,7 +48,7 @@ fn void texture_tiled(
   String texture = "texture",
   Color tint = color::WHITE,
   Rectangle bounds = {0,0,64,16},
-  Vector2 scale = {1,1},
+  Vec2f scale = {1,1},
   int priority = 0,
 ) @export("imm_texturetiled") {
   Texture? t = ennoia::textures.get(texture);
@@ -70,12 +70,12 @@ fn bool button(
   String font = "font",
   float spacing = 0,
   Color textTint = color::WHITE,
-  Vector2 textScale = {1,1},
+  Vec2f textScale = {1,1},
 
   String texture = "",
   Color[3] textureTint = {color::WHITE,color::LIGHTGRAY,color::DARKGRAY},
   Rectangle bounds = {0,0,64,16},
-  Vector2 textureScale = {1,1},
+  Vec2f textureScale = {1,1},
   int priority = 0,
 ) @export("imm_button") {
   Font? f = ennoia::fonts.get(font);
@@ -106,7 +106,7 @@ fn bool button(
     float yOffset = (((split.len * f.dim.y) + spacing) / 2) * textScale.y;
     float xOffset = (((longest   * f.dim.x) + spacing) / 2) * textScale.x;
 
-    Vector2 textPosition = {
+    Vec2f textPosition = {
       (bounds.x + (bounds.w / 2)) - xOffset,
       (bounds.y + (bounds.h / 2)) - yOffset,
     };
@@ -124,14 +124,14 @@ fn void bar(
   String font = "font",
   float spacing = 0,
   Color textTint = color::WHITE,
-  Vector2 textScale = {1,1},
+  Vec2f textScale = {1,1},
 
   String textureBg = "",
   String textureFg = "",
   Color textureTint = color::WHITE,
 
   Rectangle bounds = {0,0,64,16},
-  Vector2 textureScale = {1,1},
+  Vec2f textureScale = {1,1},
   int priority = 0,
 
   float* value = null,
@@ -170,7 +170,7 @@ fn void bar(
     float yOffset = (((split.len * f.dim.y) + spacing) / 2) * textScale.y;
     float xOffset = (((longest   * f.dim.x) + spacing) / 2) * textScale.x;
 
-    Vector2 textPosition = {
+    Vec2f textPosition = {
       (bounds.x + (bounds.w / 2)) - xOffset,
       (bounds.y + (bounds.h / 2)) - yOffset,
     };

@@ -3,6 +3,7 @@ module ennoia::render;
 import ennoia;
 import std::io;
 import std::collections;
+import std::math;
 
 
 RenderPipeline2D rp2;
@@ -15,22 +16,22 @@ alias RenderPipeline2D = List{TextureRenderInfo};
 alias RenderPipeline3D = List{MeshRenderInfo};
 
 //alias RenderInstance = HashMap{String,List{Matrix}};
-alias RenderInstance = HashMap{String, Matrix[]};
+alias RenderInstance = HashMap{String, Matrix4f[]};
 alias Render2DList = List{Pair{String, int}};
 
 struct TextureRenderInfo {
   String nameTexture;
   Rectangle dst;
   Rectangle src;
-  //Vector3 rotation;
+  //Vec3f rotation;
   Color tint;
   int priority;
 }
 struct MeshRenderInfo {
   String nameMesh, nameTexture;
-  Vector3 position;
-  Vector3 scale;
-  Vector3 rotation;
+  Vec3f position;
+  Vec3f scale;
+  Vec3f rotation;
 }
 
 
@@ -48,11 +49,17 @@ fn void render_all() {
     for (int j; j < rp3.len(); j++) {
       if (entries[i] == rp3[j].nameMesh) count++;
     }
-    Matrix[] arr = mem::new_array(Matrix, count);
+    Matrix4f[] arr = mem::new_array(Matrix4f, count);
     usz index;
     for (int j; j < rp3.len(); j++) {
       if (entries[i] == rp3[j].nameMesh) {
-        arr[index] = matrix::create(rp3[j].position, rp3[j].scale, rp3[j].rotation);
+        //arr[index] = matrix::create(rp3[j].position, rp3[j].scale, rp3[j].rotation);
+        arr[index] = MATRIX4F_IDENTITY
+          .translate(rp3[j].position)
+          //.rotate_x(rp3[j].rotation.x)
+          //.rotate_y(rp3[j].rotation.y)
+          //.rotate_z(rp3[j].rotation.z)
+          .scale(rp3[j].scale);
         index++;
       }
     }

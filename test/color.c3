@@ -8,7 +8,7 @@ fn void overloads() @test {
   Color color = color::PURPLE;
 
   assert(color == {200, 122, 255, 255}, "Equivalent failed.");
-  assert(color * 10 == {208,196,246,255}, "Multiplication failed.");
+  assert(color * 10 == {208,196,246,246}, "Multiplication failed. [%s]", color * 10);
 }
 
 fn void conversions() @test {
@@ -20,12 +20,12 @@ fn void conversions() @test {
   assert(color == hex.to_color(), "Failed to convert hex to Color.");
 
   // HSV
-  Vector3 hsv = color.to_hsv();
+  Vec3f hsv = color.to_hsv();
   assert(hsv == {37.8828125, 1, 1}, "Failed to convert to HSV.");
-  assert(hsv.to_color() == color, "Failed to convert hsv to color.");
+  assert(hsv.color() == color, "Failed to convert hsv to color.");
 
   // Normalize
-  Vector4 norm = color.normalize();
+  Vec4f norm = color.normalize();
   assert(norm == {1, 0.631372549019, 0, 1}, "Failed to normalize.");
 }
 

@@ -109,12 +109,12 @@ fn void update_screen() {
 
   // Update main shader
   Shader shader = render::save_shader();
-  shader.set_vec2("u_output_size", {(float)scrWidth, (float)scrHeight});
-  shader.set_vec2("u_game_size", {(float)renWidth, (float)renHeight});
+  shader.set_vec2f("u_output_size", {(float)scrWidth, (float)scrHeight});
+  shader.set_vec2f("u_game_size", {(float)renWidth, (float)renHeight});
 
   // Update default shaders
-  defaultShader2d.set_vec2("screensize", {(float)renWidth,(float)renHeight});
-  defaultShader3d.set_mat4x4("projection", matrix::perspective(70 * math::PI / 180, (double)renWidth / (double)renHeight, 0.1, 100.0));
+  defaultShader2d.set_vec2f("screensize", {(float)renWidth,(float)renHeight});
+  defaultShader3d.set_mat4x4("projection", matrix::perspective{float}(70 * math::PI / 180, (float)renWidth / (float)renHeight, 0.1, 100.0));
 
   // Re-create render texture
   render::clean();

@@ -23,7 +23,7 @@ fn Rectangle Rectangle.add(self, Rectangle rhs) @operator(+) @export("rect_add")
   };
 }
 <* + Overload with vector2 *>
-fn Rectangle Rectangle.add_v2(self, Vector2 rhs) @operator_s(+) @export("rect_addv2") {
+fn Rectangle Rectangle.add_v2(self, Vec2f rhs) @operator_s(+) @export("rect_addv2") {
   return {
     self.x + rhs.x,
     self.y + rhs.y,
@@ -32,7 +32,7 @@ fn Rectangle Rectangle.add_v2(self, Vector2 rhs) @operator_s(+) @export("rect_ad
   };
 }
 <* + Overload with vector4 *>
-fn Rectangle Rectangle.add_v4(self, Vector4 rhs) @operator_s(+) @export("rect_addv4") {
+fn Rectangle Rectangle.add_v4(self, Vec4f rhs) @operator_s(+) @export("rect_addv4") {
   return {
     self.x + rhs.x,
     self.y + rhs.y,
@@ -50,7 +50,7 @@ fn Rectangle Rectangle.sub(self, Rectangle rhs) @operator(-) @export("rect_sub")
   };
 }
 <* - Overload with vector2 *>
-fn Rectangle Rectangle.sub_v2(self, Vector2 rhs) @operator_s(-) @export("rect_subv2") {
+fn Rectangle Rectangle.sub_v2(self, Vec2f rhs) @operator_s(-) @export("rect_subv2") {
   return {
     self.x - rhs.x,
     self.y - rhs.y,
@@ -68,7 +68,7 @@ fn Rectangle Rectangle.mul(self, Rectangle rhs) @operator(*) @export("rect_mul")
   };
 }
 <* * Overload with vector2 *>
-fn Rectangle Rectangle.mul_v2(self, Vector2 rhs) @operator_s(*) @export("rect_mulv2") {
+fn Rectangle Rectangle.mul_v2(self, Vec2f rhs) @operator_s(*) @export("rect_mulv2") {
   return {
     self.x * rhs.x,
     self.y * rhs.y,
@@ -86,7 +86,7 @@ fn Rectangle Rectangle.div(self, Rectangle rhs) @operator(/) @export("rect_div")
   };
 }
 <* / Overload with vector2 *>
-fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) @export("rect_divv2") {
+fn Rectangle Rectangle.div_v2(self, Vec2f rhs) @operator_s(/) @export("rect_divv2") {
   return {
     self.x / rhs.x,
     self.y / rhs.y,
@@ -96,14 +96,14 @@ fn Rectangle Rectangle.div_v2(self, Vector2 rhs) @operator_s(/) @export("rect_di
 }
 
 <* Converts rectangle to a Vector2 *>
-fn Vector2 Rectangle.v2(self) @export("rect_v2") {
+fn Vec2f Rectangle.v2(self) @export("rect_v2") {
   return {
     self.x,
     self.y,
   };
 }
 <* Converts rectangle to a Vector2 *>
-fn Vector4 Rectangle.v4(self) @export("rect_v4") {
+fn Vec4f Rectangle.v4(self) @export("rect_v4") {
   return {
     self.x,
     self.y,
@@ -114,7 +114,7 @@ fn Vector4 Rectangle.v4(self) @export("rect_v4") {
 
 
 <* Returns whether Vector2 is within rectangle *>
-fn bool Rectangle.within(&self, Vector2 rhs) @export("rect_within") {
+fn bool Rectangle.within(&self, Vec2f rhs) @export("rect_within") {
   return ((rhs.x >= self.x && rhs.x <= self.x + self.w) && (rhs.y >= self.y && rhs.y <= self.y + self.h));
 }
 

@@ -4,7 +4,7 @@ import ennoia::vector;
 
 
 struct BoundingBox {
-  Vector3 min, max;
+  Vec3f min, max;
 }
 
 <* Return whether two bounding boxes overlap *>

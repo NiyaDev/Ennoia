@@ -6,7 +6,7 @@ import std::io;
 
 <* Immediate mode Draggable container *>
 fn void container_drag(
-  Vector2* position,
+  Vec2f* position,
   Rectangle dragArea = {0,0,32,8},
 ) @export("imm_contdrag") {
   if ((dragArea + *position).within(ennoia::mousePosition) && keybinds::mouse_down(1)) {

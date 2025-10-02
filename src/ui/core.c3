@@ -49,8 +49,8 @@ struct ElementLabel {
   float spacing;
   Color tint;
 
-  Vector2 position;
-  Vector2 scale;
+  Vec2f position;
+  Vec2f scale;
 }
 struct ElementButton {
   String text;
@@ -62,8 +62,8 @@ struct ElementButton {
   Color[3] textureTint;
 
   Rectangle bounds;
-  Vector4 textPadding;
-  Vector2 scale;
+  Vec4f textPadding;
+  Vec2f scale;
 
   TextAlignmentHorizontal alignHori;
   TextAlignmentVertical   alignVert;
@@ -83,8 +83,8 @@ struct ElementBar {
   Color textureTint;
 
   Rectangle bounds;
-  Vector4 textPadding;
-  Vector2 scale;
+  Vec4f textPadding;
+  Vec2f scale;
 
   float* value;
   float* valueMax;
@@ -92,8 +92,8 @@ struct ElementBar {
 
 struct ElementVerticalContainer {
   Rectangle bounds;
-  Vector2 scale;
-  Vector4 offset;
+  Vec2f scale;
+  Vec4f offset;
   float spacing;
 
   String texture;
@@ -109,8 +109,8 @@ fn Element* new_label(
   String font = "font",
   float spacing = 0,
   Color tint = color::WHITE,
-  Vector2 position = {0,0},
-  Vector2 scale = {1,1},
+  Vec2f position = {0,0},
+  Vec2f scale = {1,1},
 ) @export("ui_label") {
   Element* e = mem::new(Element);
   e.type = LABEL;
@@ -132,8 +132,8 @@ fn Element* new_button(
   String texture = "texture",
   Color[3] textureTint = {color::WHITE, color::LIGHTGRAY, color::DARKGRAY},
   Rectangle bounds = {0,0,64,16},
-  Vector4 textPadding = {2,2,2,2},
-  Vector2 scale = {1,1},
+  Vec4f textPadding = {2,2,2,2},
+  Vec2f scale = {1,1},
 
   TextAlignmentHorizontal alignHori = CENTER,
   TextAlignmentVertical   alignVert = CENTER,
@@ -166,8 +166,8 @@ fn Element* new_bar(
   String textureFg = "texture",
   Color textureTint = color::WHITE,
   Rectangle bounds = {0,0,64,16},
-  Vector4 textPadding = {2,2,2,2},
-  Vector2 scale = {1,1},
+  Vec4f textPadding = {2,2,2,2},
+  Vec2f scale = {1,1},
   float* value = null,
   float* valueMax = null,
 ) @export("ui_bar") {
@@ -190,8 +190,8 @@ fn Element* new_container(
   ElementType container = CONTAINER_VERT,
   long duration = 0,
   Rectangle bounds = {0,0,16,16},
-  Vector2 scale = {1,1},
-  Vector4 offset = {2,2,2,2},
+  Vec2f scale = {1,1},
+  Vec4f offset = {2,2,2,2},
   float spacing = 0,
   String texture = "",
   Element*[] elements = {},

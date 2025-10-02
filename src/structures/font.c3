@@ -11,12 +11,12 @@ import std::collections;
 
 struct Font {
   Texture atlas;
-  Vector2 dim;
+  Vec2f dim;
   HashMap{char, Rectangle} rects;
 }
 
 <* Loads font from file *>
-fn Font load(String filename, Vector2 size) @export("font_load") {
+fn Font load(String filename, Vec2f size) @export("font_load") {
   Font output;
   output.atlas = texture::load(filename);
   output.dim = size;
@@ -127,7 +127,7 @@ fn Font load(String filename, Vector2 size) @export("font_load") {
   return output;
 }
 <* Loads font from data *>
-fn Font load_from_mem(char[] data, Vector2 size) @export("font_loadfrommem") {
+fn Font load_from_mem(char[] data, Vec2f size) @export("font_loadfrommem") {
   Font output;
   output.atlas = texture::load_from_mem(data);
   output.dim = size;

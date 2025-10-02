@@ -6,16 +6,16 @@ import ennoia::vector;
 import ennoia::matrix;
 
 
-const Vector3 DEF_TARGET = {0,0,0};
-const Vector3 DEF_DISTANCE = {0,5,5};
-const Vector3 DEF_UP = {0,1,0};
-const float   DEF_FOV = 70;
-const float   DEF_ROTATION = 0;
+const Vec3f DEF_TARGET = {0,0,0};
+const Vec3f DEF_DISTANCE = {0,5,5};
+const Vec3f DEF_UP = {0,1,0};
+const float DEF_FOV = 70;
+const float DEF_ROTATION = 0;
 
 Camera main @export("camera_main") = {DEF_TARGET, DEF_DISTANCE, DEF_UP, DEF_FOV, DEF_ROTATION, DEF_ROTATION};
 
 struct Camera {
-  Vector3 target, distance, up;
+  Vec3f target, distance, up;
   float fov, rotation, rot_target;
 }
 
@@ -41,8 +41,8 @@ fn void update(Camera* cam = &main) @export("camera_update") {
   }
 }
 <* Creates matrix for camera position *>
-fn Matrix get_matrix(Camera* cam = &main) @export("camera_getmatrix") {
-  return matrix::look_at(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
+fn Matrix4f get_matrix(Camera* cam = &main) @export("camera_getmatrix") {
+  return matrix::look_at{float}(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
 }
 
 <* Adds to the main cameras current rotation

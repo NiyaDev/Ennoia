@@ -2,6 +2,7 @@
 module ennoia::mesh;
 import std::io;
 import std::collections;
+import std::math;
 import ennoia;
 import gl;
 
@@ -18,19 +19,19 @@ struct Mesh {
 }
 
 struct Vertex {
-  Vector3 position;
-  Vector3 normal;
-  Vector2 texCoords;
-  Vector4 color;
-  //Vector4 tangents;
+  Vec3f position;
+  Vec3f normal;
+  Vec2f texCoords;
+  Vec4f color;
+  //Vec4f tangents;
   //Vector2 texCoords2;
 }
 alias Indices = uint[3];
 
 const void* VERTEX_POSITION = null;
-const void* VERTEX_NORMAL   = (void*)(Vector3.sizeof);
+const void* VERTEX_NORMAL   = (void*)(Vec3f.sizeof);
 const void* VERTEX_TEXCOORD = (void*)((long)VERTEX_NORMAL * 2);
-const void* VERTEX_COLOR    = (void*)((long)VERTEX_TEXCOORD + Vector2.sizeof);
+const void* VERTEX_COLOR    = (void*)((long)VERTEX_TEXCOORD + Vec2f.sizeof);
 
 
 <* Loads Mesh from data
@@ -84,7 +85,7 @@ fn HashMap{String, Mesh} load_from_mem(String data) @export("mesh_loadfrommem") 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
         float z = line[3].to_float()!!;
-        vertices[lastVertexPos].position = (Vector3){x,y,z};
+        vertices[lastVertexPos].position = (Vec3f){x,y,z};
         lastVertexPos++;
       case "vn": // Normal
         if (vertices.len() <= lastVertexNor) vertices.push({{},{},{0,1},{0,0,0,1}});
@@ -92,14 +93,14 @@ fn HashMap{String, Mesh} load_from_mem(String data) @export("mesh_loadfrommem") 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
         float z = line[3].to_float()!!;
-        vertices[lastVertexNor].normal = (Vector3){x,y,z};
+        vertices[lastVertexNor].normal = (Vec3f){x,y,z};
         lastVertexNor++;
       case "vt": // TextureCoord
         if (vertices.len() <= lastVertexTex) vertices.push({{},{},{0,1},{0,0,0,1}});
 
         float x = line[1].to_float()!!;
         float y = line[2].to_float()!!;
-        vertices[lastVertexTex].texCoords = (Vector2){x,y};
+        vertices[lastVertexTex].texCoords = (Vec2f){x,y};
         lastVertexTex++;
       case "f": // Indices
         if (indices.len() <= lastIndices) indices.push({});
@@ -175,13 +176,19 @@ fn void Mesh.delete(&self) {
   @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
-fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3 rotation = {}, Texture* texture = null) @export("mesh_draw") {
+fn void Mesh.draw(&self, Vec3f position = {}, Vec3f scale = {1,1,1}, Vec3f rotation = {}, Texture* texture = null) @export("mesh_draw") {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader3d.use());
 
   // Set uniforms
   ennoia::defaultShader3d.set_mat4x4("view", camera::get_matrix());
-  ennoia::defaultShader3d.set_mat4x4("model", matrix::IDENTITY.translate(position).rotate(rotation).scale(scale));
+  ennoia::defaultShader3d.set_mat4x4("model",
+    MATRIX4F_IDENTITY
+      .translate(position)
+      .rotate_x(rotation.x)
+      .rotate_y(rotation.y)
+      .rotate_z(rotation.z)
+      .scale(scale));
   
   // Check what textures are available and uses the highest priority.
   int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
@@ -198,7 +205,7 @@ fn void Mesh.draw(&self, Vector3 position = {}, Vector3 scale = {1,1,1}, Vector3
 <* Draws Mesh multiple times with different matrices
   @param mats: "Array of Matrixes defining the location of each mesh instance"
  *>
-fn void Mesh.draw_instanced(&self, Matrix[] mats, Texture* texture = null) {
+fn void Mesh.draw_instanced(&self, Matrix4f[] mats, Texture* texture = null) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader3d.use());
 
@@ -228,15 +235,15 @@ fn void Mesh.draw_instanced(&self, Matrix[] mats, Texture* texture = null) {
   @param rotation: "Rotation to apply to mesh. Default is {0,0,0}."
   @param texture:  "Texture to draw on mesh, set to null by default"
  *>
-fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float rotation = 0, Texture* texture = null) @export("mesh_draw2d") {
+fn void Mesh.draw_2d(&self, Vec2f position = {}, Vec2f scale = {1,1}, float rotation = 0, Texture* texture = null) @export("mesh_draw2d") {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
   // Set uniforms
-  ennoia::defaultShader2d.set_vec2("position", position);
-  ennoia::defaultShader2d.set_vec2("scale", scale);
-  ennoia::defaultShader2d.set_vec2("texOffset", {0,0});
-  ennoia::defaultShader2d.set_vec2("texScale",  {1,1});
+  ennoia::defaultShader2d.set_vec2f("position", position);
+  ennoia::defaultShader2d.set_vec2f("scale", scale);
+  ennoia::defaultShader2d.set_vec2f("texOffset", {0,0});
+  ennoia::defaultShader2d.set_vec2f("texScale",  {1,1});
 
   // Check what textures are available and uses the highest priority.
   int textureID = ((texture != null) ? texture.id : ((self.texture != null) ? self.texture.id : 0));
@@ -252,7 +259,7 @@ fn void Mesh.draw_2d(&self, Vector2 position = {}, Vector2 scale = {1,1}, float 
   @require position.len == scale.len
  *>
 //fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector2[6][] texcoord, Texture* texture) {
-fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vector4[] texcoord, Color[] tint, Texture* texture) {
+fn void Mesh.draw_2d_instanced(&self, Vec2f[] position, Vec2f[] scale, Vec4f[] texcoord, Color[] tint, Texture* texture) {
   // Use default shader if the mesh doesn't have one
   ((self.shader.id != 0) ? self.shader.use() : ennoia::defaultShader2d.use());
 
@@ -262,11 +269,11 @@ fn void Mesh.draw_2d_instanced(&self, Vector2[] position, Vector2[] scale, Vecto
 
   // Loop
   for (int i; i < position.len; i++) {    // Set uniforms
-    ennoia::defaultShader2d.set_vec2("position",  position[i]);
-    ennoia::defaultShader2d.set_vec2("scale",     scale[i]);
-    ennoia::defaultShader2d.set_vec2("texOffset", {texcoord[i].x,(1 - texcoord[i].w) - texcoord[i].y});
-    ennoia::defaultShader2d.set_vec2("texScale",  {texcoord[i].z,texcoord[i].w});
-    ennoia::defaultShader2d.set_vec4("texColor",  tint[i].normalize());
+    ennoia::defaultShader2d.set_vec2f("position",  position[i]);
+    ennoia::defaultShader2d.set_vec2f("scale",     scale[i]);
+    ennoia::defaultShader2d.set_vec2f("texOffset", {texcoord[i].x,(1 - texcoord[i].w) - texcoord[i].y});
+    ennoia::defaultShader2d.set_vec2f("texScale",  {texcoord[i].z,texcoord[i].w});
+    ennoia::defaultShader2d.set_vec4f("texColor",  tint[i].normalize());
 
     gl::draw_arrays(gl::TRIANGLES, 0, self.vertices.len);
   }
