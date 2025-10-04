@@ -7,12 +7,14 @@ fn void test() @test {
   defer ennoia::clean();
 
   bool draw = true;
+  camera::main.distance = {0,10,5};
 
   while (!ennoia::window_should_close()) {
 
     if (keybinds::pressed("debug")) draw = !draw;
     
     ennoia::start_drawing();
+    camera::main.distance += ennoia::scrollwheel;
 
     if (draw) {
       for (int i; i < (16*16)*4; i++) {

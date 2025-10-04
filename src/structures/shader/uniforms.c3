@@ -54,6 +54,8 @@ fn void Shader.set_mat4x4(&self, String name, Matrix4f mat) @export("shader_setm
   } else {
     uint loc = gl::get_uniform_location(self.id, name.zstr_tcopy());
     self.locs.set(name, loc);
+    //Matrix4f transposed = mat.transpose();
+    //gl::program_uniform_matrix4_fv(self.id, loc, 1, false, (float*)&transposed);
     gl::program_uniform_matrix4_fv(self.id, loc, 1, false, (float*)&mat);
   }
 }

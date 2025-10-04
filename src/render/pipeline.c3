@@ -56,10 +56,14 @@ fn void render_all() {
         //arr[index] = matrix::create(rp3[j].position, rp3[j].scale, rp3[j].rotation);
         arr[index] = MATRIX4F_IDENTITY
           .translate(rp3[j].position)
+          //.rotatem(rp3[j].rotation)
           //.rotate_x(rp3[j].rotation.x)
           //.rotate_y(rp3[j].rotation.y)
           //.rotate_z(rp3[j].rotation.z)
           .scale(rp3[j].scale);
+          //.transpose();
+        io::printfn("%s",arr[index].m);
+        //unreachable();
         index++;
       }
     }

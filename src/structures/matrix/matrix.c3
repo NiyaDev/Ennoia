@@ -1,5 +1,62 @@
 
 module ennoia::matrix;
+import ennoia::vector;
+import std::math;
+
+
+fn Matrix4f look_atm(Vec3f eye, Vec3f target, Vec3f up) @export("matrix_lookat") {
+	Matrix4f result;
+	float length;
+	float ilength;
+
+	Vec3f vz = eye - target;
+
+	//* Vector3Normalize(vz)
+	Vec3f v = vz;
+	length = v.length();
+	if (length == 0) { length = 1; }
+	ilength = 1 / length;
+	vz.x *= ilength;
+	vz.y *= ilength;
+	vz.z *= ilength;
+
+	//* Vector3CrossProduct(up, vz)
+	Vec3f vx = up.cross_product(vz);
+
+	//* Vector3Normalize(x)
+	v = vx;
+	length = v.length();
+	if (length == 0) { length = 1; }
+	ilength = 1 / length;
+	vx.x *= ilength;
+	vx.y *= ilength;
+	vx.z *= ilength;
+
+	//* Vector3CrossProduct(vz, vx)
+	Vec3f vy = vz.cross_product(vx);
+	
+	//*
+	result.m00 =  vx.x;
+	result.m01 =  vy.x;
+	result.m02 =  vz.x;
+	result.m03 =     0;
+	result.m10 =  vx.y;
+	result.m11 =  vy.y;
+	result.m12 =  vz.y;
+	result.m13 =     0;
+	result.m20 =  vx.z;
+	result.m21 =  vy.z;
+	result.m22 =  vz.z;
+	result.m23 =     0;
+	result.m30 = -(vx.x * eye.x + vx.y * eye.y + vx.z * eye.z);   // Vector3DotProduct(vx, eye)
+	result.m31 = -(vy.x * eye.x + vy.y * eye.y + vy.z * eye.z);   // Vector3DotProduct(vy, eye)
+	result.m32 = -(vz.x * eye.x + vz.y * eye.y + vz.z * eye.z);   // Vector3DotProduct(vz, eye)
+	result.m33 =     1;
+
+	return result.transpose();
+}
+
+
 /*
 import std::io;
 import std::math;

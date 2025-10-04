@@ -42,7 +42,8 @@ fn void update(Camera* cam = &main) @export("camera_update") {
 }
 <* Creates matrix for camera position *>
 fn Matrix4f get_matrix(Camera* cam = &main) @export("camera_getmatrix") {
-  return matrix::look_at{float}(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
+  //return matrix::look_at{float}(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
+  return matrix::look_atm(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
 }
 
 <* Adds to the main cameras current rotation

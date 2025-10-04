@@ -185,9 +185,10 @@ fn void Mesh.draw(&self, Vec3f position = {}, Vec3f scale = {1,1,1}, Vec3f rotat
   ennoia::defaultShader3d.set_mat4x4("model",
     MATRIX4F_IDENTITY
       .translate(position)
-      .rotate_x(rotation.x)
-      .rotate_y(rotation.y)
-      .rotate_z(rotation.z)
+      //.rotatem(rotation)
+      //.rotate_x(rotation.x)
+      //.rotate_y(rotation.y)
+      //.rotate_z(rotation.z)
       .scale(scale));
   
   // Check what textures are available and uses the highest priority.

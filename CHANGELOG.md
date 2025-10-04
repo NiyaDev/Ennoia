@@ -121,3 +121,7 @@
   - It seems like it may be a different layout from OpenGL. Which is weird...
   - Changed: matrix.c3, uniforms.c3, mesh.c3, pipeline.c3, camera.c3, system/drawing.c3, and system/core.c3.
 
+#### [10/3/25]
+- Still trying to figure out matrix nonsense.
+  - Got an idea to try tomorrow.
+
