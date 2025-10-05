@@ -2,7 +2,6 @@
 module ennoia::vector;
 import std::io;
 import std::math;
-import ennoia::matrix;
 import ennoia::color;
 
 

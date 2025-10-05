@@ -1,7 +1,6 @@
 
 module ennoia::shader;
 import ennoia::vector;
-import ennoia::matrix;
 import ennoia::texture;
 import std::io;
 import std::collections;

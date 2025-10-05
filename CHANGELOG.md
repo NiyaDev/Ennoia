@@ -125,3 +125,8 @@
 - Still trying to figure out matrix nonsense.
   - Got an idea to try tomorrow.
 
+#### [10/4/25]
+- FIXED MATRIXES!! It was stupid too!
+  - I never transposed the perspective matrix in system/core.c3.
+- Removed all references to matrix.
+

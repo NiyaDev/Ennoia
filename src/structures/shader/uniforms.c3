@@ -1,6 +1,5 @@
 
 module ennoia::shader;
-import ennoia::matrix;
 import ennoia::texture;
 import ennoia::vector;
 import gl;

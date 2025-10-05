@@ -1,6 +1,5 @@
 
 module ennoia::vector;
-import ennoia::matrix;
 import std::io;
 import std::math;
 

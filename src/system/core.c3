@@ -57,7 +57,7 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   defaultShader2d = shader::compile(shader::DEFAULT_VERTEX_2D, shader::DEFAULT_FRAGMENT_2D);
   defaultShader2d.set_vec2f("screensize", {(float)renWidth,(float)renHeight});
   defaultShader3d = shader::compile(shader::DEFAULT_VERTEX_3D, shader::DEFAULT_FRAGMENT_3D);
-  defaultShader3d.set_mat4x4("projection", matrix::perspective{float}(70 * math::PI / 180, (float)renWidth / (float)renHeight, 0.1, 100.0));
+  defaultShader3d.set_mat4x4("projection", matrix::perspective{float}(70 * math::PI / 180, (float)renWidth / (float)renHeight, 0.1, 100.0).transpose());
 
   // Framebuffer
   render::init(renWidth, renHeight);

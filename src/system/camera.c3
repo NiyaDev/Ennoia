@@ -3,7 +3,6 @@ module ennoia::camera;
 import std::io;
 import std::math;
 import ennoia::vector;
-import ennoia::matrix;
 
 
 const Vec3f DEF_TARGET = {0,0,0};
@@ -42,8 +41,7 @@ fn void update(Camera* cam = &main) @export("camera_update") {
 }
 <* Creates matrix for camera position *>
 fn Matrix4f get_matrix(Camera* cam = &main) @export("camera_getmatrix") {
-  //return matrix::look_at{float}(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
-  return matrix::look_atm(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up);
+  return matrix::look_at{float}(cam.target.rotate(cam.distance, cam.rotation), cam.target, cam.up).transpose();
 }
 
 <* Adds to the main cameras current rotation
