@@ -158,6 +158,7 @@ extern fn void gen_textures(int, uint*) @extern("glGenTextures");
 extern fn void bind_texture(int, uint) @extern("glBindTexture");
 extern fn void generate_mipmap(int) @extern("glGenerateMipmap");
 extern fn void tex_image_2d(int target, int level, int internalFormat, int width, int height, int border, int format, int type, void* data) @extern("glTexImage2D");
+extern fn void get_texture(uint target, int level, uint format, uint type, void* pixels) @extern("glGetTexImage");
 
 // Meshes
 extern fn void vertex_attrib_pointer(uint, int, int, bool, int, void*) @extern("glVertexAttribPointer");

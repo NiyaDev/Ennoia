@@ -130,3 +130,7 @@
   - I never transposed the perspective matrix in system/core.c3.
 - Removed all references to matrix.
 
+#### [10/5/25]
+- Started working on Screenshots, but realized the stb bindings are just not enough.
+  - so I started on making my own bindings for spng.
+

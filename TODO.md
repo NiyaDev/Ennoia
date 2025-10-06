@@ -1,8 +1,6 @@
 
 ### Testing
-- Quaternion overloads
 - BoundingBoxes
-- Matrices
 - Fonts
 - Keybinds
 - Localizations
@@ -40,7 +38,6 @@
 ### Fixes
 - Move over to using proper OpenGL bindings.
 - Tapping shift while holding direction keeps it down when you let go.
-- Confirm matrix functions work
 - mesh::new doesn't use input vertices and instead just returns a triangle.
 - Add inputs to mesh generation.
 

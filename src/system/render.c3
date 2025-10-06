@@ -3,7 +3,9 @@ module ennoia::render;
 import ennoia::shader;
 import ennoia::texture;
 import ennoia::mesh;
+import ennoia::debug;
 import gl;
+import std::io;
 
 
 uint framebuffer, renderbuffer;
@@ -51,5 +53,33 @@ fn Shader save_shader() @export("getshader") {
   Shader sh = renderQuad.shader;
   renderQuad.shader = {};
   return sh;
+}
+
+<* Gets raw screenshot *>
+// TODO: Error check
+fn char[] screenshot() @export("screenshot") {
+  char[] data = mem::new_array(char, 4 * (usz)renderTexture.width * (usz)renderTexture.height);
+  gl::read_pixels(0,0,renderTexture.width,renderTexture.height, gl::RGBA, gl::UNSIGNED_BYTE, data);
+
+  return data;
+}
+<* Saves screenshot as png *>
+fn void save_screenshot(String filename = "screenshot.bmp") @export("screenshot_save") {
+  File? file = file::open(filename, "wb");
+  if (catch file) {
+    debug::warning("Failed to open file to write screenshot.");
+    return;
+  }
+
+  char[] data = screenshot();
+  if (catch file.write(data)) {
+    debug::warning("Failed to write data to file.");
+  }
+
+  if (catch file.close()) {
+    debug::warning("Failed to close screenshot file.");
+  }
+
+  free(data);
 }
 

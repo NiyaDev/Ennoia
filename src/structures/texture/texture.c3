@@ -93,6 +93,8 @@ fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
  *>
 fn Texture new(int width, int height) @export("texture_new") {
   Texture output;
+  output.width = width;
+  output.height = height;
 
   gl::gen_textures(1, &output.id);
   gl::bind_texture(gl::TEXTURE_2D, output.id);
