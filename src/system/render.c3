@@ -6,6 +6,7 @@ import ennoia::mesh;
 import ennoia::debug;
 import gl;
 import std::io;
+import spng;
 
 
 uint framebuffer, renderbuffer;
@@ -64,22 +65,38 @@ fn char[] screenshot() @export("screenshot") {
   return data;
 }
 <* Saves screenshot as png *>
-fn void save_screenshot(String filename = "screenshot.bmp") @export("screenshot_save") {
-  File? file = file::open(filename, "wb");
-  if (catch file) {
-    debug::warning("Failed to open file to write screenshot.");
-    return;
-  }
+fn void save_screenshot(String filename = "screenshot.png") @export("screenshot_save") {
+  int res;
+
+  Ctx* enc = spng::ctx_new((int)CTXFlags.ENCODER);
+  defer spng::ctx_free(enc);
+
+  res = spng::set_option(enc, Option.ENCODE_TO_BUFFER, 1);
+  debug::error(res == 0, "set_options() error: %s", spng::strerror(res));
+
+  Ihdr ihdr = {
+    ennoia::renWidth,
+    ennoia::renHeight,
+    8,
+    (char)ColorType.TRUECOLOR_ALPHA,
+    0, 0, 0,
+  };
+  res = spng::set_ihdr(enc, &ihdr);
+  debug::error(res == 0, "set_ihdr() error: %s", spng::strerror(res));
 
   char[] data = screenshot();
-  if (catch file.write(data)) {
-    debug::warning("Failed to write data to file.");
-  }
+  data.reverse(ennoia::renWidth, ennoia::renHeight, 4);
+  defer free(data);
 
-  if (catch file.close()) {
-    debug::warning("Failed to close screenshot file.");
-  }
+  res = spng::encode_image(enc, data, data.len, (int)Format.PNG, (int)EncodeFlags.FINALIZE);
+  debug::error(res == 0, "encode_image() error: %s", spng::strerror(res));
 
-  free(data);
+  usz pngSize;
+  void* png = spng::get_png_buffer(enc, &pngSize, &res);
+  //defer free(png);
+  debug::error(res == 0, "get_png_buffer() error: %s", spng::strerror(res));
+
+  file::save(filename, ((char*)png)[:pngSize])!!;
+
 }
 

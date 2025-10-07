@@ -3,9 +3,11 @@ module ennoia::texture;
 import ennoia::color;
 import ennoia::rectangle;
 import ennoia::vector;
+import ennoia::debug;
 import std::io;
-import stb;
+import spng;
 import gl;
+import libc;
 
 
 struct Texture {
@@ -27,20 +29,33 @@ enum TilingLayout {
  *>
 fn Texture load(String filename) @export("texture_load") {
   Texture output;
+  int res;
 
   // Load data from file
-  stb::stbi_set_flip_vertically_on_load(true);
-  uint channels;
-  char* data = stb::stbi_load(filename.zstr_tcopy(), &output.width, &output.height, &channels, 0);
-  assert(data != null, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to load image]");
+  CFile file = libc::fopen((ZString)filename, "rb");
+  defer libc::fclose(file);
+  usz imgSize;
 
-  // Check if transparent
-  for (int i = 3; i < (output.width * output.height) * 4; i += 4) {
-    if (data[i] != 255) {
-      output.transparency = true;
-      break;
-    }
-  }
+  Ctx* ctx = spng::ctx_new(0);
+  spng::set_png_file(ctx, file);
+  debug::error(res == 0, "set_png_file() error: %s", spng::strerror(res));
+  spng::decoded_image_size(ctx, (int)Format.RGBA8, &imgSize);
+  debug::error(res == 0, "decoded_image_size() error: %s", spng::strerror(res));
+  
+  char[] data = mem::new_array(char, imgSize);
+  defer free(data);
+
+  Ihdr ihdr;
+  spng::get_ihdr(ctx, &ihdr);
+  debug::error(res == 0, "get_ihdr() error: %s", spng::strerror(res));
+  output.width = ihdr.width;
+  output.height = ihdr.height;
+  
+  spng::decode_image(ctx, (void*)data, imgSize, (int)Format.RGBA8, 0);
+  debug::error(res == 0, "decode_image() error: %s", spng::strerror(res));
+  data.reverse(output.width, output.height, 4);
+
+  spng::ctx_free(ctx);
 
   // Gen OpenGL texture
   gl::gen_textures(1, &output.id);
@@ -51,10 +66,7 @@ fn Texture load(String filename) @export("texture_load") {
 
   gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGBA, gl::UNSIGNED_BYTE, data);
   gl::generate_mipmap(gl::TEXTURE_2D);
-  assert(output.id != 0, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to bind texture]");
-
-  // Cleanup
-  stb::stbi_image_free(data);
+  debug::error(output.id != 0, "texture::load() error: Failed to bind Texture.");
 
   return output;
 }
@@ -64,13 +76,34 @@ fn Texture load(String filename) @export("texture_load") {
  *>
 fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
   Texture output;
+  int res;
 
-  stb::stbi_set_flip_vertically_on_load(true);
+  // Create context and get decoded size
+  Ctx* ctx = spng::ctx_new(0);
+  usz imgSize;
+  res = spng::set_png_buffer(ctx, data, data.len);
+  debug::error(res == 0, "set_png_buffer() error: %s", spng::strerror(res));
+  res = spng::decoded_image_size(ctx, (int)Format.RGBA8, &imgSize);
+  debug::error(res == 0, "decoded_image_size() error: %s", spng::strerror(res));
 
-  uint channels;
-  char* img = stb::stbi_load_from_memory((char*)data, (uint)data.len, &output.width, &output.height, &channels, 0);
-  assert(img != null, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to load image]");
+  // Copy width and height
+  Ihdr ihdr;
+  res = spng::get_ihdr(ctx, &ihdr);
+  debug::error(res == 0, "get_ihdr() error: %s", spng::strerror(res));
+  output.width = ihdr.width;
+  output.height = ihdr.height;
+  
+  // Decode image data and reverse result
+  char[] img = mem::new_array(char, imgSize);
+  defer free(img);
+  
+  res = spng::decode_image(ctx, (void*)img, imgSize, (int)Format.RGBA8, 0);
+  debug::error(res == 0, "decode_image() error: %s", spng::strerror(res));
+  img.reverse(output.width, output.height, 4);
 
+  spng::ctx_free(ctx);
+
+  // Gen OpenGL texture
   gl::gen_textures(1, &output.id);
   gl::bind_texture(gl::TEXTURE_2D, output.id);
 
@@ -79,9 +112,7 @@ fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
 
   gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGBA, gl::UNSIGNED_BYTE, img);
   gl::generate_mipmap(gl::TEXTURE_2D);
-  assert(output.id != 0, "[ERROR] - ENNOIA::TEXTURE::LOAD [Failed to bind texture]");
-
-  stb::stbi_image_free(img);
+  debug::error(output.id != 0, "texture::load() error: Failed to bind Texture.");
 
   return output;
 }
@@ -110,3 +141,17 @@ fn void Texture.clean(&self) @export("texture_clean") {
   gl::delete_textures(1, &self.id);
 }
 
+<**>
+fn void char[].reverse(self, usz width, usz height, int bytesPerPixel) {
+  usz stride = width * bytesPerPixel;
+  char[] row = mem::new_array(char, stride);
+  for (int y; y < height / 2; y++) {
+    char* top = (char*)self + y * stride;
+    char* bot = (char*)self + (height - y - 1) * stride;
+
+    mem::copy(row, top, stride);
+    mem::copy(top, bot, stride);
+    mem::copy(bot, row, stride);
+  }
+  free(row);
+}

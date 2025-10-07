@@ -134,3 +134,7 @@
 - Started working on Screenshots, but realized the stb bindings are just not enough.
   - so I started on making my own bindings for spng.
 
+#### [10/7/25]
+- Removed stb dependency and replaced it and all uses of it with spng.
+- Added ability to take screenshots.
+

@@ -7,11 +7,10 @@ fn void test() @test {
   defer ennoia::clean();
 
   bool draw = true;
-  //camera::main.distance = {0,10,8};
 
   while (!ennoia::window_should_close()) {
 
-    if (keybinds::pressed("debug")) draw = !draw;
+    if (keybinds::pressed("debug")) render::save_screenshot();
     
     ennoia::start_drawing();
     camera::main.distance.yz -= ennoia::scrollwheel;
