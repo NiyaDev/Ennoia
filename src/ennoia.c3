@@ -18,7 +18,7 @@ bool forceClose @export("forceclose");
 int scrWidth, scrHeight;
 int renWidth @export("renderwidth");
 int renHeight @export("renderheight");
-float renRes;
+float renRes @export("renderres");
 bool borderless, fullscreen;
 
 Shader defaultShader2d;

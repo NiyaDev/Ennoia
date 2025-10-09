@@ -7,6 +7,7 @@ extern double lastFrame     @extern("lastframe");
 extern bool   forceClose    @extern("forceclose");
 extern int    renWidth      @extern("renderwidth");
 extern int    renHeight     @extern("renderheight");
+extern float  renRes        @extern("renderres");
 extern Vec2f  mousePosition @extern("mouseposition");
 extern Vec2f  mouseDelta    @extern("mousedelta");
 extern float  scrollwheel   @extern("scrollwheel");
@@ -40,7 +41,7 @@ import ennoia::rectangle;
 import ennoia::vector;
 
 extern fn void draw_mesh(String nameMesh = "cube", String nameTexture = "", Vec3f position = {}, Vec3f scale = {1,1,1}, Vec3f rotation = {}) @extern("render_mesh");
-extern fn void draw_texture(String nameTexture = "default", Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Vec3f rotation = {}, Color tint = {255, 255, 255, 255}) @extern("render_texture");
+extern fn void draw_texture(String nameTexture = "texture", Rectangle dst = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, Color tint = {255, 255, 255, 255}, int priority = 1) @extern("render_texture");
 
 
 module ennoia::bounds;
@@ -531,7 +532,7 @@ import ennoia::vector;
 extern fn void label(String text = "", String font = "font", float spacing = 0, Color tint = {255, 255, 255, 255}, Vec2f position = {0,0}, Vec2f scale = {1,1}, int priority = 0) @extern("imm_label");
 extern fn void texture(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, int priority = 0) @extern("imm_texture");
 extern fn void texture_tiled(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vec2f scale = {1,1}, int priority = 0) @extern("imm_texturetiled");
-extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String texture = "", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0) @extern("imm_button");
+extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String texture = "texture", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0) @extern("imm_button");
 extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = {255, 255, 255, 255}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0, float* value = null, float* valueMax = null) @extern("imm_bar");
 
 extern fn void container_drag(Vec2f* position, Rectangle dragArea = {0,0,32,8}) @extern("imm_contdrag");

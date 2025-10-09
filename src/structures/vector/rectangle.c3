@@ -4,8 +4,9 @@ import ennoia::vector;
 import std::io;
 
 
-struct Rectangle {
-  float x, y, w, h;
+union Rectangle {
+  struct { float x, y, w, h; }
+  float[<4>] f;
 }
 
 
