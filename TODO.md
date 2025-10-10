@@ -31,12 +31,15 @@
 - Screenshot
 - Ability to take a screenshot and compare it to another for testing.
 
+- Documentation
+
 ### Additions
 - Vector2
   - Min/Max
 
 ### Fixes
 - Move over to using proper OpenGL bindings.
+- Move Yaml to it's own library.
 - Tapping shift while holding direction keeps it down when you let go.
 - mesh::new doesn't use input vertices and instead just returns a triangle.
 - Add inputs to mesh generation.
