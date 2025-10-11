@@ -26,7 +26,8 @@ struct Vertex {
   //Vec4f tangents;
   //Vector2 texCoords2;
 }
-alias Indices = uint[3];
+//alias Indices = uint[3];
+alias Indices = uint[<3>];
 
 const void* VERTEX_POSITION = null;
 const void* VERTEX_NORMAL   = (void*)(Vec3f.sizeof);
