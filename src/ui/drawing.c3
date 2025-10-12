@@ -1,5 +1,5 @@
 
-module ennoia::ui;
+module ennoia::ui::old;
 import ennoia;
 
 
@@ -16,8 +16,8 @@ fn void draw() {
         Rectangle tileBounds = {
           e.button.bounds.x,
           e.button.bounds.y,
-          (e.button.bounds.w <= 0 ? (font.dim.x + e.button.spacing) * e.button.text.len + (e.button.textPadding.x + e.button.textPadding.z) : e.button.bounds.w),
-          (e.button.bounds.h <= 0 ? (font.dim.y + e.button.spacing) * ((float)e.button.text.count("\n") + 1) + (e.button.textPadding.y + e.button.textPadding.w) : e.button.bounds.h),
+          (e.button.bounds.w <= 0 ? (font.dim.x + e.button.spacing.x) * e.button.text.len + (e.button.textPadding.x + e.button.textPadding.z) : e.button.bounds.w),
+          (e.button.bounds.h <= 0 ? (font.dim.y + e.button.spacing.y) * ((float)e.button.text.count("\n") + 1) + (e.button.textPadding.y + e.button.textPadding.w) : e.button.bounds.h),
         };
 
         // Change color
@@ -40,10 +40,10 @@ fn void draw() {
             break; // TODO:
             //textPosition = (tileBounds.v2() + e.button.textPadding.xy) * e.button.scale;
           case CENTER:
-            textPosition.x = ((tileBounds.x + (tileBounds.w / 2)) - (((font.dim.x + e.button.spacing) * e.button.text.len) / 2)) * e.button.scale.x;
-            textPosition.y = ((tileBounds.y + (tileBounds.h / 2)) - (((font.dim.y + e.button.spacing) * ((float)e.button.text.count("\n") + 1)) / 2)) * e.button.scale.y;
+            textPosition.x = ((tileBounds.x + (tileBounds.w / 2)) - (((font.dim.x + e.button.spacing.x) * e.button.text.len) / 2)) * e.button.scale.x;
+            textPosition.y = ((tileBounds.y + (tileBounds.h / 2)) - (((font.dim.y + e.button.spacing.y) * ((float)e.button.text.count("\n") + 1)) / 2)) * e.button.scale.y;
           case LEFT:
-            textPosition.x = (tileBounds.x + tileBounds.w - e.button.textPadding.z - ((font.dim.x + e.button.spacing) * e.button.text.len)) * e.button.scale.x;
+            textPosition.x = (tileBounds.x + tileBounds.w - e.button.textPadding.z - ((font.dim.x + e.button.spacing.x) * e.button.text.len)) * e.button.scale.x;
             textPosition.y = (tileBounds.y + e.button.textPadding.y) * e.button.scale.y;
         }
 

@@ -7,6 +7,7 @@ import ennoia::rectangle;
 import ennoia::texture;
 import ennoia::vector;
 import std::collections;
+import std::io;
 
 
 <* Sends model info to renderpipline for rendering *>
@@ -162,12 +163,12 @@ fn void draw_font(
   String textIn,
   Vec2f position = {0,0},
   Vec2f scale = {1,1},
-  float spacing = 0,
-  Color tint = color::WHITE,
+  Vec2f spacing = {0,0},
   int priority = 1,
 ) {
   Font* font = ennoia::fonts.get_ref(nameFont)!!;
   String text = textIn;
+  Color col = color::WHITE;
 
   float char_x = 0;
   float char_y = 0;
@@ -208,9 +209,28 @@ fn void draw_font(
       }
       i -= 2;
     }
+    // Check for tags
+    if (text[i] == '<') {
+      switch (text[i+1]) {
+        case 'c': // Color
+          i += 3;
+          col = text.break_into_color(&i);
+        default:
+      }
+      // Check for ending tags
+      if (text[i+1] == '/') {
+        switch (text[i+2]) {
+          case 'c': // Color
+            col = color::WHITE;
+            i += 3;
+            continue;
+          default:
+        }
+      }
+    }
     Vec2f space;
-    if (char_x > 0) space.x = ((spacing * scale.x) * char_x);
-    if (char_y > 0) space.y = ((spacing * scale.y) * char_y);
+    if (char_x > 0) space.x = ((spacing.x * scale.x) * char_x);
+    if (char_y > 0) space.y = ((spacing.y * scale.y) * char_y);
     render::draw_texture(
       nameFont,
       dst: {
@@ -220,11 +240,31 @@ fn void draw_font(
         font.dim.y * scale.y,
       },
       src: font.rects[text[i]]!!,
-      tint: tint,
+      tint: col,
       priority: priority,
     );
     char_x++;
   }
 
+}
+
+<* Breaks string at index up into Color *>
+fn Color String.break_into_color(self, int* index) {
+  Color output;
+
+  for (int i; i < 4; i++) {
+    int count;
+    for (int j = *index; j < self.len; j++) {
+      if (self[j] != ',' && self[j] != '>') {
+        count++;
+        continue;
+      }
+      break;
+    }
+    output[i] = self[*index:count].to_uchar()!!;
+    *index += count + 1;
+  }
+
+  return output;
 }
 

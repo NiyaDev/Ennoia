@@ -138,3 +138,9 @@
 - Removed stb dependency and replaced it and all uses of it with spng.
 - Added ability to take screenshots.
 
+#### [10/12/25]
+- Added <c=X,X,X,X></c> tag to font drawing where the Xs define the color to draw inbetween tags.
+- Added new hybrid UI elements for Labels and Textures.
+  - Need to do Buttons and Bars to catch up.
+- Changed all UI functions to use Vec2f for spacing instead of just a single float.
+

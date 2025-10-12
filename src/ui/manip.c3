@@ -1,5 +1,5 @@
 
-module ennoia::ui;
+module ennoia::ui::old;
 import std::io;
 
 

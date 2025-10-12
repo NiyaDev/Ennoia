@@ -125,7 +125,7 @@ fn void clean() @export("clean") {
   shaders.clear();
 
   // Clean up UI handler
-  ui::clean();
+  //ui::clean();
 
   // Clean up renderbuffers
   render::clean();

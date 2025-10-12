@@ -1,5 +1,5 @@
 
-module ennoia::ui;
+module ennoia::ui::old;
 import ennoia;
 import std::io;
 
@@ -46,7 +46,7 @@ enum TextAlignmentVertical {
 struct ElementLabel {
   String text;
   String font;
-  float spacing;
+  Vec2f spacing;
   Color tint;
 
   Vec2f position;
@@ -55,7 +55,7 @@ struct ElementLabel {
 struct ElementButton {
   String text;
   String font;
-  float spacing;
+  Vec2f spacing;
   Color textTint;
 
   String texture;
@@ -75,7 +75,7 @@ struct ElementButton {
 struct ElementBar {
   String text;
   String font;
-  float spacing;
+  Vec2f spacing;
   Color textTint;
 
   String textureBg;
@@ -94,7 +94,7 @@ struct ElementVerticalContainer {
   Rectangle bounds;
   Vec2f scale;
   Vec4f offset;
-  float spacing;
+  Vec2f spacing;
 
   String texture;
 
@@ -107,7 +107,7 @@ fn Element* new_label(
   String text = "NULL",
   long duration = 0,
   String font = "font",
-  float spacing = 0,
+  Vec2f spacing = {0,0},
   Color tint = color::WHITE,
   Vec2f position = {0,0},
   Vec2f scale = {1,1},
@@ -126,7 +126,7 @@ fn Element* new_button(
   String text = "NULL",
   long duration = 0,
   String font = "font",
-  float spacing = 0,
+  Vec2f spacing = {0,0},
   Color textTint = color::WHITE,
 
   String texture = "texture",
@@ -160,7 +160,7 @@ fn Element* new_bar(
   long duration = 0,
   String text = "",
   String font = "font",
-  float spacing = 0,
+  Vec2f spacing = {0,0},
   Color textTint = color::WHITE,
   String textureBg = "texture",
   String textureFg = "texture",
@@ -192,7 +192,7 @@ fn Element* new_container(
   Rectangle bounds = {0,0,16,16},
   Vec2f scale = {1,1},
   Vec4f offset = {2,2,2,2},
-  float spacing = 0,
+  Vec2f spacing = {0,0},
   String texture = "",
   Element*[] elements = {},
 ) @export("ui_container") {

@@ -7,7 +7,7 @@ import ennoia;
 fn void label(
   String text = "",
   String font = "font",
-  float spacing = 0,
+  Vec2f spacing = {0,0},
   Color tint = color::WHITE,
 
   Vec2f position = {0,0},
@@ -20,7 +20,6 @@ fn void label(
     position,
     scale,
     spacing,
-    tint,
     1 + priority,
   );
 }
@@ -68,7 +67,7 @@ fn void texture_tiled(
 fn bool button(
   String text = "",
   String font = "font",
-  float spacing = 0,
+  Vec2f spacing = {0,0},
   Color textTint = color::WHITE,
   Vec2f textScale = {1,1},
 
@@ -103,15 +102,15 @@ fn bool button(
     String[] split = text.tsplit("\n");
     float longest;
     for (int i; i < split.len; i++) split[i].len > longest ? longest = split[i].len : 0;
-    float yOffset = (((split.len * f.dim.y) + spacing) / 2) * textScale.y;
-    float xOffset = (((longest   * f.dim.x) + spacing) / 2) * textScale.x;
+    float yOffset = (((split.len * f.dim.y) + spacing.y) / 2) * textScale.y;
+    float xOffset = (((longest   * f.dim.x) + spacing.x) / 2) * textScale.x;
 
     Vec2f textPosition = {
       (bounds.x + (bounds.w / 2)) - xOffset,
       (bounds.y + (bounds.h / 2)) - yOffset,
     };
 
-    render::draw_font(font, text, textPosition, textScale, spacing, col, 1 + priority);
+    render::draw_font(font, text, textPosition, textScale, spacing, 1 + priority);
   }
 
   // Interaction
@@ -122,7 +121,7 @@ fn bool button(
 fn void bar(
   String text = "",
   String font = "font",
-  float spacing = 0,
+  Vec2f spacing = {0,0},
   Color textTint = color::WHITE,
   Vec2f textScale = {1,1},
 
@@ -167,15 +166,15 @@ fn void bar(
     String[] split = text.tsplit("\n");
     float longest;
     for (int i; i < split.len; i++) split[i].len > longest ? longest = split[i].len : 0;
-    float yOffset = (((split.len * f.dim.y) + spacing) / 2) * textScale.y;
-    float xOffset = (((longest   * f.dim.x) + spacing) / 2) * textScale.x;
+    float yOffset = (((split.len * f.dim.y) + spacing.y) / 2) * textScale.y;
+    float xOffset = (((longest   * f.dim.x) + spacing.x) / 2) * textScale.x;
 
     Vec2f textPosition = {
       (bounds.x + (bounds.w / 2)) - xOffset,
       (bounds.y + (bounds.h / 2)) - yOffset,
     };
 
-    render::draw_font(font, text, textPosition, textScale, spacing, textTint, 1 + priority);
+    render::draw_font(font, text, textPosition, textScale, spacing, 1 + priority);
   }
 }
 
