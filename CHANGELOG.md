@@ -144,3 +144,7 @@
   - Need to do Buttons and Bars to catch up.
 - Changed all UI functions to use Vec2f for spacing instead of just a single float.
 
+#### [10/13/25]
+- Added Button HUI element.
+- Added Bar HUI element.
+

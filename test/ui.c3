@@ -106,8 +106,12 @@ fn void hybrid() @test {
   UILabel label_cent_bot = ui::label(text:"center:bottom",alignHori:CENTER,alignVert:BOTTOM,position:{200,424});
   UILabel label_righ_bot = ui::label(text:"right:bottom", alignHori:RIGHT, alignVert:BOTTOM,position:{200,448});
 
+  UIButton but_1 = ui::button(text:"TEMP", bounds:{0,500,100,25}, func:&button_test);
+
   float timer = 1000;
   float timerLength = 1000;
+
+  UIBar bar_progress = ui::bar(textureBG:"bar_bg",textureFG:"bar_fill",bounds:{0,(float)ennoia::renHeight-32,ennoia::renWidth,32},value:&timer,max:&timerLength);
 
   while (!ennoia::window_should_close()) {
 
@@ -127,11 +131,14 @@ fn void hybrid() @test {
     label_left_bot.draw();
     label_cent_bot.draw();
     label_righ_bot.draw();
+
+    but_1.draw();
     
-    ennoia::start_drawing();
+    bar_progress.draw();
+    //ennoia::start_drawing();
 
 
-    ennoia::end_drawing();
+    ennoia::drawing();
 
     if (timer <= 0) ennoia::forceClose = true;
     timer--;
@@ -175,4 +182,7 @@ fn void immediate_mode() @test {
   }
 }
 
-
+fn void button_test() {
+  io::printfn("Button test");
+  unreachable();
+}

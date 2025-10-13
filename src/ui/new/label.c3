@@ -20,7 +20,7 @@ struct UILabel {
 
 <* Creates a new Label *>
 fn UILabel label(
-  String text = "NULL",
+  String text = "",
   String font = "font",
   TextAlignmentHori alignHori = LEFT,
   TextAlignmentVert alignVert = TOP,
