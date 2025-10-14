@@ -14,4 +14,21 @@ enum TextAlignmentVert {
   BOTTOM,
 }
 
+enum UIElementType {
+  LABEL,
+  TEXTURE,
+  BUTTON,
+  BAR,
+  CONTAINER,
+}
+struct UIElement {
+  UIElementType type;
+  union {
+    UILabel label;
+    UITexture texture;
+    UIButton button;
+    UIBar bar;
+    UIContainer cont;
+  }
+}
 
