@@ -51,9 +51,17 @@ fn void UIButton.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) 
   self.texture.draw(posOffset, scaleMulti);
 
   // Draw label
-  self.label.position = {self.texture.bounds.x + (self.texture.bounds.w / 2), self.texture.bounds.y + (self.texture.bounds.h / 2)};
-  self.label.draw(posOffset, scaleMulti);
+  //self.label.position = {self.texture.bounds.x + (self.texture.bounds.w / 2), self.texture.bounds.y + (self.texture.bounds.h / 2)};
+  self.label.draw(
+    posOffset + {self.texture.bounds.x + (self.texture.bounds.w / 2), self.texture.bounds.y + (self.texture.bounds.h / 2)},
+    scaleMulti,
+  );
 
-  if (keybinds::mouse_up(1) && self.func != null) self.func();
+  if (within && keybinds::mouse_up(1) && self.func != null) self.func();
+}
+
+<* Set bounds *>
+fn void UIButton.set_bounds(&self, Rectangle bounds) {
+  self.texture.bounds = bounds;
 }
 

@@ -108,6 +108,16 @@ fn void hybrid() @test {
 
   UIButton but_1 = ui::button(text:"TEMP", bounds:{0,500,100,25}, func:&button_test);
 
+  UIContainer vertical = ui::container(VERTICAL,{800,50,200,400},{0,0,190,50},"texture", scale:{4,4});
+  UILabel cont_label = ui::label("Label",alignHori:CENTER,alignVert:CENTER);
+  UITexture cont_texture = ui::texture("bar_fill",tiled:true);
+  UIButton cont_button = ui::button("Button");
+  UIBar cont_bar = ui::bar();
+  //vertical.push((any)&cont_label);
+  //vertical.push((any)&cont_texture);
+  vertical.push((any)&cont_button);
+  vertical.push((any)&cont_bar);
+
   float timer = 1000;
   float timerLength = 1000;
 
@@ -135,8 +145,8 @@ fn void hybrid() @test {
     but_1.draw();
     
     bar_progress.draw();
-    //ennoia::start_drawing();
 
+    vertical.draw();
 
     ennoia::drawing();
 

@@ -148,3 +148,10 @@
 - Added Button HUI element.
 - Added Bar HUI element.
 
+#### [10/14/25]
+- Started on HUI Containers.
+
+#### [10/15/25]
+- Mostly finished drawing for Vertical containers.
+- Fixed errors with Buttons and Bars.
+

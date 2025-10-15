@@ -55,7 +55,7 @@ fn void UITexture.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1})
   } else {
     render::draw_texture(
       self.texture,
-      self.bounds,
+      self.bounds + (Rectangle){posOffset.x, posOffset.y, scaleMulti.x, scaleMulti.y},
       {0,0,-1,-1}, // TODO:
       self.tint,
       2,
