@@ -155,3 +155,6 @@
 - Mostly finished drawing for Vertical containers.
 - Fixed errors with Buttons and Bars.
 
+#### [10/16/25]
+- Continued on containers, but I have a new idea for them...
+
