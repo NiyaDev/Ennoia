@@ -108,19 +108,38 @@ fn void hybrid() @test {
 
   UIButton but_1 = ui::button(text:"TEMP", bounds:{0,500,100,25}, func:&button_test);
 
-  //UIContainer vertical = ui::container(VERTICAL,{800,50,200,400},{0,0,190,50},"texture", scale:{4,4});
-  UIContainer vertical = ui::container(VERTICAL,{800,50,200,400},{5,5,5,5},"texture", scale:{4,4});
+  UIContainer vertical = ui::container(VERTICAL,{800,50,200,400},{5,5,5,5},{190,40},"texture", scale:{4,4});
+  UIContainer horizontal = ui::container(HORIZONTAL,{600,450,400,200},{5,5,5,5},{40,190},"texture", scale:{4,4});
+
   UILabel cont_label = ui::label("Label",alignHori:CENTER,alignVert:CENTER);
   UITexture cont_texture = ui::texture("bar_fill",tiled:true);
   UIButton cont_button = ui::button("Button");
   UIBar cont_bar = ui::bar();
-  //vertical.push((any)&cont_label);
-  //vertical.push((any)&cont_texture);
+
+  vertical.push((any)&cont_label);
+  vertical.push((any)&cont_texture);
+  vertical.push((any)&cont_texture);
   vertical.push((any)&cont_button);
-  vertical.push((any)&cont_bar);
+  vertical.push((any)&cont_label);
+  vertical.push((any)&cont_texture);
+  vertical.push((any)&cont_texture);
+  vertical.push((any)&cont_button);
+  vertical.push((any)&cont_label);
+  vertical.push((any)&cont_texture);
+  vertical.push((any)&cont_texture);
+  vertical.push((any)&cont_button);
+  
+  horizontal.push((any)&cont_label);
+  horizontal.push((any)&cont_texture);
+  horizontal.push((any)&cont_texture);
+  horizontal.push((any)&cont_button);
 
   float timer = 1000;
   float timerLength = 1000;
+
+  cont_bar.value = &timer;
+  cont_bar.max = &timerLength;
+  vertical.push((any)&cont_bar);
 
   UIBar bar_progress = ui::bar(textureBG:"bar_bg",textureFG:"bar_fill",bounds:{0,(float)ennoia::renHeight-32,ennoia::renWidth,32},value:&timer,max:&timerLength);
 

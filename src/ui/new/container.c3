@@ -2,6 +2,7 @@
 module ennoia::ui;
 import ennoia;
 import std::collections;
+import std::io;
 
 
 enum UIContainerType {
@@ -12,7 +13,8 @@ enum UIContainerType {
 struct UIContainer {
   UIContainerType type;
   Rectangle bounds;
-  Vec4f slot;
+  Vec4f padding;
+  Vec2f slot;
 
   UITexture background;
   List{UIElement} elements;
@@ -21,8 +23,9 @@ struct UIContainer {
 <* Create new container *>
 fn UIContainer container(
   UIContainerType type = VERTICAL,
-  Rectangle bounds = {0,0,-1,-1},
-  Vec4f slot = {0,0,0,0},
+  Rectangle bounds = {0,0,100,300},
+  Vec4f padding = {5,5,5,5},
+  Vec2f slot = {90,40},
   
   String texture = "",
   Color tint = color::WHITE,
@@ -31,6 +34,7 @@ fn UIContainer container(
   return {
     type,
     bounds,
+    padding,
     slot,
 
     ui::texture(texture, true, tint, bounds, scale),
@@ -45,6 +49,47 @@ fn void UIContainer.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1
     self.background.draw();
   }
 
+  Vec2f posOffsetCont = self.bounds.f.xy;
+
+  for (int i; i < self.elements.len(); i++) {
+    UIElement e = self.elements[i];
+
+    Rectangle slotPosition = {
+      self.padding.x,
+      self.padding.y,
+      self.slot.x,
+      self.slot.y,
+    };
+
+    switch (self.type) {
+      case VERTICAL:
+        slotPosition += posOffsetCont;
+        posOffsetCont.y += slotPosition.h + self.padding.w;
+        if (slotPosition.y+slotPosition.h > self.bounds.y+self.bounds.h) return;
+        
+      case HORIZONTAL:
+      case SQUARE:
+      default:
+    }
+
+    switch (e.type) {
+      case LABEL:
+        e.label.draw(posOffset + slotPosition.f.xy + {slotPosition.f.zw / 2}, scaleMulti);
+      case TEXTURE:
+        e.texture.bounds = slotPosition;
+        e.texture.draw(posOffset, scaleMulti);
+      case BUTTON:
+        e.button.set_bounds(slotPosition);
+        e.button.draw(posOffset, scaleMulti);
+      case BAR:
+        e.bar.set_bounds(slotPosition);
+        e.bar.draw(posOffset, scaleMulti);
+      case CONTAINER:
+      default:
+    }
+  }
+
+  /*
   for (int i; i < self.elements.len(); i++) {
     UIElement e = self.elements[i];
     Vec2f pos = posOffset;
@@ -53,7 +98,7 @@ fn void UIContainer.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1
 
     switch (self.type) {
       case VERTICAL:
-        //off = {self.bounds.f.x + (self.bounds.w - self.slot.w)/2, self.bounds.f.y * ((float)i+1)};
+        off = {self.bounds.f.x + (self.bounds.w - self.slot.w)/2, self.bounds.f.y * ((float)i+1)};
       default:
     }
     switch (e.type) {
@@ -72,6 +117,7 @@ fn void UIContainer.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1
       default:
     }
   }
+  */
 }
 
 <* Push new element into container *>

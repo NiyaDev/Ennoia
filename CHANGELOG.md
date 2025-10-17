@@ -158,3 +158,6 @@
 #### [10/16/25]
 - Continued on containers, but I have a new idea for them...
 
+#### [10/17/25]
+- Got basic vertical containers working.
+
