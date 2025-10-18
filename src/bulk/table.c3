@@ -1,5 +1,6 @@
 
 module ennoia::bulk;
+import ennoia::debug;
 import std::io;
 import std::collections;
 
@@ -51,13 +52,13 @@ fn String[] get_entries(String filepath) @export("tableentry_getentries") {
 
   File? file = file::open(filepath, "rb");
   if (catch file) {
-    io::printfn("[ERROR] - ENNOIA::BULK::GET_ENTRIES [Failed to open file %s]", filepath);
+    debug::error(false, "Failed to open file. [%s]", filepath);
     return {};
   }
 
   // Ensure correct version
-  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
-  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  debug::error(file.read_byte()!! >= VERSION_MAJOR, "Incompatible Major version. [%s]", filepath);
+  debug::error(file.read_byte()!! == VERSION_MINOR, "Incompatible Minor version. [%s]", filepath);
   
   // Skip two bytes
   file.read_short();
@@ -90,13 +91,13 @@ fn BulkTable get_table(String filepath) @export("tableentry_gettable") {
 
   File? file = file::open(filepath, "rb");
   if (catch file) {
-    io::printfn("[ERROR] - ENNOIA::BULK::GET_ENTRIES [Failed to open file %s]", filepath);
+    debug::error(false, "Failed to open file. [%s]", filepath);
     return {};
   }
 
   // Ensure correct version
-  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
-  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible version]");
+  debug::error(file.read_byte()!! >= VERSION_MAJOR, "Incompatible Major version. [%s]", filepath);
+  debug::error(file.read_byte()!! == VERSION_MINOR, "Incompatible Minor version. [%s]", filepath);
   
   // Skip two bytes
   file.read_short();

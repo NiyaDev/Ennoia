@@ -27,7 +27,7 @@ fn UILabel label(
   Vec2f position = {0,0},
   Vec2f scale = {1,1},
   Vec2f spacing = {0,0},
-) {
+) @export("hui_labelnew") {
   return {
     text,
     font,
@@ -42,7 +42,7 @@ fn UILabel label(
 }
 
 <* Draws label *>
-fn void UILabel.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) {
+fn void UILabel.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) @export("hui_labeldraw") {
   Font? font = ennoia::fonts.get(self.font);
   if (catch font) {
     debug::warning(false,"Attempted to draw using Font [%s] that doesn't exist.", self.font);

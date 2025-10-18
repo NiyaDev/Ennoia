@@ -8,6 +8,7 @@ import ennoia::keybinds;
 import ennoia::options;
 import ennoia::localization;
 import ennoia::yaml;
+import ennoia::debug;
 import std::io;
 import std::collections;
 
@@ -25,13 +26,13 @@ const char VERSION_MINOR @export("bulk_minorversion") = 0;
 fn char[] load(String filepath, String dataname) @export("bulk_load") {
   File? file = file::open(filepath, "rb");
   if (catch file) {
-    io::printfn("[ERROR] - ENNOIA::BULK::LOAD [Failed to open file %s]", filepath);
+    debug::error(false, "Failed to open file. [%s]", filepath);
     return {};
   }
 
   // Ensure correct version
-  assert(file.read_byte()!! >= VERSION_MAJOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Major version %s]",filepath);
-  assert(file.read_byte()!! == VERSION_MINOR, "[ERROR] - ENNOIA::BULK::LOAD [Incompatible Minor version %s]",filepath);
+  debug::error(file.read_byte()!! >= VERSION_MAJOR, "Incompatible Major version. [%s]", filepath);
+  debug::error(file.read_byte()!! == VERSION_MINOR, "Incompatible Minor version. [%s]", filepath);
 
   // Load entry
   TableEntry tableEntry = get_table_entry(filepath, dataname);
@@ -60,7 +61,7 @@ fn void load_all(String filepath) @export("bulk_loadall") {
       case KEYBIND: load_keybind(filepath, key, true);
       case OPTION:  load_option(filepath, key, true);
       case LOCALIZATION: load_localization(filepath, key, true);
-      default: io::printfn("[WARNING] - ENNOIA::BULK::LOAD_ALL [Attempted to use load all on a file that contains incompatible file types. %s]", val.type);
+      default: debug::warning(false, "Attempted to use load all on a file that contains incompatible file types. [%s]", val.type);
     }
   };
 }
@@ -343,13 +344,12 @@ fn Localization load_localization(String filepath, String dataname, bool send = 
   Localization output;
 
   y.@each(; String key, TypedValue val) {
-    //io::printfn("%s",key);
     Local local;
-    assert(val.type == OBJECT, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
+    debug::error(val.type == OBJECT, "Attempted to load localization that wasn't in the proper format.");
     
     yaml::Object o = val.as_object;
     o.@each(; String key_inner, TypedValue val_inner) {
-      assert(val_inner.type == STRING, "[ERROR] - ENNOIA::BULK::LOAD_LOCAL [Attempted to load localization that wasn't in the proper format.]");
+      debug::error(val_inner.type == STRING, "Attempted to load localization that wasn't in the proper format.");
       local.set(key_inner, val_inner.as_string);
     };
 

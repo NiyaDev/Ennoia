@@ -29,7 +29,7 @@ fn UIBar bar(
 
   float* value = null,
   float* max   = null,
-) {
+) @export("hui_barnew") {
   return {
     ui::label(text, font, CENTER, CENTER, {0,0}, txScale, spacing),
 
@@ -42,7 +42,7 @@ fn UIBar bar(
 }
 
 <* Draw UI Bar*>
-fn void UIBar.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) {
+fn void UIBar.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) @export("hui_bardraw") {
   // Update size of FG
   self.fg.bounds.w = self.value != null && self.max != null ? self.bg.bounds.w * (*self.value / *self.max) : self.fg.bounds.w;
 
@@ -53,7 +53,7 @@ fn void UIBar.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) {
 }
 
 <* Sets the bounds of bar *>
-fn void UIBar.set_bounds(&self, Rectangle bounds) {
+fn void UIBar.set_bounds(&self, Rectangle bounds) @export("hui_barbounds") {
   self.fg.bounds = bounds;
   self.bg.bounds = bounds;
 }

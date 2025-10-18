@@ -487,56 +487,6 @@ extern fn void Texture.draw(&self, Rectangle dst = {0,0,-1,-1}, Rectangle src = 
 extern fn void Texture.draw_tiled(&self, Rectangle dest = {0,0,-1,-1}, Rectangle src = {0,0,-1,-1}, TilingLayout layout = THREE_THREE, Color color = color::WHITE) @extern("texture_drawtiled");
 
 
-module ennoia::ui;
-import ennoia::color;
-import ennoia::rectangle;
-import ennoia::vector;
-
-alias Element = void;
-alias FuncCallVoid = fn void();
-enum ElementType {
-  EMPTY,
-
-  LABEL,
-  BUTTON,
-  BAR,
-
-  CONTAINER_VERT,
-  CONTAINER_HORI,
-}
-enum TextAlignmentHorizontal {
-  RIGHT,
-  CENTER,
-  LEFT,
-}
-enum TextAlignmentVertical {
-  TOP,
-  CENTER,
-  BOTTOM,
-}
-
-extern fn void add(String name, Element* e) @extern("ui_add");
-extern fn bool exists(String name) @extern("ui_exists");
-extern fn Element* get(String name) @extern("ui_get");
-
-extern fn Element* new_label(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color tint = color::WHITE, Vec2f position = {0,0}, Vec2f scale = {1,1}) @extern("ui_label");
-extern fn Element* new_button(String text = "NULL", long duration = 0, String font = "font", float spacing = 0, Color textTint = color::WHITE, String texture = "texture", Color[3] textureTint = {{255, 255, 255, 255}, color::LIGHTGRAY, color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vec4f textPadding = {2,2,2,2}, Vec2f scale = {1,1}, TextAlignmentHorizontal alignHori = CENTER, TextAlignmentVertical alignVert = CENTER, bool active = true, FuncCallVoid hover = null, FuncCallVoid click = null) @extern("ui_button");
-extern fn Element* new_container(ElementType container = CONTAINER_VERT, long duration = 0, Rectangle bounds = {0,0,16,16}, Vec2f scale = {1,1}, Vec4f offset = {2,2,2,2}, float spacing = 0, String texture = "", Element*[] elements = {}) @extern("ui_container");
-
-
-module ennoia::ui::imm;
-import ennoia::color;
-import ennoia::rectangle;
-import ennoia::vector;
-
-extern fn void label(String text = "", String font = "font", float spacing = 0, Color tint = {255, 255, 255, 255}, Vec2f position = {0,0}, Vec2f scale = {1,1}, int priority = 0) @extern("imm_label");
-extern fn void texture(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, int priority = 0) @extern("imm_texture");
-extern fn void texture_tiled(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vec2f scale = {1,1}, int priority = 0) @extern("imm_texturetiled");
-extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String texture = "texture", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0) @extern("imm_button");
-extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = {255, 255, 255, 255}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0, float* value = null, float* valueMax = null) @extern("imm_bar");
-
-extern fn void container_drag(Vec2f* position, Rectangle dragArea = {0,0,32,8}) @extern("imm_contdrag");
-
 
 module ennoia::vector;
 import ennoia::color;

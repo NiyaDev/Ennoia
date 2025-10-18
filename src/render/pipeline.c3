@@ -10,12 +10,9 @@ RenderPipeline2D rp2;
 RenderPipeline2D rpf;
 RenderPipeline3D rp3;
 
-//RenderInstance entries;
-
 alias RenderPipeline2D = List{TextureRenderInfo};
 alias RenderPipeline3D = List{MeshRenderInfo};
 
-//alias RenderInstance = HashMap{String,List{Matrix}};
 alias RenderInstance = HashMap{String, Matrix4f[]};
 alias Render2DList = List{Pair{String, int}};
 
@@ -23,7 +20,6 @@ struct TextureRenderInfo {
   String nameTexture;
   Rectangle dst;
   Rectangle src;
-  //Vec3f rotation;
   Color tint;
   int priority;
 }
@@ -53,17 +49,13 @@ fn void render_all() {
     usz index;
     for (int j; j < rp3.len(); j++) {
       if (entries[i] == rp3[j].nameMesh) {
-        //arr[index] = matrix::create(rp3[j].position, rp3[j].scale, rp3[j].rotation);
         arr[index] = MATRIX4F_IDENTITY
           .translate(rp3[j].position)
-          //.rotatem(rp3[j].rotation)
           .rotate_x(rp3[j].rotation.x)
           .rotate_y(rp3[j].rotation.y)
           .rotate_z(rp3[j].rotation.z)
           .scale(rp3[j].scale)
           .transpose();
-        io::printfn("%s",arr[index].m);
-        //unreachable();
         index++;
       }
     }

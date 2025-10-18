@@ -25,7 +25,7 @@ fn UIButton button(
   Vec2f teScale = {1,1},
 
   ButtonFunc func = null,
-) {
+) @export("hui_buttonnew") {
   return {
     ui::label(text:text, font:font, alignHori:CENTER, alignVert:CENTER, scale:txScale, spacing:spacing),
     ui::texture(texture:texture, tiled:true, bounds:bounds, scale:teScale),
@@ -36,7 +36,7 @@ fn UIButton button(
 }
 
 <* Draws button *>
-fn void UIButton.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) {
+fn void UIButton.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) @export("hui_buttondraw") {
   // Select color to use on texture
   Color col = self.tints[0];
   bool within = self.texture.bounds.within(ennoia::mousePosition);
@@ -51,7 +51,6 @@ fn void UIButton.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) 
   self.texture.draw(posOffset, scaleMulti);
 
   // Draw label
-  //self.label.position = {self.texture.bounds.x + (self.texture.bounds.w / 2), self.texture.bounds.y + (self.texture.bounds.h / 2)};
   self.label.draw(
     posOffset + {self.texture.bounds.x + (self.texture.bounds.w / 2), self.texture.bounds.y + (self.texture.bounds.h / 2)},
     scaleMulti,
@@ -61,7 +60,7 @@ fn void UIButton.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) 
 }
 
 <* Set bounds *>
-fn void UIButton.set_bounds(&self, Rectangle bounds) {
+fn void UIButton.set_bounds(&self, Rectangle bounds) @export("hui_buttonbounds") {
   self.texture.bounds = bounds;
 }
 

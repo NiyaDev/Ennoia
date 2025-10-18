@@ -30,7 +30,7 @@ fn UIContainer container(
   String texture = "",
   Color tint = color::WHITE,
   Vec2f scale = {1,1},
-) {
+) @extern("hui_contnew") {
   return {
     type,
     bounds,
@@ -43,7 +43,7 @@ fn UIContainer container(
 }
 
 <* Draw container *>
-fn void UIContainer.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) {
+fn void UIContainer.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) @extern("hui_contdraw") {
   // Draw background
   if (self.background.texture != "") {
     self.background.draw();
@@ -88,40 +88,10 @@ fn void UIContainer.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1
       default:
     }
   }
-
-  /*
-  for (int i; i < self.elements.len(); i++) {
-    UIElement e = self.elements[i];
-    Vec2f pos = posOffset;
-
-    Vec2f off;
-
-    switch (self.type) {
-      case VERTICAL:
-        off = {self.bounds.f.x + (self.bounds.w - self.slot.w)/2, self.bounds.f.y * ((float)i+1)};
-      default:
-    }
-    switch (e.type) {
-      case LABEL:
-        e.label.draw(pos+off);
-      case TEXTURE:
-        //e.texture.bounds.f = self.slot + off;
-        e.texture.draw(pos);
-      case BUTTON:
-        //e.button.set_bounds(self.slot + off);
-        e.button.draw(pos);
-      case BAR:
-        e.bar.draw(pos);
-      case CONTAINER:
-        e.cont.draw(pos);
-      default:
-    }
-  }
-  */
 }
 
 <* Push new element into container *>
-fn void UIContainer.push(&self, any value) {
+fn void UIContainer.push(&self, any value) @extern("hui_contpush") {
   UIElement ele;
   switch (value.type) {
     case UILabel:

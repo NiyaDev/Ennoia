@@ -161,3 +161,11 @@
 #### [10/17/25]
 - Got basic vertical containers working.
 
+#### [10/18/25]
+- Added bindings for new UI elements.
+- Fixed debuging for:
+  - Keybinds
+  - Localization
+  - Bulk Loading and Table
+  - Pipeline
+

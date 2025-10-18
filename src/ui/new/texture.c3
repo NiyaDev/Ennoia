@@ -24,7 +24,7 @@ fn UITexture texture(
   Color tint = color::WHITE,
   Rectangle bounds = {0,0,-1,-1},
   Vec2f scale = {1,1},
-) {
+) @export("hui_texturenew") {
   return {
     texture,
     tiled,
@@ -36,7 +36,7 @@ fn UITexture texture(
 }
 
 <* Draw UI texture *>
-fn void UITexture.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) {
+fn void UITexture.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) @export("hui_texturedraw") {
   Texture? texture = ennoia::textures.get(self.texture);
   if (catch texture) {
     debug::warning(false,"Attempted to draw using Texture [%s] that doesn't exist.", self.texture);
