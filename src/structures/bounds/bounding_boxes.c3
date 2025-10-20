@@ -19,3 +19,8 @@ fn bool check_boxes(BoundingBox b1, BoundingBox b2) @export("bounds_checkbox") {
   return output;
 }
 
+<* Offsets bounding box by vec3f *>
+fn BoundingBox BoundingBox.offset(self, Vec3f off) @export("bounds_offset") {
+  return {self.min + off, self.max + off};
+}
+

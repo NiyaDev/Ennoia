@@ -169,3 +169,6 @@
   - Bulk Loading and Table
   - Pipeline
 
+#### [10/20/25]
+- Added offset for BoundingBox.
+

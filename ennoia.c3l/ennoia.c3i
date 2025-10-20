@@ -52,6 +52,7 @@ struct BoundingBox {
 }
 
 extern fn bool check_boxes(BoundingBox b1, BoundingBox b2) @extern("bounds_checkbox");
+extern fn BoundingBox BoundingBox.offset(self, Vec3f off) @extern("bounds_offset");
 
 
 module ennoia::bulk;
