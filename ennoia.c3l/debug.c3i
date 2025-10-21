@@ -1,9 +1,9 @@
 
 module ennoia::debug;
 
-extern fn void error(String err, args...) @extern("debug_error");
-extern fn void warning(String err, args...) @extern("debug_error");
-extern fn void info(String err, args...) @extern("debug_error");
+extern fn void error(bool cond, String err, args...) @extern("debug_error");
+extern fn void warning(bool cond, String err, args...) @extern("debug_error");
+extern fn void info(bool cond, String err, args...) @extern("debug_error");
 
 
 module ennoia::console;
