@@ -31,7 +31,6 @@
 - Screenshot
 - Ability to take a screenshot and compare it to another for testing.
 - Audio
-
 - Documentation
 
 ### Additions
