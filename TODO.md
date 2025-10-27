@@ -21,10 +21,12 @@
     - Square
     - They all have the ability to scroll if turned on
     - Culls anything not in rect
+      - Don't know how I'm going to do this smoothly
 - Bulk
 - Meshes
   - Render pipeline improvements
     - Have pipeline remove duplicates
+    - Fix not changing textures
   - Culling?
   - Plane generation
 - Debug logging system
