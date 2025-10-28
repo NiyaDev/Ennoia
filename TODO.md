@@ -1,5 +1,6 @@
 
 ### Testing
+- Add screenshot testing to all
 - BoundingBoxes
 - Fonts
 - Keybinds
