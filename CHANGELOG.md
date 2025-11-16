@@ -172,3 +172,6 @@
 #### [10/20/25]
 - Added offset for BoundingBox.
 
+#### [11/16/25]
+- Added first version of immediate mode input box.
+

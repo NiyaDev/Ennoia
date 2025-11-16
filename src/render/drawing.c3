@@ -173,6 +173,10 @@ fn void draw_font(
   float char_x = 0;
   float char_y = 0;
   for (int i; i < text.len; i++) {
+    // Check for null characters
+    if (text[i] == '\0') {
+      continue;
+    }
     // Checks for newline written out
     if (text[i] == '\\' && text[i+1] == 'n') {
       i++;

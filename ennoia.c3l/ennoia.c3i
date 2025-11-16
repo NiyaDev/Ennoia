@@ -245,6 +245,7 @@ struct Keybind {
 
 extern fn void save_keybinds() @extern("keybinds_save");
 extern fn void KeyData.print(&self) @extern("keybinds_print");
+extern fn bool KeyData.is_alphanumeric(&self) @extern("keybinds_alphanumeric");
 
 extern fn void update() @extern("keybinds_update");
 

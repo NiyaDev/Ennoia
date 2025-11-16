@@ -184,6 +184,9 @@ fn void immediate_mode() @test {
   float timer = 1000;
   float timerLength = 1000;
 
+  bool edit;
+  String input = (String)mem::new_array(char, 10);
+
   while (!ennoia::window_should_close()) {
 
     if (keybinds::pressed("debug")) {}
@@ -201,6 +204,16 @@ fn void immediate_mode() @test {
       value:     &timer,
       valueMax:  &timerLength,
     );
+
+    imm::input(
+      &edit,
+      &input,
+
+      bounds: {0,300,128,32},
+
+      texture: "texture",
+      textureScale: {5,5},
+    );
     
     ennoia::start_drawing();
 
@@ -210,6 +223,8 @@ fn void immediate_mode() @test {
     if (timer <= 0) ennoia::forceClose = true;
     timer--;
   }
+
+  free(input);
 }
 
 fn void button_test() {

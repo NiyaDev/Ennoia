@@ -41,6 +41,50 @@ fn void save_keybinds() @export("keybinds_save") {
 fn void KeyData.print(&self) @export("keybinds_print") {
   io::printfn("%X - %X (%s|%s)",self.key, self.mod, self.down, self.repeat);
 }
+<* Checks whether key is AlphaNumeric *>
+fn bool KeyData.is_alphanumeric(&self) @export("keybindsI_alphanumeric") {
+  if (
+    self.key == 'a' ||
+    self.key == 'b' ||
+    self.key == 'c' ||
+    self.key == 'd' ||
+    self.key == 'e' ||
+    self.key == 'f' ||
+    self.key == 'g' ||
+    self.key == 'h' ||
+    self.key == 'i' ||
+    self.key == 'j' ||
+    self.key == 'k' ||
+    self.key == 'l' ||
+    self.key == 'm' ||
+    self.key == 'n' ||
+    self.key == 'o' ||
+    self.key == 'p' ||
+    self.key == 'q' ||
+    self.key == 'r' ||
+    self.key == 's' ||
+    self.key == 't' ||
+    self.key == 'u' ||
+    self.key == 'v' ||
+    self.key == 'w' ||
+    self.key == 'x' ||
+    self.key == 'y' ||
+    self.key == 'z' ||
+    self.key == '0' ||
+    self.key == '1' ||
+    self.key == '2' ||
+    self.key == '3' ||
+    self.key == '4' ||
+    self.key == '5' ||
+    self.key == '6' ||
+    self.key == '7' ||
+    self.key == '8' ||
+    self.key == '9' ||
+    self.key == '.' // Temporary
+  ) return true;
+
+  return false;
+}
 
 <* Sets any existing key in the queue to repeat and remove any that are still up *>
 fn void update() @export("keybinds_update") {

@@ -48,6 +48,7 @@ extern fn void texture(String texture = "texture", Color tint = color::WHITE, Re
 extern fn void texture_tiled(String texture = "texture", Color tint = color::WHITE, Rectangle bounds = {0,0,64,16}, Vec2f scale = {1,1}, int priority = 0) @extern("imm_texturetiled");
 extern fn bool button(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String texture = "texture", Color[3] textureTint = {{255, 255, 255, 255},color::LIGHTGRAY,color::DARKGRAY}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0) @extern("imm_button");
 extern fn void bar(String text = "", String font = "font", float spacing = 0, Color textTint = {255, 255, 255, 255}, Vec2f textScale = {1,1}, String textureBg = "", String textureFg = "", Color textureTint = {255, 255, 255, 255}, Rectangle bounds = {0,0,64,16}, Vec2f textureScale = {1,1}, int priority = 0, float* value = null, float* valueMax = null) @extern("imm_bar");
+extern fn void input(bool* edit, String* input, Rectangle bounds = {0,0,64,16}, String texture = "", Vec2f textureScale = {1,1}, Color[3] textureTint = {color::WHITE, color::GRAY, color::DARKGRAY}, String font = "font", Vec2f textScale = {1,1}, Color textTint = color::BLACK, Vec2f spacing = {0,0}) @extern("imm_input");
 
 extern fn void container_drag(Vec2f* position, Rectangle dragArea = {0,0,32,8}) @extern("imm_contdrag");
 
