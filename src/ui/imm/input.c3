@@ -10,6 +10,12 @@ import ennoia::vector;
 import std::io;
 
 
+enum CharRules {
+  ALPHA,
+  NUMERIC,
+  ALPHANUMERIC,
+}
+
 <**>
 fn void input(
   bool* edit,
@@ -24,6 +30,7 @@ fn void input(
   Vec2f textScale = {1,1},
   Color textTint = color::BLACK,
   Vec2f spacing = {0,0},
+  String illegalChars = "",
 ) @export("imm_input") {
   // Draw background texture
   if (texture != "") {
@@ -64,12 +71,10 @@ fn void input(
       // Check for backspace
       if ((char)dat.key == 8 && index != 0 && (dat.down && !dat.repeat)) (*input)[index-1] = '\0';
       // Input text
-      if (index != input.len && dat.is_alphanumeric() && (dat.down && !dat.repeat)) (*input)[index] = (char)dat.key;
+      char c = dat.check_key(illegalChars);
+      if (index != input.len && (dat.down && !dat.repeat) && c != '\0') (*input)[index] = c;
     }
   }
-  //if ()
-  //KeyData? dat = ennoia::keyqueue.pop();
-  //if (try dat) {io::printfn("%s",dat.key);unreachable();}
 
   // Draw text
   if (font != "") {
@@ -79,7 +84,6 @@ fn void input(
       float yOffset = ((f.dim.y + spacing.y) / 2) * textScale.y;
       Vec2f textPosition = {
         bounds.x + xOffset,
-        //(bounds.x + (bounds.w / 2)) - xOffset,
         (bounds.y + (bounds.h / 2)) - yOffset,
       };
 
@@ -93,5 +97,51 @@ fn void input(
       );
     }
   }
+}
+
+<* Checks whether input Key is a valid character *>
+fn char KeyData.check_key(&self, String illegalChars = "") {
+  char output;
+  if (self.key >= 0x20 && self.key < 0x7F) {
+    output = (char)self.key;
+
+    // Check for shift
+    if (self.mod == 1 || self.mod == 2) {
+      // Capitalize if shifted
+      if ((self.key >= 0x61 && self.key <= 0x7A)) output -= 0x20;
+
+      switch (output) {
+        case '1': output = '!';
+        case '2': output = '@';
+        case '3': output = '#';
+        case '4': output = '$';
+        case '5': output = '%';
+        case '6': output = '^';
+        case '7': output = '&';
+        case '8': output = '*';
+        case '9': output = '(';
+        case '0': output = ')';
+        case '-': output = '_';
+        case '=': output = '+';
+        case '`': output = '~';
+        case '[': output = '{';
+        case ']': output = '}';
+        case '\\': output = '|';
+        case ';': output = ':';
+        case '\'': output = '"';
+        case ',': output = '<';
+        case '.': output = '>';
+        case '/': output = '?';
+      }
+
+    }
+
+    // Check for illegal characters
+    for (int i; i < illegalChars.len; i++) {
+      if (self.key == illegalChars[i]) return '\0';
+    }
+  }
+
+  return output;
 }
 

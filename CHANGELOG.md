@@ -175,3 +175,6 @@
 #### [11/16/25]
 - Added first version of immediate mode input box.
 
+#### [11/17/25]
+- Fixed up input box to allow capitals, non-letter input, and blocking specific characters from entry.
+
