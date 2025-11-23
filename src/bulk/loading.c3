@@ -25,14 +25,14 @@ const char VERSION_MINOR @export("bulk_minorversion") = 0;
  *>
 fn char[] load(String filepath, String dataname) @export("bulk_load") {
   File? file = file::open(filepath, "rb");
-  if (catch file) {
-    debug::error(false, "Failed to open file. [%s]", filepath);
+  if (catch excuse = file) {
+    debug::fatal("Failed to open file. [%s]", filepath);
     return {};
   }
 
   // Ensure correct version
-  debug::error(file.read_byte()!! >= VERSION_MAJOR, "Incompatible Major version. [%s]", filepath);
-  debug::error(file.read_byte()!! == VERSION_MINOR, "Incompatible Minor version. [%s]", filepath);
+  if (file.read_byte()!! <  VERSION_MAJOR) debug::error("Incompatible Major version. [%s]", filepath);
+  if (file.read_byte()!! != VERSION_MINOR) debug::error("Incompatible Minor version. [%s]", filepath);
 
   // Load entry
   TableEntry tableEntry = get_table_entry(filepath, dataname);
@@ -61,7 +61,7 @@ fn void load_all(String filepath) @export("bulk_loadall") {
       case KEYBIND: load_keybind(filepath, key, true);
       case OPTION:  load_option(filepath, key, true);
       case LOCALIZATION: load_localization(filepath, key, true);
-      default: debug::warning(false, "Attempted to use load all on a file that contains incompatible file types. [%s]", val.type);
+      default: debug::warning("Attempted to use load all on a file that contains incompatible file types. [%s]", val.type);
     }
   };
 }
@@ -345,11 +345,11 @@ fn Localization load_localization(String filepath, String dataname, bool send = 
 
   y.@each(; String key, TypedValue val) {
     Local local;
-    debug::error(val.type == OBJECT, "Attempted to load localization that wasn't in the proper format.");
+    if (val.type == OBJECT) debug::error("Attempted to load localization that wasn't in the proper format.");
     
     yaml::Object o = val.as_object;
     o.@each(; String key_inner, TypedValue val_inner) {
-      debug::error(val_inner.type == STRING, "Attempted to load localization that wasn't in the proper format.");
+      if (val_inner.type == STRING) debug::fatal("Attempted to load localization that wasn't in the proper format.");
       local.set(key_inner, val_inner.as_string);
     };
 

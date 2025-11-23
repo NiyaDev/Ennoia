@@ -1,6 +1,8 @@
 
 module ennoia;
 
+const String VERSION = "0.1.0";
+
 extern Color  bgColor       @extern("bgcolor");
 extern double deltaTime     @extern("deltatime");
 extern double lastFrame     @extern("lastframe");

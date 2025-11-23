@@ -38,21 +38,21 @@ fn Texture load(String filename) @export("texture_load") {
 
   Ctx* ctx = spng::ctx_new(0);
   spng::set_png_file(ctx, file);
-  debug::error(res == 0, "set_png_file() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("set_png_file() error: %s", spng::strerror(res));
   spng::decoded_image_size(ctx, (int)Format.RGBA8, &imgSize);
-  debug::error(res == 0, "decoded_image_size() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("decoded_image_size() error: %s", spng::strerror(res));
   
   char[] data = mem::new_array(char, imgSize);
   defer free(data);
 
   Ihdr ihdr;
   spng::get_ihdr(ctx, &ihdr);
-  debug::error(res == 0, "get_ihdr() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("get_ihdr() error: %s", spng::strerror(res));
   output.width = ihdr.width;
   output.height = ihdr.height;
   
   spng::decode_image(ctx, (void*)data, imgSize, (int)Format.RGBA8, 0);
-  debug::error(res == 0, "decode_image() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("decode_image() error: %s", spng::strerror(res));
   data.reverse(output.width, output.height, 4);
 
   spng::ctx_free(ctx);
@@ -66,7 +66,7 @@ fn Texture load(String filename) @export("texture_load") {
 
   gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGBA, gl::UNSIGNED_BYTE, data);
   gl::generate_mipmap(gl::TEXTURE_2D);
-  debug::error(output.id != 0, "texture::load() error: Failed to bind Texture.");
+  if (output.id == 0) debug::fatal("texture::load() error: Failed to bind Texture.");
 
   return output;
 }
@@ -82,14 +82,14 @@ fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
   Ctx* ctx = spng::ctx_new(0);
   usz imgSize;
   res = spng::set_png_buffer(ctx, data, data.len);
-  debug::error(res == 0, "set_png_buffer() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("set_png_buffer() error: %s", spng::strerror(res));
   res = spng::decoded_image_size(ctx, (int)Format.RGBA8, &imgSize);
-  debug::error(res == 0, "decoded_image_size() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("decoded_image_size() error: %s", spng::strerror(res));
 
   // Copy width and height
   Ihdr ihdr;
   res = spng::get_ihdr(ctx, &ihdr);
-  debug::error(res == 0, "get_ihdr() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("get_ihdr() error: %s", spng::strerror(res));
   output.width = ihdr.width;
   output.height = ihdr.height;
   
@@ -98,7 +98,7 @@ fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
   defer free(img);
   
   res = spng::decode_image(ctx, (void*)img, imgSize, (int)Format.RGBA8, 0);
-  debug::error(res == 0, "decode_image() error: %s", spng::strerror(res));
+  if (res != 0) debug::fatal("decode_image() error: %s", spng::strerror(res));
   img.reverse(output.width, output.height, 4);
 
   spng::ctx_free(ctx);
@@ -112,7 +112,7 @@ fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
 
   gl::tex_image_2d(gl::TEXTURE_2D, 0, gl::RGBA, output.width, output.height, 0, gl::RGBA, gl::UNSIGNED_BYTE, img);
   gl::generate_mipmap(gl::TEXTURE_2D);
-  debug::error(output.id != 0, "texture::load() error: Failed to bind Texture.");
+  if (output.id == 0) debug::fatal("texture::load() error: Failed to bind Texture.");
 
   return output;
 }

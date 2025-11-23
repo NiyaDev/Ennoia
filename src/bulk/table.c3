@@ -51,14 +51,14 @@ fn String[] get_entries(String filepath) @export("tableentry_getentries") {
   List{String} list;
 
   File? file = file::open(filepath, "rb");
-  if (catch file) {
-    debug::error(false, "Failed to open file. [%s]", filepath);
+  if (catch excuse = file) {
+    debug::error("Failed to open file. [%s]", filepath);
     return {};
   }
 
   // Ensure correct version
-  debug::error(file.read_byte()!! >= VERSION_MAJOR, "Incompatible Major version. [%s]", filepath);
-  debug::error(file.read_byte()!! == VERSION_MINOR, "Incompatible Minor version. [%s]", filepath);
+  if (file.read_byte()!! <  VERSION_MAJOR) debug::error("Incompatible Major version. [%s]", filepath);
+  if (file.read_byte()!! != VERSION_MINOR) debug::error("Incompatible Minor version. [%s]", filepath);
   
   // Skip two bytes
   file.read_short();
@@ -90,14 +90,14 @@ fn BulkTable get_table(String filepath) @export("tableentry_gettable") {
   BulkTable output;
 
   File? file = file::open(filepath, "rb");
-  if (catch file) {
-    debug::error(false, "Failed to open file. [%s]", filepath);
+  if (catch excuse = file) {
+    debug::error("Failed to open file. [%s]", filepath);
     return {};
   }
 
   // Ensure correct version
-  debug::error(file.read_byte()!! >= VERSION_MAJOR, "Incompatible Major version. [%s]", filepath);
-  debug::error(file.read_byte()!! == VERSION_MINOR, "Incompatible Minor version. [%s]", filepath);
+  if (file.read_byte()!! <  VERSION_MAJOR) debug::error("Incompatible Major version. [%s]", filepath);
+  if (file.read_byte()!! != VERSION_MINOR) debug::error("Incompatible Minor version. [%s]", filepath);
   
   // Skip two bytes
   file.read_short();

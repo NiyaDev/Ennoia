@@ -39,7 +39,7 @@ fn UITexture texture(
 fn void UITexture.draw(&self, Vec2f posOffset = {0,0}, Vec2f scaleMulti = {1,1}) @export("hui_texturedraw") {
   Texture? texture = ennoia::textures.get(self.texture);
   if (catch texture) {
-    debug::warning(false,"Attempted to draw using Texture [%s] that doesn't exist.", self.texture);
+    debug::warning("Attempted to draw using Texture [%s] that doesn't exist.", self.texture);
     self.texture = "texture";
   }
 

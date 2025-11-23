@@ -108,7 +108,7 @@ fn void UIContainer.push(&self, any value) @extern("hui_contpush") {
     case UIContainer:
       ele = {.type=CONTAINER, .cont=*(UIContainer*)value};
     default:
-      debug::error(false, "Attempted to push a non-HUI element into a container.");
+      debug::error("Attempted to push a non-HUI element into a container.");
       return;
   }
   self.elements.push(ele);

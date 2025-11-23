@@ -151,7 +151,7 @@ fn void rem_queue(SDL_KeyboardEvent data) @export("keybinds_queueremove") {
 fn bool pressed(String key) @export("keybinds_pressed") {
   Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
-    debug::warning(false, "Attempted to use keybinding that doesn't exist. [%s]", key);
+    debug::warning("Attempted to use keybinding that doesn't exist. [%s]", key);
     return false;
   }
 
@@ -169,7 +169,7 @@ fn bool pressed(String key) @export("keybinds_pressed") {
 fn bool down(String key) @export("keybinds_down") {
   Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
-    debug::warning(false, "Attempted to use keybinding that doesn't exist. [%s]", key);
+    debug::warning("Attempted to use keybinding that doesn't exist. [%s]", key);
     return false;
   }
   for (int i; i < ennoia::keyqueue.len(); i++) {
@@ -185,7 +185,7 @@ fn bool down(String key) @export("keybinds_down") {
 fn bool up(String key) @export("keybinds_up") {
   Keybind? kb = ennoia::keybinds.get(key);
   if (catch kb) {
-    debug::warning(false, "Attempted to use keybinding that doesn't exist. [%s]", key);
+    debug::warning("Attempted to use keybinding that doesn't exist. [%s]", key);
     return false;
   }
 

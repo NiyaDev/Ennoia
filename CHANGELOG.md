@@ -178,3 +178,6 @@
 #### [11/17/25]
 - Fixed up input box to allow capitals, non-letter input, and blocking specific characters from entry.
 
+#### [11/22/25]
+- Removed conditions from debug messages.
+- Added debug::fatal to end runtime and made error keep program running.

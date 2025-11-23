@@ -72,7 +72,7 @@ fn void save_screenshot(String filename = "screenshot.png") @export("screenshot_
   defer spng::ctx_free(enc);
 
   res = spng::set_option(enc, Option.ENCODE_TO_BUFFER, 1);
-  debug::error(res == 0, "set_options() error: %s", spng::strerror(res));
+  if (res != 0) debug::error("set_options() error: %s", spng::strerror(res));
 
   Ihdr ihdr = {
     ennoia::renWidth,
@@ -82,19 +82,19 @@ fn void save_screenshot(String filename = "screenshot.png") @export("screenshot_
     0, 0, 0,
   };
   res = spng::set_ihdr(enc, &ihdr);
-  debug::error(res == 0, "set_ihdr() error: %s", spng::strerror(res));
+  if (res != 0) debug::error("set_ihdr() error: %s", spng::strerror(res));
 
   char[] data = screenshot();
   data.reverse(ennoia::renWidth, ennoia::renHeight, 4);
   defer free(data);
 
   res = spng::encode_image(enc, data, data.len, (int)Format.PNG, (int)EncodeFlags.FINALIZE);
-  debug::error(res == 0, "encode_image() error: %s", spng::strerror(res));
+  if (res != 0) debug::error("encode_image() error: %s", spng::strerror(res));
 
   usz pngSize;
   void* png = spng::get_png_buffer(enc, &pngSize, &res);
   //defer free(png);
-  debug::error(res == 0, "get_png_buffer() error: %s", spng::strerror(res));
+  if (res != 0) debug::error("get_png_buffer() error: %s", spng::strerror(res));
 
   file::save(filename, ((char*)png)[:pngSize])!!;
 
