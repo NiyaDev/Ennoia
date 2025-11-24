@@ -181,3 +181,8 @@
 #### [11/22/25]
 - Removed conditions from debug messages.
 - Added debug::fatal to end runtime and made error keep program running.
+
+#### [11/24/25]
+- Made debug info functions wait untill no printing is being done to print themselves.
+  - Makes it so that printing on seperate threads wont overlap text.
+

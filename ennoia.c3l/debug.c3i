@@ -3,8 +3,8 @@ module ennoia::debug;
 
 extern fn void fatal(String err, args...) @extern("debug_fatal");
 extern fn void error(String err, args...) @extern("debug_error");
-extern fn void warning(String err, args...) @extern("debug_error");
-extern fn void info(String err, args...) @extern("debug_error");
+extern fn void warning(String err, args...) @extern("debug_warning");
+extern fn void info(String err, args...) @extern("debug_info");
 
 
 module ennoia::console;
