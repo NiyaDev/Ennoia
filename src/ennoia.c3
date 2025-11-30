@@ -42,5 +42,5 @@ HashMap{String, Texture}  textures;
 HashMap{String, Font}     fonts;
 HashMap{String, Mesh}     meshes;
 HashMap{String, Shader}   shaders;
-HashMap{String, Element*} uiElements;
+HashMap{String, old::Element*} uiElements;
 

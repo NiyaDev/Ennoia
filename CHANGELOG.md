@@ -186,3 +186,7 @@
 - Made debug info functions wait untill no printing is being done to print themselves.
   - Makes it so that printing on seperate threads wont overlap text.
 
+#### [11/30/25]
+- Started on having debug functions draw an alert on screen when they occur.
+  - Doesn't work yet?
+

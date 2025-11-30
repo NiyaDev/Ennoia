@@ -22,9 +22,12 @@ fn void start_drawing() @export("start_drawing") {
 fn void end_drawing() @export("end_drawing") {
   scrollwheel = 0;
 
-  render::render_all();
+  if (debug::timer > 0) {
+    render::draw_font("font",debug::recentText);
+    debug::timer--;
+  }
 
-  //ui::draw();
+  render::render_all();
 
   // Set up default framebuffer
   gl::bind_framebuffer(gl::FRAMEBUFFER, 0);
