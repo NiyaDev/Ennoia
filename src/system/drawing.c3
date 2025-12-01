@@ -22,8 +22,8 @@ fn void start_drawing() @export("start_drawing") {
 fn void end_drawing() @export("end_drawing") {
   scrollwheel = 0;
 
-  if (debug::timer > 0) {
-    render::draw_font("font",debug::recentText);
+  if (debug::timer > 0 && debug::recentText != "") {
+    render::draw_font("font",debug::recentText,position:{10,10},scale:{0.4,0.4});
     debug::timer--;
   }
 

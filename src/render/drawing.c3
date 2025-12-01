@@ -235,6 +235,11 @@ fn void draw_font(
     Vec2f space;
     if (char_x > 0) space.x = ((spacing.x * scale.x) * char_x);
     if (char_y > 0) space.y = ((spacing.y * scale.y) * char_y);
+    Rectangle? srcRect = font.rects[text[i]];
+    if (catch excuse = srcRect) {
+      io::printfn("Displaying invalid character. [%s]", text[i]);
+      continue;
+    }
     render::draw_texture(
       nameFont,
       dst: {
@@ -243,7 +248,8 @@ fn void draw_font(
         font.dim.x * scale.x,
         font.dim.y * scale.y,
       },
-      src: font.rects[text[i]]!!,
+      //src: font.rects[text[i]]!!,
+      src: srcRect,
       tint: col,
       priority: priority,
     );

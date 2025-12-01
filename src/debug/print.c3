@@ -40,7 +40,7 @@ fn void error(String err, args...) @export("debug_error") {
   io::printfn(err, args);
   printing = false;
 
-  recentText = err.color({230, 41, 55, 255});
+  recentText = err;//.color({230, 41, 55, 255});
   timer = 100;
 }
 <* For warnings *>
@@ -54,7 +54,7 @@ fn void warning(String err, args...) @export("debug_warning") {
   io::printfn(err, args);
   printing = false;
 
-  recentText = err.color(color::ORANGE);
+  recentText = err;//.color(color::ORANGE);
   timer = 100;
 }
 <* For info *>
@@ -67,9 +67,6 @@ fn void info(String err, args...) @export("debug_info") {
   io::print("] - ");
   io::printfn(err, args);
   printing = false;
-
-  recentText = err.color(color::GRAY);
-  timer = 100;
 }
 
 
