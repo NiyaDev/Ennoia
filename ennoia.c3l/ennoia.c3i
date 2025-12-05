@@ -89,7 +89,7 @@ enum DataType : short {
   // OpenGL/SDL3
   TEXTURE,
   FONT,
-SHADER,
+  SHADER,
   MODEL,
   MATERIAL,
 }

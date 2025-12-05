@@ -9,10 +9,9 @@ String recentText;
 uint timer;
 bool printing = false;
 
-<* Print line into console and file *>
-fn void println(String format, args...) {
-  io::printfn(format, ...args);
-  // Write to file
+<* Get the most recent error text *>
+fn String recent_error() @export("debug_recent") {
+  return recentText;
 }
 
 <* For program ending errors *>

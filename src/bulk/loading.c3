@@ -29,22 +29,23 @@ fn char[] load(String filepath, String dataname) @export("bulk_load") {
     debug::fatal("Failed to open file. [%s]", filepath);
     return {};
   }
+  defer file.close()!!;
 
-  // Ensure correct version
-  if (file.read_byte()!! <  VERSION_MAJOR) debug::error("Incompatible Major version. [%s]", filepath);
-  if (file.read_byte()!! != VERSION_MINOR) debug::error("Incompatible Minor version. [%s]", filepath);
+  // Check header
+  if (catch excuse = file.check_header()) return {};
 
   // Load entry
   TableEntry tableEntry = get_table_entry(filepath, dataname);
-  file.seek(tableEntry.pointer)!!;
+  if (catch excuse = file.seek(tableEntry.pointer)) {
+    debug::warning("Failed to seek to position in file.");
+    return {};
+  }
   
   // Read into array
   char[] data = mem::new_array(char, tableEntry.length);
   for (int i; i < tableEntry.length; i++) data[i] = file.read_byte()!!;
 
   // Decompress data
-
-  file.close()!!;
 
   return data;
 }
@@ -284,33 +285,33 @@ fn Option load_option(String filepath, String dataname, bool send = true) @expor
 
   switch (opt.type) {
     case CHAR:
-      opt.data.as_char   = data[1];
+      opt.as_char   = data[1];
     case SHORT:
       short sh;
       mem::copy(&sh, &data[1], 2);
-      opt.data.as_short  = sh;
+      opt.as_short  = sh;
     case INT:
       int sh;
       mem::copy(&sh, &data[1], 4);
-      opt.data.as_int    = sh;
+      opt.as_int    = sh;
     case LONG:
       long sh;
       mem::copy(&sh, &data[1], 8);
-      opt.data.as_long   = sh;
+      opt.as_long   = sh;
 
     case FLOAT:
       float sh;
       mem::copy(&sh, &data[1], 4);
-      opt.data.as_float  = sh;
+      opt.as_float  = sh;
     case DOUBLE:
       double sh;
       mem::copy(&sh, &data[1], 8);
-      opt.data.as_double = sh;
+      opt.as_double = sh;
 
     case STRING:
       String str = (String)mem::new_array(char,(usz)data[1]);
       mem::copy(&str, &data[2], data[1]);
-      opt.data.as_string = str;
+      opt.as_string = str;
   }
 
   if (send) ennoia::options.set(dataname, opt);

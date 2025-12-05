@@ -27,7 +27,7 @@ fn void save_options() @export("options_save") {
         length += 8;
 
       case STRING:
-        length += val.data.as_string.len;
+        length += val.as_string.len;
     }
   };
 
@@ -53,24 +53,42 @@ fn void save_options() @export("options_save") {
 
     switch (val.type) {
       case CHAR:
-        if (catch excuse = file.write_byte(val.data.as_char)) {
+        if (catch excuse = file.write_byte(val.as_char)) {
           debug::warning("Failed to write char option to file.");
           continue;
         }
       case SHORT:
-        file.write_short(val.data.as_short);
+        if (catch excuse = file.write_short(val.as_short)) {
+          debug::warning("Failed to write short option to file.");
+          continue;
+        }
       case INT:
-        file.write_int(val.data.as_int);
+        if (catch excuse = file.write_int(val.as_int)) {
+          debug::warning("Failed to write int option to file.");
+          continue;
+        }
       case LONG:
-        file.write_long(val.data.as_long);
+        if (catch excuse = file.write_long(val.as_long)) {
+          debug::warning("Failed to write long option to file.");
+          continue;
+        }
 
       case FLOAT:
-        file.write_float(val.data.as_float);
+        if (catch excuse = file.write_float(val.as_float)) {
+          debug::warning("Failed to write float option to file.");
+          continue;
+        }
       case DOUBLE:
-        file.write_double(val.data.as_double);
+        if (catch excuse = file.write_double(val.as_double)) {
+          debug::warning("Failed to write double option to file.");
+          continue;
+        }
 
       case STRING:
-        file.write_string(val.data.as_string);
+        if (catch excuse = file.write_string(val.as_string)) {
+          debug::warning("Failed to write string option to file.");
+          continue;
+        }
     }
 
     if (catch excuse = file.close()) {

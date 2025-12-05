@@ -46,7 +46,7 @@ fn void loading_keybind() @test {
 
 fn void loading_option() @test {
   Option opt = bulk::load_option("resources/options", "screen_width", false);
-  assert(opt.data.as_int == 1280, "Failed to correctly load Option. [%d]",opt.data.as_int);
+  assert(opt.as_int == 1280, "Failed to correctly load Option. [%d]",opt.as_int);
 }
 
 

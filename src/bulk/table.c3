@@ -49,36 +49,60 @@ fn usz TableEntry.size(&self) @export("tableentry_size") {
  *>
 fn String[] get_entries(String filepath) @export("tableentry_getentries") {
   List{String} list;
+  defer list.free();
 
   File? file = file::open(filepath, "rb");
   if (catch excuse = file) {
-    debug::error("Failed to open file. [%s]", filepath);
+    debug::error("Failed to open file. %s", filepath);
+    return {};
+  }
+  defer file.close()!!;
+
+  // Check header
+  if (catch excuse = file.check_header()) return {};
+
+  // Get entry count
+  short? count = file.read_short();
+  if (catch excuse = count) {
+    debug::warning("Failed to get bulk entry count.");
     return {};
   }
 
-  // Ensure correct version
-  if (file.read_byte()!! <  VERSION_MAJOR) debug::error("Incompatible Major version. [%s]", filepath);
-  if (file.read_byte()!! != VERSION_MINOR) debug::error("Incompatible Minor version. [%s]", filepath);
-  
-  // Skip two bytes
-  file.read_short();
-
-  // Get entry count
-  short count = file.read_short();
-
   // Find data
   for (int i; i < count; i++) {
-    String name = file.read_string();
+    String? name = file.read_string();
+    if (catch excuse = name) {
+      debug::warning("Failed to read bulk entry name.");
+      continue;
+    }
     if (name.len == 0) break;
 
-    file.read_long();
-    file.read_long();
+    long? length = file.read_long();
+    if (catch excuse = length) {
+      debug::warning("Failed to read bulk entry length.");
+      continue;
+    }
+    long? pointer = file.read_long();
+    if (catch excuse = pointer) {
+      debug::warning("Failed to read bulk entry pointer.");
+      continue;
+    }
+    short? type = file.read_short();
+    if (catch excuse = type) {
+      debug::warning("Failed to read bulk entry type.");
+      continue;
+    }
+    short? compression = file.read_short();
+    if (catch excuse = compression) {
+      debug::warning("Failed to read bulk entry compression type.");
+      continue;
+    }
 
     list.push(name);
   }
 
+  // Create output
   String[] output = list.to_tarray();
-  list.free();
 
   return output;
 }
@@ -91,34 +115,59 @@ fn BulkTable get_table(String filepath) @export("tableentry_gettable") {
 
   File? file = file::open(filepath, "rb");
   if (catch excuse = file) {
-    debug::error("Failed to open file. [%s]", filepath);
+    debug::error("Failed to open file. %s", filepath);
+    return {};
+  }
+  defer file.close()!!;
+
+  // Check header
+  if (catch excuse = file.check_header()) return {};
+
+  // Get entry count
+  short? count = file.read_short();
+  if (catch excuse = count) {
+    debug::warning("Failed to get bulk entry count.");
     return {};
   }
 
-  // Ensure correct version
-  if (file.read_byte()!! <  VERSION_MAJOR) debug::error("Incompatible Major version. [%s]", filepath);
-  if (file.read_byte()!! != VERSION_MINOR) debug::error("Incompatible Minor version. [%s]", filepath);
-  
-  // Skip two bytes
-  file.read_short();
-
-  // Read number of entries
-  short num = file.read_short();
-
   // Grab all entries
-  for (int i; i < num; i++) {
-    TableEntry ent;
+  for (int i; i < count; i++) {
+    String? name = file.read_string();
+    if (catch excuse = name) {
+      debug::warning("Failed to read bulk entry name.");
+      continue;
+    }
+    long? length = file.read_long();
+    if (catch excuse = length) {
+      debug::warning("Failed to read bulk entry length.");
+      continue;
+    }
+    long? pointer = file.read_long();
+    if (catch excuse = pointer) {
+      debug::warning("Failed to read bulk entry pointer.");
+      continue;
+    }
+    short? type = file.read_short();
+    if (catch excuse = type) {
+      debug::warning("Failed to read bulk entry type.");
+      continue;
+    }
+    short? compression = file.read_short();
+    if (catch excuse = compression) {
+      debug::warning("Failed to read bulk entry compression type.");
+      continue;
+    }
 
-    ent.name = file.read_string();
-    ent.length = file.read_long();
-    ent.pointer = file.read_long();
-    ent.type = DataType.from_ordinal(file.read_short());
-    ent.comp = CompType.from_ordinal(file.read_short());
+    TableEntry entry = {
+      name,
+      length,
+      pointer,
+      DataType.from_ordinal(type),
+      CompType.from_ordinal(compression),
+    };
 
-    output.set(ent.name, ent);
+    output.set(name, entry);
   }
-
-  file.close()!!;
 
   return output;
 }
@@ -135,3 +184,26 @@ fn TableEntry get_table_entry(String filepath, String dataname) @export("tableen
   return output;
 }
 
+faultdef INCORRECT_VERSION;
+<* Checks whether the header of the bulk file is correct *>
+fn void? File.check_header(&self) {
+  char? major = self.read_byte();
+  if (catch excuse = major) {
+    debug::warning("Failed to read Major Version.");
+    return excuse?;
+  }
+  char? minor = self.read_byte();
+  if (catch excuse = minor) {
+    debug::warning("Failed to read Minor Version.");
+    return excuse?;
+  }
+
+  if (major != VERSION_MAJOR || minor != VERSION_MINOR) {
+    debug::warning("Version incorrect.");
+    return INCORRECT_VERSION?;
+  }
+
+  self.read_short()!;
+
+  return;
+} 

@@ -6,6 +6,7 @@ extern fn void error(String err, args...) @extern("debug_error");
 extern fn void warning(String err, args...) @extern("debug_warning");
 extern fn void info(String err, args...) @extern("debug_info");
 
+extern fn String recent_error() @extern("debug_recent");
 
 module ennoia::console;
 import ennoia::color;

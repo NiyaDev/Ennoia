@@ -8,7 +8,7 @@ import ennoia::debug;
   @param optname: "Name of option"
  *>
 fn char get_char(String optname) @export("options_char") {
-  char? output = ennoia::options[optname].data.as_char;
+  char? output = ennoia::options[optname].as_char;
   if (catch excuse = output) {
     debug::warning("Option %s isn't a char.", optname);
     return 0;
@@ -20,7 +20,7 @@ fn char get_char(String optname) @export("options_char") {
   @param optname: "Name of option"
  *>
 fn short get_short(String optname) @export("options_short") {
-  short? output = ennoia::options[optname].data.as_short;
+  short? output = ennoia::options[optname].as_short;
   if (catch excuse = output) {
     debug::warning("Option %s isn't a short.", optname);
     return 0;
@@ -32,7 +32,7 @@ fn short get_short(String optname) @export("options_short") {
   @param optname: "Name of option"
  *>
 fn int get_int(String optname) @export("options_int") {
-  int? output = ennoia::options[optname].data.as_int;
+  int? output = ennoia::options[optname].as_int;
   if (catch excuse = output) {
     debug::warning("Option %s isn't a int.", optname);
     return 0;
@@ -44,7 +44,7 @@ fn int get_int(String optname) @export("options_int") {
   @param optname: "Name of option"
  *>
 fn long get_long(String optname) @export("options_long") {
-  long? output = ennoia::options[optname].data.as_long;
+  long? output = ennoia::options[optname].as_long;
   if (catch excuse = output) {
     debug::warning("Option %s isn't a long.", optname);
     return 0;
@@ -57,7 +57,7 @@ fn long get_long(String optname) @export("options_long") {
   @param optname: "Name of option"
  *>
 fn float get_float(String optname) @export("options_float") {
-  float? output = ennoia::options[optname].data.as_float;
+  float? output = ennoia::options[optname].as_float;
   if (catch excuse = output) {
     debug::warning("Option %s isn't a float.", optname);
     return 0;
@@ -69,7 +69,7 @@ fn float get_float(String optname) @export("options_float") {
   @param optname: "Name of option"
  *>
 fn double get_double(String optname) @export("options_double") {
-  double? output = ennoia::options[optname].data.as_double;
+  double? output = ennoia::options[optname].as_double;
   if (catch excuse = output) {
     debug::warning("Option %s isn't a double.", optname);
     return 0;
@@ -84,8 +84,8 @@ fn double get_double(String optname) @export("options_double") {
  *>
 fn void set_char(String optname, char data) @export("options_setchar") {
   Option result = {
-    OptionType.CHAR,
-    {.as_char=data},
+    .type    = OptionType.CHAR,
+    .as_char = data,
   };
   ennoia::options.set(optname, result);
 }
@@ -95,8 +95,8 @@ fn void set_char(String optname, char data) @export("options_setchar") {
  *>
 fn void set_short(String optname, short data) @export("options_setshort") {
   Option result = {
-    OptionType.SHORT,
-    {.as_short=data},
+    .type     = OptionType.SHORT,
+    .as_short = data,
   };
   ennoia::options.set(optname, result);
 }
@@ -106,8 +106,8 @@ fn void set_short(String optname, short data) @export("options_setshort") {
  *>
 fn void set_int(String optname, int data) @export("options_setint") {
   Option result = {
-    OptionType.INT,
-    {.as_int=data},
+    .type   = OptionType.INT,
+    .as_int = data,
   };
   ennoia::options.set(optname, result);
 }
@@ -117,8 +117,8 @@ fn void set_int(String optname, int data) @export("options_setint") {
  *>
 fn void set_long(String optname, long data) @export("options_setlong") {
   Option result = {
-    OptionType.LONG,
-    {.as_long=data},
+    .type    = OptionType.LONG,
+    .as_long = data,
   };
   ennoia::options.set(optname, result);
 }
@@ -129,8 +129,8 @@ fn void set_long(String optname, long data) @export("options_setlong") {
  *>
 fn void set_float(String optname, float data) @export("options_setfloat") {
   Option result = {
-    OptionType.FLOAT,
-    {.as_float=data},
+    .type     = OptionType.FLOAT,
+    .as_float = data,
   };
   ennoia::options.set(optname, result);
 }
@@ -140,8 +140,8 @@ fn void set_float(String optname, float data) @export("options_setfloat") {
  *>
 fn void set_double(String optname, double data) @export("options_setdouble") {
   Option result = {
-    OptionType.DOUBLE,
-    {.as_double=data},
+    .type      = OptionType.DOUBLE,
+    .as_double = data,
   };
   ennoia::options.set(optname, result);
 }

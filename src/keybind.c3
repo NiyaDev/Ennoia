@@ -32,8 +32,8 @@ fn void save_keybinds() @export("keybinds_save") {
   // Create file
   ennoia::keybinds.@each(; String key, Keybind val) {
     File file = file::open(key, "wb")!!;
-    file.write_int(val.key);
-    file.write_short(val.mod);
+    file.write_int(val.key)!!;
+    file.write_short(val.mod)!!;
     file.close()!!;
   };
 }

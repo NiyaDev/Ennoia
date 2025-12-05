@@ -194,3 +194,11 @@
 - Reorganized options.
 - Added error checking to options.
 
+#### [12/5/25]
+- Moved file functions from bulk to utilities.
+- Added faults to file functions.
+- Added 'recent_error' to debug.
+- Added error-checking to bulk loading.
+- Added documentation for Debug, Bulk, and Options.
+- Changed structure of Options to remove OptionType data to just inline the union.
+
