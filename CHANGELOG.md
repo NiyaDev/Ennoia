@@ -190,3 +190,7 @@
 - Started on having debug functions draw an alert on screen when they occur.
   - Doesn't work yet?
 
+#### [12/4/25]
+- Reorganized options.
+- Added error checking to options.
+
