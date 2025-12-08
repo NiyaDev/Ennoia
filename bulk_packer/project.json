@@ -2,7 +2,7 @@
   "langrev": "1",
   "warnings": [ "no-unused" ],
   "dependency-search-paths": [ "../", "../../" ],
-  "dependencies": [ "ennoia" ],
+  "dependencies": [ "ennoia", "spng" ],
   "authors": [ "John Doe <john.doe@example.com>" ],
   "version": "0.1.0",
   "sources": [ "src/**" ],

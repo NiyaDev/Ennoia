@@ -129,12 +129,12 @@ extern fn float File.read_float(&self) @extern("bulk_filefloat");
 extern fn double File.read_double(&self) @extern("bulk_filedouble");
 extern fn String File.read_string(&self) @extern("bulk_filestring");
 
-extern fn void File.write_short(&self, short val) @extern("bulk_filewriteshort");
-extern fn void File.write_int(&self, int val) @extern("bulk_filewriteint");
-extern fn void File.write_long(&self, long val) @extern("bulk_filewritelong");
-extern fn void File.write_float(&self, float val) @extern("bulk_filewritefloat");
-extern fn void File.write_double(&self, double val) @extern("bulk_filewritedouble");
-extern fn void File.write_string(&self, String val) @extern("bulk_filewritestring");
+extern fn void? File.write_short(&self, short val) @extern("bulk_filewriteshort");
+extern fn void? File.write_int(&self, int val) @extern("bulk_filewriteint");
+extern fn void? File.write_long(&self, long val) @extern("bulk_filewritelong");
+extern fn void? File.write_float(&self, float val) @extern("bulk_filewritefloat");
+extern fn void? File.write_double(&self, double val) @extern("bulk_filewritedouble");
+extern fn void? File.write_string(&self, String val) @extern("bulk_filewritestring");
 
 
 module ennoia::camera;
