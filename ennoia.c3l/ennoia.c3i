@@ -255,6 +255,7 @@ extern fn int  queue_contains(SDL_KeyboardEvent data) @export("keybinds_queuecon
 extern fn void queue_add(SDL_KeyboardEvent data) @extern("keybinds_queueadd");
 extern fn void queue_remove(SDL_KeyboardEvent data) @extern("keybinds_queueremove");
 
+extern fn void set(String key, bool held = true, bool repeat = false) @extern("keybinds_set");
 extern fn bool pressed(String key) @extern("keybinds_pressed");
 extern fn bool down(String key)    @extern("keybinds_down");
 extern fn bool up(String key)      @extern("keybinds_up");

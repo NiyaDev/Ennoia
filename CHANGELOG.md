@@ -202,3 +202,7 @@
 - Added documentation for Debug, Bulk, and Options.
 - Changed structure of Options to remove OptionType data to just inline the union.
 
+#### [12/10/25]
+- Reorganized Keybinds into own directory.
+- Added keybinds::set to "press" a button in code.
+
