@@ -206,3 +206,6 @@
 - Reorganized Keybinds into own directory.
 - Added keybinds::set to "press" a button in code.
 
+#### [12/12/25]
+- Started on animation system
+
