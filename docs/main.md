@@ -6,6 +6,7 @@
 1. [Debug](#debug)
 2. [Bulk](#bulk)
 3. [Options](#options)
+4. [Keybinds](#keybinds)
 
 ### Debug <a name="debug"></a>
 #### `void info(String err, args...)`
@@ -151,6 +152,45 @@ Sets option as a float.
 Sets option as a double.
 #### `bool contains(String optname)`
 Returns whether there is currently an option by that name.
+
+
+### Options <a name="debug"></a>
+#### `KeyData`
+```
+KeyboardKey key;
+KeyboardMod mod;
+bool down;
+bool repeat;
+```
+#### `Keybind`
+```
+KeyboardKey key;
+KeyboardMod mod;
+```
+
+#### `void save_keybinds()`
+Saves all keybinds as individual files.
+#### `void KeyData.print(&self)`
+Prints keybinds info.
+
+#### `void set(String key, bool down = true, bool repeat = false)`
+Presses a button through code.
+#### `bool pressed(String key)`
+Checks whether key has been pressed once.
+#### `bool down(String key)`
+Checks whether key has been held down.
+#### `bool up(String key)`
+Checks whether key has been released.
+#### `bool mouse_pressed(uint button)`
+Checks whether mouse button has been pressed once.
+#### `bool mouse_down(uint button)`
+Checks whether mouse button has been held down.
+#### `bool mouse_up(uint button)`
+checks whether mouse button has been released.
+
+#### ``
+#### ``
+
 
 
 
