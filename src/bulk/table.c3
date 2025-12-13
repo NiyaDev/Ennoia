@@ -21,6 +21,7 @@ enum DataType : short {
   KEYBIND,
   OPTION,
   LOCALIZATION,
+  ANIMATION,
   
   // OpenGL/SDL3
   TEXTURE,

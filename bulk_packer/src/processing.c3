@@ -84,100 +84,78 @@ fn void? process(TypedValue value, String newFile) {
 					  @err(file.write_string(val.get_array(2).as_string), "Failed to write to file. %s", newFile)!;
 			  }
 			case TEXT:
-				file.write_string(val.get_array(1).as_string);
+				@err(file.write_string(val.get_array(1).as_string), "Failed to write to file. %s", newFile)!;
 			case RAW:
 				File? data = file::open(val.get_array(1).as_string, "rb");
-				if (catch data) {
-					io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-					return 1;
-				}
+				@err(data, "Attempted to read file that doesn't exist. %s", newFile)!;
+
 				for (int l; l < table[i].length; l++) {
-					file.write_byte(data.read_byte()!!)!!;
+					@err(file.write_byte(data.read_byte()!), "Failed to write to file. %s", newFile)!;
 				}
-				data.close()!!;
+				data.close()!;
 			case FONT:
 				File? data = file::open(val.get_array(3).as_string, "rb");
-				if (catch data) {
-					io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-					return 1;
-				}
-				file.write_byte((char)val.get_array(1).as_int)!!;
-				file.write_byte((char)val.get_array(2).as_int)!!;
+				@err(data, "Attempted to read file that doesn't exist. %s", val.get_array(3).as_string)!;
+				@err(file.write_byte((char)val.get_array(1).as_int), "Failed to write to file. %s", newFile)!;
+				@err(file.write_byte((char)val.get_array(2).as_int), "Failed to write to file. %s", newFile)!;
+
 				for (int l; l < table[i].length - 2; l++) {
-					file.write_byte(data.read_byte()!!)!!;
+					@err(file.write_byte(data.read_byte()!), "Failed to write to file. %s", newFile)!;
 				}
-				data.close()!!;
+				data.close()!;
 			case SHADER:
 				// Vertex Shader
 				if (val.get_array(1).as_string != "") {
 					File? vs = file::open(val.get_array(1).as_string, "rb");
-					if (catch vs) {
-						io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-						return 1;
-					}
-					usz vsSize = file::get_size(val.get_array(1).as_string)!!;
-					file.write_long(vsSize);
+					@err(vs, "Attempted to read file that doesn't exist. %s", val.get_array(1).as_string)!;
+					usz vsSize = file::get_size(val.get_array(1).as_string)!;
+					@err(file.write_long(vsSize), "Failed to write to file. %s", newFile)!;
 					for (int l; l < vsSize; l++) {
-						file.write_byte(vs.read_byte()!!)!!;
+						@err(file.write_byte(vs.read_byte()!), "Failed to write to file. %s", newFile)!;
 					}
-					vs.close()!!;
+					vs.close()!;
 				} else {
-					file.write_long(0);
+					@err(file.write_long(0), "Failed to write to file. %s", newFile)!;
 				}
 				// Fragment Shader
 				if (val.get_array(2).as_string != "") {
 					File? fs = file::open(val.get_array(2).as_string, "rb");
-					if (catch fs) {
-						io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-						return 1;
-					}
+					@err(fs, "Attempted to read file that doesn't exist. %s", val.get_array(2).as_string)!;
 					usz fsSize = file::get_size(val.get_array(2).as_string)!!;
-					file.write_long(fsSize);
+					@err(file.write_long(fsSize), "Failed to write to file. %s", newFile)!;
 					for (int l; l < fsSize; l++) {
-						file.write_byte(fs.read_byte()!!)!!;
+						@err(file.write_byte(fs.read_byte()!), "Failed to write to file. %s", newFile)!;
 					}
-					fs.close()!!;
+					fs.close()!;
 				} else {
-					file.write_long(0);
+					@err(file.write_long(0), "Failed to write to file. %s", newFile)!;
 				}
 			case TEXTURE:
 				File? data = file::open(val.get_array(1).as_string, "rb");
-				if (catch data) {
-					io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-					return 1;
-				}
-				for (int l; l < table[i].length; l++) file.write_byte(data.read_byte()!!)!!;
-				data.close()!!;
+				@err(data, "Attempted to read file that doesn't exist. %s", val.get_array(1).as_string)!;
+				for (int l; l < table[i].length; l++) @err(file.write_byte(data.read_byte()!), "Failed to write to file. %s", newFile)!;
+				data.close()!;
 			case MODEL:
 				File? data = file::open(val.get_array(1).as_string, "rb");
-				if (catch data) {
-					io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-					return 1;
-				}
+				@err(data, "Attempted to read file that doesn't exist. %s", val.get_array(1).as_string)!;
 				for (int l; l < table[i].length; l++) {
-					file.write_byte(data.read_byte()!!)!!;
+					@err(file.write_byte(data.read_byte()!), "Failed to write to file. %s", newFile)!;
 				}
-				data.close()!!;
+				data.close()!;
 			case MATERIAL:
 				File? data = file::open(val.get_array(1).as_string, "rb");
-				if (catch data) {
-					io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-					return 1;
-				}
+				@err(data, "Attempted to read file that doesn't exist. %s", val.get_array(1).as_string)!;
 				for (int l; l < table[i].length; l++) {
-					file.write_byte(data.read_byte()!!)!!;
+					@err(file.write_byte(data.read_byte()!), "Failed to write to file. %s", newFile)!;
 				}
-				data.close()!!;
+				data.close()!;
 			case LOCALIZATION:
 				File? data = file::open(val.get_array(1).as_string, "rb");
-				if (catch data) {
-					io::printfn("[ERROR] - BULK_PACKER::MAIN [Attempted to read file that doesn't exist]");
-					return 1;
-				}
+				@err(data, "Attempted to read file that doesn't exist. %s", val.get_array(1).as_string)!;
 				for (int l; l < table[i].length; l++) {
-					file.write_byte(data.read_byte()!!)!!;
+					@err(file.write_byte(data.read_byte()!), "Failed to write to file. %s", newFile)!;
 				}
-				data.close()!!;
+				data.close()!;
 			default:
     }
   }

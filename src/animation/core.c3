@@ -8,7 +8,5 @@ struct Animation {
   uint timeLeft;
 }
 
-enum AnimationType {
-  NONE,
-}
+
 

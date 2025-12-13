@@ -63,6 +63,12 @@ fn int main(String[] args) {
 	defer yaml.clean();
 	io::printfn("  - YAML");
 
+	io::printfn("- Processing:");
+	yaml.@each(; String newFile, TypedValue val) {
+		io::printfn("  - %s", newFile);
+		process(val, newFile)!!;
+	};
+
 	return 0;
 }
 

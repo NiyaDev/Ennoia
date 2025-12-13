@@ -1,6 +1,7 @@
 
 module ennoia::animation;
 import std::collections;
+import ennoia;
 
 
 struct AnimatedTexture {
@@ -14,8 +15,12 @@ struct AnimatedTexture {
 
 struct TextureFrame {
   uint textureid;
-  uint 
+  uint animationid;
 }
 
 
+<**>
+fn void? AnimatedTexture.draw(&self) {
+  
+}
 
