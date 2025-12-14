@@ -49,5 +49,6 @@ default:
 003:
   local_test: [LOCALIZATION, resources/local_test.yaml]
 
-
+004:
+  anim_test: [ANIMATION, [resources/peppino/3hpidle_00.png, resources/peppino/3hpidle_01-02.png, resources/peppino/3hpidle_03.png, resources/peppino/3hpidle_04.png, resources/peppino/3hpidle_05.png, resources/peppino/3hpidle_06.png, resources/peppino/3hpidle_07-08.png, resources/peppino/3hpidle_09.png, resources/peppino/3hpidle_10.png, resources/peppino/3hpidle_11.png, resources/peppino/3hpidle_12.png], [[0,1,2,3,4,5,6,7,8,9,10], [0]], [], 10],
 

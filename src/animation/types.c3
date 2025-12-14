@@ -2,7 +2,7 @@
 module ennoia::animation;
 
 
-enum AnimationType {
-  NONE,
+enum AnimationType : (uint size) {
+  NONE = 0,
 }
 

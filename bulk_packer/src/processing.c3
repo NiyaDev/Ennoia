@@ -156,6 +156,13 @@ fn void? process(TypedValue value, String newFile) {
 					@err(file.write_byte(data.read_byte()!), "Failed to write to file. %s", newFile)!;
 				}
 				data.close()!;
+			case ANIMATION:
+				Array arr = val.get_array(1).as_array;
+				for (int i; i < arr.len; i++) {
+					File? data = file::open(arr[i], "rb");
+					@err(data, "Attempted to read a file that doesn't exist. %s", arr[i])!;
+
+				}
 			default:
     }
   }
@@ -222,6 +229,19 @@ fn TableEntry read_entry(String name, TypedValue arr, usz* total) {
 			output.length = file::get_size(arr.get_array(1).as_string)!!;
 		  output.type = LOCALIZATION;
 			output.comp = NONE;
+		case "ANIMATION":
+			output.type = ANIMATION;
+			output.comp = NONE;
+			for (int i; i < arr.get_array(1).as_array.len; i++) { // Textures
+				output.length += file::get_size(arr.get_array(1).get_array(i).as_string)!!;
+			}
+			output.length += arr.get_array(2).get_array(0).len * uint.sizeof; // Frame texIds
+			output.length += arr.get_array(2).get_array(1).len * uint.sizeof; // Frame aniIds
+			for (int i; i < arr.get_array(3).as_array.len; i++) { // Animation
+				output.length += 2 * uint.sizeof;
+				output.length += AnimationType.from_ordinal(arr.get_array(3).get_array(i)).size;
+			}
+			output.length += uint.sizeof;
   }
   return output;
 }
