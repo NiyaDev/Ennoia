@@ -20,7 +20,7 @@ struct TextureFrame {
 
 
 <**>
-fn void? AnimatedTexture.draw(&self) {
+fn void? AnimatedTexture.draw(&self, Vec2f position) {
   
 }
 

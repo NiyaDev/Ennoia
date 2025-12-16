@@ -33,19 +33,19 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   renHeight = (int)((float)scrHeight * renRes);
   
   // Initialize SDL3
-	assert(sdl3::init(sdl3::INIT_VIDEO | sdl3::INIT_AUDIO), "[ERROR] - ENNOIA::INIT::INIT [Failed to initialize SDL3 (%s)]", sdl3::get_error());
+	assert(sdl3::init(sdl3::INIT_VIDEO | sdl3::INIT_AUDIO), "[ERROR] - Failed to initialize SDL3. (%s)", sdl3::get_error());
 	sdl3::gl_set_attribute(GLAttr.CONTEXT_MAJOR_VERSION, 3);
 	sdl3::gl_set_attribute(GLAttr.CONTEXT_MINOR_VERSION, 3);
 	sdl3::gl_set_attribute(GLAttr.CONTEXT_PROFILE_MASK, sdl3::CONTEXT_PROFILE_CORE);
 
   // Create window
   window = sdl3::create_window(title.zstr_tcopy(), scrWidth, scrHeight, sdl3::WINDOW_OPENGL);
-  assert(window != null, "[ERROR] - ENNOIA::INIT::CREATE_WINDOW [Failed to create sdl3 window(%s)]", sdl3::get_error());
+  assert(window != null, "[ERROR] - Failed to create sdl3 window. %s", sdl3::get_error());
 
   // Create OpenGL context
   glcontext = sdl3::gl_create_context(window);
-  assert(glcontext != null, "[ERROR] - ENNOIA::INIT::CREATE_CONTEXT [Failed to create SDL_GL context (%s)]", (String)sdl3::get_error()[..1024]);
-  assert(sdl3::gl_make_current(window, glcontext), "[ERROR] - ENNOIA::INIT::MAKE_CURRENT [Failed to make gl context current (%s)]", sdl3::get_error()); 
+  assert(glcontext != null, "[ERROR] - Failed to create SDL_GL context. %s", (String)sdl3::get_error()[..1024]);
+  assert(sdl3::gl_make_current(window, glcontext), "[ERROR] - Failed to make gl context current. %s", sdl3::get_error()); 
 
   // Enable depth testing
   gl::enable(gl::DEPTH_TEST);

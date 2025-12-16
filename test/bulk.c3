@@ -32,7 +32,7 @@ fn void getting_table() @test {
 }
 
 fn void loading_raw_from_file() @test {
-  char[] data = bulk::load("resources/000", "test");
+  char[] data = bulk::load("resources/000", "test")!!;
   assert(data == "test4", "Failed to load raw data from file.");
 
   // Cleanup
@@ -49,4 +49,7 @@ fn void loading_option() @test {
   assert(opt.as_int == 1280, "Failed to correctly load Option. [%d]",opt.as_int);
 }
 
-
+fn void loading_default() @test {
+  Texture? defaultTexture = bulk::load_texture("resources/default", "texture");
+  assert(@ok(defaultTexture), "Failed to load texture from default.");
+}

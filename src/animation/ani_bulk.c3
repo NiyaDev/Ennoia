@@ -5,7 +5,7 @@ import ennoia;
 
 <**>
 fn AnimatedTexture load_animation(String filepath, String dataname) {
-  char[] data = bulk::load(filepath, dataname);
+  char[] data = bulk::load(filepath, dataname)!!;
   defer free(data);
   usz index;
   
@@ -21,8 +21,8 @@ fn AnimatedTexture load_animation(String filepath, String dataname) {
     mem::copy(&textureLength, (char*)data + index, uint.sizeof);
     index += uint.sizeof;
 
-    Texture tex = texture::load_from_mem(data[index:textureLength]);
-    output.texture.push(tex);
+    Texture tex = texture::load_from_mem(data[index:textureLength])!!;
+    output.textures.push(tex);
     String fmt = string::tformat("%s_%s",filepath,dataname);
     ennoia::textures.set(fmt, tex);
 
@@ -45,7 +45,7 @@ fn AnimatedTexture load_animation(String filepath, String dataname) {
 
   // Animations
   uint aniLen;
-  mem::copy(&anilen, (char*)data + index, uint.sizeof);
+  mem::copy(&aniLen, (char*)data + index, uint.sizeof);
   index += uint.sizeof;
   for (int i; i < aniLen; i++) {
     Animation animation;
@@ -55,7 +55,7 @@ fn AnimatedTexture load_animation(String filepath, String dataname) {
     mem::copy(&animation.timeLeft, (char*)data + index, uint.sizeof);
     index += uint.sizeof;
 
-    switch (type) {
+    switch (animation.type) {
       //case :
       default:
     }

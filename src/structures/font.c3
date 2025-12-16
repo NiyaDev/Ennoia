@@ -129,7 +129,7 @@ fn Font load(String filename, Vec2f size) @export("font_load") {
 <* Loads font from data *>
 fn Font load_from_mem(char[] data, Vec2f size) @export("font_loadfrommem") {
   Font output;
-  output.atlas = texture::load_from_mem(data);
+  output.atlas = texture::load_from_mem(data)!!;
   output.dim = size;
 
   float x = size.x;

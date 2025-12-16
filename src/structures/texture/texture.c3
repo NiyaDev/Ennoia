@@ -23,6 +23,8 @@ enum TilingLayout {
   THREE_ONE,
 }
 
+faultdef SPNG_ERROR;
+
 
 <* Loads image from file
   @param filename: "Name of file to load"
@@ -74,7 +76,7 @@ fn Texture load(String filename) @export("texture_load") {
 <* Load texture from memory
   @param data: "Array of data to convert into texture"
  *>
-fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
+fn Texture? load_from_mem(char[] data) @export("texture_loadfrommem") {
   Texture output;
   int res;
 
@@ -82,9 +84,11 @@ fn Texture load_from_mem(char[] data) @export("texture_loadfrommem") {
   Ctx* ctx = spng::ctx_new(0);
   usz imgSize;
   res = spng::set_png_buffer(ctx, data, data.len);
-  if (res != 0) debug::fatal("set_png_buffer() error: %s", spng::strerror(res));
+  debug::@error_b(res != 0, "set_png_buffer() error: %s", spng::strerror(res), SPNG_ERROR)!;
+  //if (res != 0) debug::fatal("set_png_buffer() error: %s", spng::strerror(res));
   res = spng::decoded_image_size(ctx, (int)Format.RGBA8, &imgSize);
-  if (res != 0) debug::fatal("decoded_image_size() error: %s", spng::strerror(res));
+  debug::@error_b(res != 0, "decoded_image_size() error: %s", spng::strerror(res), SPNG_ERROR)!;
+  //if (res != 0) debug::fatal("decoded_image_size() error: %s", spng::strerror(res));
 
   // Copy width and height
   Ihdr ihdr;

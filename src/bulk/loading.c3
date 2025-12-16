@@ -23,27 +23,25 @@ const char VERSION_MINOR @export("bulk_minorversion") = 0;
   @param dataname: "Name of data inside bulk file"
   @require dataname != ""
  *>
-fn char[] load(String filepath, String dataname) @export("bulk_load") {
+fn char[]? load(String filepath, String dataname) @export("bulk_load") {
   File? file = file::open(filepath, "rb");
-  if (catch excuse = file) {
-    debug::fatal("Failed to open file. [%s]", filepath);
-    return {};
-  }
+  debug::@error(file, "Failed to open file. [bulk::load] %s", filepath)!;
   defer file.close()!!;
 
   // Check header
-  if (catch excuse = file.check_header()) return {};
+  file.check_header()!;
 
   // Load entry
   TableEntry tableEntry = get_table_entry(filepath, dataname);
-  if (catch excuse = file.seek(tableEntry.pointer)) {
-    debug::warning("Failed to seek to position in file.");
-    return {};
-  }
+  debug::@error(file.seek(tableEntry.pointer), "Failed to seek to position. [bulk::load] %s", filepath)!;
   
   // Read into array
   char[] data = mem::new_array(char, tableEntry.length);
-  for (int i; i < tableEntry.length; i++) data[i] = file.read_byte()!!;
+  for (int i; i < tableEntry.length; i++) {
+    char? b = file.read_byte();
+    debug::@error(b, "Failed to read byte. [bulk::load] %s", filepath)!;
+    data[i] = b!;
+  }
 
   // Decompress data
 
@@ -55,7 +53,7 @@ fn void load_all(String filepath) @export("bulk_loadall") {
 
   tbls.@each(; String key, TableEntry val) {
     switch (val.type) {
-      case TEXTURE: load_texture(filepath, key, true);
+      case TEXTURE: load_texture(filepath, key, true)!!;
       case FONT:    load_font(filepath, key, true);
       case MODEL:   load_model(filepath, key, true);
       case SHADER:  load_shader(filepath, key, true);
@@ -73,13 +71,14 @@ fn void load_all(String filepath) @export("bulk_loadall") {
   @param dataname: "Name of data inside bulk file"
   @require dataname != ""
  *>
-fn Texture load_texture(String filepath, String dataname, bool send = true) @export("bulk_texture") {
-  char[] data = load(filepath, dataname);
+fn Texture? load_texture(String filepath, String dataname, bool send = true) @export("bulk_texture") {
+  char[] data = load(filepath, dataname)!!;
   defer free(data);
 
-  Texture tex = texture::load_from_mem(data);
+  Texture? tex = texture::load_from_mem(data);
+  debug::@error(tex, "Failed to load texture from bulk. %s", filepath)!;
 
-  if (send) ennoia::textures.set(dataname, tex);
+  if (send) ennoia::textures.set(dataname, tex!!);
 
   return tex;
 }
@@ -91,7 +90,7 @@ fn void load_all_textures(String filepath) @export("bulk_alltexture") {
   BulkTable tbls = get_table(filepath);
 
   tbls.@each(; String key, TableEntry val) {
-    if (val.type == TEXTURE) load_texture(filepath, key, true);
+    if (val.type == TEXTURE) load_texture(filepath, key, true)!!;
   };
 }
 
@@ -102,7 +101,7 @@ fn void load_all_textures(String filepath) @export("bulk_alltexture") {
   @require dataname != ""
  *>
 fn Font load_font(String filepath, String dataname, bool send = true) @export("bulk_font") {
-  char[] data = load(filepath, dataname);
+  char[] data = load(filepath, dataname)!!;
   defer free(data);
 
   Font font = font::load_from_mem(data[2..], {(float)data[0], (float)data[1]});
@@ -135,7 +134,7 @@ fn void load_all_fonts(String filepath) @export("bulk_allfont") {
 fn HashMap{String, Mesh} load_model(String filepath, String dataname, bool getMaterial = true, bool send = true) @export("bulk_model") {
   HashMap{String, Mesh} output;
 
-  char[] data = load(filepath,dataname);
+  char[] data = load(filepath,dataname)!!;
   defer free(data);
   char[] mtl;
 
@@ -146,7 +145,7 @@ fn HashMap{String, Mesh} load_model(String filepath, String dataname, bool getMa
       String[] splitTwo = split[i].tsplit(" ");
       if (splitTwo[0] == "mtllib") {
         String[] nameSplit = splitTwo[1].tsplit(".");
-        mtl = bulk::load(filepath,nameSplit[0]);
+        mtl = bulk::load(filepath,nameSplit[0])!!;
         break;
       }
     }
@@ -170,7 +169,7 @@ fn HashMap{String, Mesh} load_model(String filepath, String dataname, bool getMa
               String[] nameSplit = line[1].tsplit(".");
               Mesh* temp = output.get_ref(key)!!;
               temp.texture = mem::new(Texture);
-              *temp.texture = bulk::load_texture(filepath, nameSplit[0]);
+              *temp.texture = bulk::load_texture(filepath, nameSplit[0])!!;
             }
         }
       }
@@ -208,7 +207,7 @@ fn void load_all_models(String filepath) @export("bulk_allmodel") {
   @require dataname != ""
  *>
 fn Shader load_shader(String filepath, String dataname, bool send = true) @export("bulk_shader") {
-  char[] data = load(filepath, dataname);
+  char[] data = load(filepath, dataname)!!;
   defer free(data);
 
   usz counter;
@@ -245,7 +244,7 @@ fn void load_all_shaders(String filepath) @export("bulk_allshader") {
   @require dataname != ""
  *>
 fn Keybind load_keybind(String filepath, String dataname, bool send = true) @export("bulk_keybind") {
-  char[] data = load(filepath, dataname);
+  char[] data = load(filepath, dataname)!!;
   defer free(data);
 
   Keybind kb = {
@@ -269,66 +268,6 @@ fn void load_all_keybinds(String filepath) @export("bulk_allkeybind") {
   };
 }
 
-<* Shorthand for loading an option from a bulk file
-  @param filepath: "Path to bulk file"
-  @require filepath != ""
-  @param dataname: "Name of data inside bulk file"
-  @require dataname != ""
-  @param send: "If true, it adds it to the keybinds global registry"
- *>
-fn Option load_option(String filepath, String dataname, bool send = true) @export("bulk_option") {
-  char[] data = load(filepath, dataname);
-  defer free(data);
-
-  Option opt;
-  opt.type = OptionType.from_ordinal(data[0]); 
-
-  switch (opt.type) {
-    case CHAR:
-      opt.as_char   = data[1];
-    case SHORT:
-      short sh;
-      mem::copy(&sh, &data[1], 2);
-      opt.as_short  = sh;
-    case INT:
-      int sh;
-      mem::copy(&sh, &data[1], 4);
-      opt.as_int    = sh;
-    case LONG:
-      long sh;
-      mem::copy(&sh, &data[1], 8);
-      opt.as_long   = sh;
-
-    case FLOAT:
-      float sh;
-      mem::copy(&sh, &data[1], 4);
-      opt.as_float  = sh;
-    case DOUBLE:
-      double sh;
-      mem::copy(&sh, &data[1], 8);
-      opt.as_double = sh;
-
-    case STRING:
-      String str = (String)mem::new_array(char,(usz)data[1]);
-      mem::copy(&str, &data[2], data[1]);
-      opt.as_string = str;
-  }
-
-  if (send) ennoia::options.set(dataname, opt);
-
-  return opt;
-}
-<* Loads all options in file
-  @param filepath: "File path of file to load"
-  @require filepath != ""
- *>
-fn void load_all_options(String filepath) @export("bulk_alloption") {
-  BulkTable tbls = get_table(filepath);
-
-  tbls.@each(; String key, TableEntry val) {
-    if (val.type == OPTION) load_option(filepath, key, true);
-  };
-}
 
 <* Shorthand for loading a set of localization strings from a bulk file
   @param filepath: "Path to bulk file"
@@ -338,7 +277,7 @@ fn void load_all_options(String filepath) @export("bulk_alloption") {
   @param send: "If true, it adds it to the keybinds global registry"
  *>
 fn Localization load_localization(String filepath, String dataname, bool send = true) @export("bulk_local") {
-  char[] data = load(filepath,dataname);
+  char[] data = load(filepath,dataname)!!;
   defer free(data);
   Yaml y = yaml::parse((String)data);
 
