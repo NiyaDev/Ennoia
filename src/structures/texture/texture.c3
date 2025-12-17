@@ -23,6 +23,8 @@ enum TilingLayout {
   THREE_ONE,
 }
 
+char[] def = $embed("../../../resources/def_tex.png");
+
 faultdef SPNG_ERROR;
 
 
@@ -84,10 +86,10 @@ fn Texture? load_from_mem(char[] data) @export("texture_loadfrommem") {
   Ctx* ctx = spng::ctx_new(0);
   usz imgSize;
   res = spng::set_png_buffer(ctx, data, data.len);
-  debug::@error_b(res != 0, "set_png_buffer() error: %s", spng::strerror(res), SPNG_ERROR)!;
+  debug::@error_b(res == 0, "set_png_buffer() error: %s", spng::strerror(res), SPNG_ERROR)!;
   //if (res != 0) debug::fatal("set_png_buffer() error: %s", spng::strerror(res));
   res = spng::decoded_image_size(ctx, (int)Format.RGBA8, &imgSize);
-  debug::@error_b(res != 0, "decoded_image_size() error: %s", spng::strerror(res), SPNG_ERROR)!;
+  debug::@error_b(res == 0, "decoded_image_size() error: %s", spng::strerror(res), SPNG_ERROR)!;
   //if (res != 0) debug::fatal("decoded_image_size() error: %s", spng::strerror(res));
 
   // Copy width and height

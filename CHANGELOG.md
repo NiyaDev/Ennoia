@@ -211,3 +211,7 @@
 
 #### [12/16/25]
 - I broke everything. Now I must fix.
+
+#### [12/17/25]
+- Started fixing.
+

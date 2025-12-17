@@ -75,8 +75,10 @@ fn Texture? load_texture(String filepath, String dataname, bool send = true) @ex
   char[] data = load(filepath, dataname)!!;
   defer free(data);
 
+  io::printfn("%s",data);
+
   Texture? tex = texture::load_from_mem(data);
-  debug::@error(tex, "Failed to load texture from bulk. %s", filepath)!;
+  debug::@error(tex, "Failed to load texture from bulk. %s", dataname)!;
 
   if (send) ennoia::textures.set(dataname, tex!!);
 

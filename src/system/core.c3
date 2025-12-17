@@ -63,7 +63,10 @@ fn void init(int width = -1, int height = -1, String title = "ENNOIA", float sca
   render::init(renWidth, renHeight);
 
   // Load defaults
-  bulk::load_all("resources/default");
+  Texture tex = texture::load_from_mem(texture::def)!!;
+  ennoia::textures.set("texture", tex);
+  Font font = font::load_from_mem(font::def, {24,24});
+  ennoia::fonts.set("font", font);
   textureMesh = mesh::gen_quad();
 
   meshes.set("tri", mesh::gen_tri(1,1));

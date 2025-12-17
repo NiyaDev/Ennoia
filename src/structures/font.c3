@@ -15,6 +15,9 @@ struct Font {
   HashMap{char, Rectangle} rects;
 }
 
+char[] def = $embed("../../resources/font_2.png");
+
+
 <* Loads font from file *>
 fn Font load(String filename, Vec2f size) @export("font_load") {
   Font output;
