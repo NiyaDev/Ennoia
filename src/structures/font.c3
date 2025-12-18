@@ -15,7 +15,7 @@ struct Font {
   HashMap{char, Rectangle} rects;
 }
 
-char[] def = $embed("../../resources/font_2.png");
+char[] def = $embed("../../resources/defaults/font_2.png");
 
 
 <* Loads font from file *>

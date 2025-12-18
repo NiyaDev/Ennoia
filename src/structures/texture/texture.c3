@@ -23,7 +23,7 @@ enum TilingLayout {
   THREE_ONE,
 }
 
-char[] def = $embed("../../../resources/def_tex.png");
+char[] def = $embed("../../../resources/defaults/def_tex.png");
 
 faultdef SPNG_ERROR;
 
